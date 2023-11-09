@@ -17,7 +17,11 @@
           :key="`service-${sIndex}`"
         >
           <label class="flex-1 flex items-center">
-            <UCheckbox label="Label" :value="service.checked" />
+            <input
+              type="checkbox"
+              v-model="service.checked"
+              class="form-checkbox text-blue-600"
+            />
             <span class="ml-3 text-sm text-gray-300">{{ service.name }}</span>
           </label>
           <span class="font-semibold text-gray-300">{{ service.price }} ₽</span>
