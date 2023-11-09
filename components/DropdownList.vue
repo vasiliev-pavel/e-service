@@ -6,7 +6,7 @@
         <input
           type="checkbox"
           :id="item.id"
-          :checked="store.selectedCheckboxes[item.id]"
+          :checked="store.selectedServices[item.id]"
           @change="() => store.toggleCheckbox(item.id, item.price)"
         />
         <label :for="item.id">{{ item.label }} - {{ item.price }} ₽</label>

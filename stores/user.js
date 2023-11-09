@@ -2,17 +2,17 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
-    selectedCheckboxes: {},
+    selectedServices: {},
     totalSum: 0,
   }),
   actions: {
     toggleCheckbox(id, price) {
-      if (this.selectedCheckboxes[id]) {
+      if (this.selectedServices[id]) {
         this.totalSum -= price;
-        delete this.selectedCheckboxes[id];
+        delete this.selectedServices[id];
       } else {
         this.totalSum += price;
-        this.selectedCheckboxes[id] = true;
+        this.selectedServices[id] = true;
       }
     },
   },
