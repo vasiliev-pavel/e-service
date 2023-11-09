@@ -38,13 +38,19 @@ import { useBusinessStore } from "@/stores/business";
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
-// Вычисляемое свойство для фильтрации специалистов
+// Вычисляемое свойство для фильтрации специалистов или отображения всех специалистов
 const filteredSpecialists = computed(() => {
-  const selectedServiceIds = Object.keys(userStore.selectedServices);
-  return businessStore.businessData?.specialists.filter((specialist) =>
-    specialist.services.some((serviceId) =>
-      selectedServiceIds.includes(serviceId.toString())
-    )
-  );
+  // Если selectedServices не пуст, фильтруем специалистов
+  if (Object.keys(userStore.selectedServices).length > 0) {
+    const selectedServiceIds = Object.keys(userStore.selectedServices);
+    return businessStore.businessData?.specialists.filter((specialist) =>
+      specialist.services.some((serviceId) =>
+        selectedServiceIds.includes(serviceId.toString())
+      )
+    );
+  } else {
+    // Если selectedServices пуст, возвращаем всех специалистов
+    return businessStore.businessData?.specialists;
+  }
 });
 </script>

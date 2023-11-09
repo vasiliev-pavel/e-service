@@ -30,6 +30,7 @@ import DropdownList from "~/components/DropdownList.vue";
 import { useUserStore } from "~/stores/user";
 import { ref } from "vue";
 import { useBusinessStore } from "~/stores/business";
+import { onBeforeRouteLeave } from "vue-router";
 
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
@@ -38,5 +39,13 @@ const categories = businessStore.businessData.categories;
 // Вычисляемое свойство, которое возвращает true, если есть выбранные услуги
 const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
+});
+
+// Сброс состояния в случае если пользователь вернулся на предыдущую страницу
+onBeforeRouteLeave((to, from) => {
+  if (from.path === "/services" && to.path === "/booking") {
+    // действие сброса store
+    userStore.resetSelectedServices();
+  }
 });
 </script>

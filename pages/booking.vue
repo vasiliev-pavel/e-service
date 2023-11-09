@@ -4,7 +4,7 @@
   >
     <div class="p-4">
       <h2 class="text-sm uppercase tracking-wide">e-service</h2>
-      <h1 class="font-bold text-xl mt-2">BarberShop</h1>
+      <h1 class="font-bold text-xl mt-2">{{ nameBusinnes }}</h1>
     </div>
     <div class="flex-grow flex flex-col items-center justify-center">
       <h3 class="text-2xl font-semibold mb-8">Where do I begin?</h3>
@@ -22,6 +22,12 @@
   </div>
 </template>
 
+<script setup>
+import { useBusinessStore } from "@/stores/business";
+
+const businessStore = useBusinessStore();
+const nameBusinnes = businessStore.businessData.name;
+</script>
 <style>
 /* You might want to add some custom styles or adjust the Tailwind classes to better match your design */
 </style>

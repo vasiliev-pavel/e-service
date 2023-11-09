@@ -15,5 +15,9 @@ export const useUserStore = defineStore("user", {
         this.selectedServices[id] = true;
       }
     },
+    resetSelectedServices() {
+      this.selectedServices = {};
+      this.totalSum = 0;
+    },
   },
 });
