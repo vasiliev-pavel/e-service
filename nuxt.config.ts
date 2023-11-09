@@ -4,8 +4,5 @@ export default defineNuxtConfig({
   devServer: {
     host: "0.0.0.0",
   },
-  modules: ["@nuxt/ui"],
-  nitro: {
-    preset: "server",
-  },
+  modules: ["@nuxt/ui", "@pinia/nuxt"],
 });

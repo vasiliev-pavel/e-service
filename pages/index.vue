@@ -32,6 +32,36 @@
   </div>
 </template>
 
-<style>
-/* Additional styles can be added here */
-</style>
+<script setup>
+import { useAsyncData } from "nuxt/app";
+import { useRoute } from "vue-router";
+import { useBusinessStore } from "~/stores/business";
+
+const route = useRoute();
+const businessStore = useBusinessStore();
+
+// Функция для загрузки данных о бизнесе
+const loadBusinessData = async (id) => {
+  // Проверяем, что мы находимся на главной странице и что данные еще не были загружены
+  if (!businessStore.businessData) {
+    await businessStore.fetchBusiness(id);
+  }
+};
+
+onMounted(() => {
+  const id = route.query.id;
+  if (id && route.path === "/") {
+    loadBusinessData(id);
+  }
+});
+
+// Используем useAsyncData для загрузки данных асинхронно
+// и устанавливаем ключ, чтобы избежать коллизии, если используется на разных страницах
+// const { data, error } = useAsyncData("businessData", () => {
+//   const id = route.query.id;
+//   // Выполняем запрос только если id существует и мы находимся на главной странице
+//   if (id && route.path === "/") {
+//     return fetchBusinessData(id);
+//   }
+// });
+</script>
