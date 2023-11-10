@@ -67,5 +67,5 @@ function selectSpecialist(specialist) {
   // Перенаправление на страницу записи или другое действие
 }
 
-useResetOnLeave();
+useRouteLeaveGuard();
 </script>

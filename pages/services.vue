@@ -61,5 +61,5 @@ const hasSelectedServices = computed(() => {
 });
 
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
-useResetOnLeave();
+useRouteLeaveGuard();
 </script>
