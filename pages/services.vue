@@ -1,7 +1,7 @@
 <template>
   <div>
     <DropdownList
-      v-for="(items, title) in categories"
+      v-for="(items, title) in filteredCategories"
       :key="title"
       :title="title"
       :items="items"
@@ -14,38 +14,52 @@
         Общая сумма:
         <span class="text-green-500">{{ userStore.totalSum }} ₽</span>
       </div>
-      <NuxtLink to="/providers">
-        <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-        >
-          К выбору специалистов
-        </button>
-      </NuxtLink>
+      <NavigationButton />
     </div>
   </div>
 </template>
 
 <script setup>
 import DropdownList from "~/components/DropdownList.vue";
+import NavigationButton from "~/components/NavigationButton.vue";
+
 import { useUserStore } from "~/stores/user";
 import { ref } from "vue";
 import { useBusinessStore } from "~/stores/business";
-import { onBeforeRouteLeave } from "vue-router";
+import { useResetOnLeave } from "~/composables/useResetOnLeave";
 
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
-const categories = businessStore.businessData.categories;
+const routePairs = [{ from: "/services", to: "/booking" }];
+
+const filteredCategories = computed(() => {
+  const specialistServicesIds = userStore.selectedSpecialist?.services || [];
+  const categories = businessStore.businessData?.categories || {};
+
+  if (specialistServicesIds.length === 0) {
+    // Если  специалист не выбран, возвращаем все категории
+    return categories;
+  } else {
+    const filtered = {};
+    for (const [category, services] of Object.entries(categories)) {
+      // Фильтрация услуг по id, которые есть у специалиста
+      const filteredServices = services.filter((service) =>
+        specialistServicesIds.includes(service.id)
+      );
+      // Если в категории есть услуги, добавляем её в объект filtered
+      if (filteredServices.length > 0) {
+        filtered[category] = filteredServices;
+      }
+    }
+    return filtered;
+  }
+});
 
 // Вычисляемое свойство, которое возвращает true, если есть выбранные услуги
 const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
 
-// Сброс состояния в случае если пользователь вернулся на предыдущую страницу
-onBeforeRouteLeave((to, from) => {
-  if (from.path === "/services" && to.path === "/booking") {
-    // действие сброса store
-    userStore.resetSelectedServices();
-  }
-});
+// // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
+useResetOnLeave();
 </script>

@@ -6,9 +6,10 @@
         <div class="flex flex-col">
           <!-- Специалисты отфильтрованные по выбранным услугам -->
           <div
+            class="flex items-center mb-4 bg-slate-300 rounded-lg p-3 cursor-pointer hover:bg-slate-400 transition duration-300 ease-in-out"
             v-for="specialist in filteredSpecialists"
             :key="specialist.name"
-            class="flex items-center mb-4 bg-slate-300 rounded-lg p-3"
+            @click="selectSpecialist(specialist)"
           >
             <div class="w-10 h-10 mr-3">
               <img
@@ -32,9 +33,12 @@
 
 <script setup>
 import { computed } from "vue";
+import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useBusinessStore } from "@/stores/business";
+import { useResetOnLeave } from "~/composables/useResetOnLeave";
 
+const router = useRouter();
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
@@ -53,4 +57,15 @@ const filteredSpecialists = computed(() => {
     return businessStore.businessData?.specialists;
   }
 });
+
+function selectSpecialist(specialist) {
+  userStore.setSelectedSpecialist(specialist);
+
+  if (Object.keys(userStore.selectedServices).length === 0) {
+    router.push("/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги
+  } else router.push("/appointment");
+  // Перенаправление на страницу записи или другое действие
+}
+
+useResetOnLeave();
 </script>

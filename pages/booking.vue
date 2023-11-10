@@ -23,10 +23,12 @@
 </template>
 
 <script setup>
-import { useBusinessStore } from "@/stores/business";
+import { useBusinessStore } from "~/stores/business";
+import { useUserStore } from "~/stores/user";
 
 const businessStore = useBusinessStore();
 const nameBusinnes = businessStore.businessData.name;
+const userStore = useUserStore();
 </script>
 <style>
 /* You might want to add some custom styles or adjust the Tailwind classes to better match your design */

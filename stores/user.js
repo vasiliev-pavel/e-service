@@ -2,10 +2,20 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
+    firstPageVisited: null,
     selectedServices: {},
     totalSum: 0,
+    selectedSpecialist: null,
   }),
+
   actions: {
+    setFirstPageVisited(page) {
+      if (!this.firstPageVisited) {
+        // Установить только если не было установлено ранее
+        this.firstPageVisited = page;
+      }
+    },
+
     toggleCheckbox(id, price) {
       if (this.selectedServices[id]) {
         this.totalSum -= price;
@@ -18,6 +28,13 @@ export const useUserStore = defineStore("user", {
     resetSelectedServices() {
       this.selectedServices = {};
       this.totalSum = 0;
+    },
+
+    setSelectedSpecialist(specialist) {
+      this.selectedSpecialist = specialist;
+    },
+    resetSelectedSpecialist() {
+      this.selectedSpecialist = null;
     },
   },
 });
