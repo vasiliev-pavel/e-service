@@ -36,7 +36,7 @@ import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useBusinessStore } from "@/stores/business";
-import { useResetOnLeave } from "~/composables/useResetOnLeave";
+import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 
 const router = useRouter();
 const userStore = useUserStore();

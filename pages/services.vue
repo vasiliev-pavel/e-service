@@ -26,7 +26,7 @@ import NavigationButton from "~/components/NavigationButton.vue";
 import { useUserStore } from "~/stores/user";
 import { ref } from "vue";
 import { useBusinessStore } from "~/stores/business";
-import { useResetOnLeave } from "~/composables/useResetOnLeave";
+import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
