@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-white shadow-md rounded-lg p-6 max-w-sm mx-auto my-10">
-    <div class="text-gray-700">
-      <p class="text-lg mb-3">
-        {{ selectedDay.day }} {{ selectedDay.month }} ваш специалист занят
-      </p>
-      <p class="mb-1">Но можно записаться к другому.</p>
-      <p class="mb-1">Показать расписание всех специалистов?</p>
+  <div
+    class="flex flex-col items-center justify-center p-6 max-w-sm mx-auto m-3 bg-white rounded-xl shadow-md"
+  >
+    <div class="text-xl font-semibold text-gray-900">
+      {{ selectedDay.day }} {{ selectedDay.month }} ваш специалист занят
     </div>
+    <div class="text-gray-600">Но можно записаться к другому.</div>
+    <div class="text-gray-600">Показать расписание всех специалистов?</div>
     <button
-      class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+      class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700 transition"
     >
       Давайте
     </button>
@@ -23,7 +23,3 @@ defineProps({
   },
 });
 </script>
-
-<style>
-/* Your custom styles here */
-</style>

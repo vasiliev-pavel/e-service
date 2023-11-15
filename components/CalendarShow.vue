@@ -39,7 +39,11 @@
     </div>
   </div>
 
-  <TimeSlot v-if="!isWeekend" :filteredPeriods="filteredPeriods" />
+  <TimeSlot
+    v-if="!isWeekend"
+    :filteredPeriods="filteredPeriods"
+    :selectedDate="selectedDate"
+  />
   <SpecUnavNotification v-else :selectedDay="dayNumber" />
 </template>
 
@@ -59,9 +63,9 @@ const now = ref(new Date());
 const defaultSelectDay = now.value
   .toLocaleString("en", { weekday: "long" })
   .toLowerCase();
-const daySelect = ref(defaultSelectDay);
+const weekdaySelect = ref(defaultSelectDay);
 const isWeekend = ref(true);
-
+const selectedDate = ref(now);
 const allDates = ref(generateDates());
 const visibleCount = 7;
 const startIndex = ref(0);
@@ -110,8 +114,8 @@ function selectDate(date) {
   const dayOfWeek = date
     .toLocaleDateString("en", { weekday: "long" })
     .toLowerCase();
-
-  daySelect.value = dayOfWeek;
+  selectedDate.value = new Date(date);
+  weekdaySelect.value = dayOfWeek;
 
   dayNumber.value = {
     day: date.getDate(),
@@ -122,9 +126,6 @@ function selectDate(date) {
 //logic for time slots
 //
 //
-//
-
-// Using ES6 features for better readability and efficiency
 
 const getAvailableTimeSlots = (dailyAvailability) => {
   const periods = { Утро: [], День: [], Вечер: [] };
@@ -178,17 +179,21 @@ const removeBookedSlots = (periods, appointments) => {
 };
 
 const availablePeriods = computed(() =>
-  getAvailableTimeSlots({ [daySelect.value]: availability[daySelect.value] })
+  getAvailableTimeSlots({
+    [weekdaySelect.value]: availability[weekdaySelect.value],
+  })
 );
 const filteredPeriods = ref([]);
 
 watchEffect(() => {
   if (availablePeriods.value) {
     removeBookedSlots(availablePeriods.value, appointment);
-    filteredPeriods.value = ["Утро", "День", "Вечер"].map((label) => ({
-      label,
-      times: availablePeriods.value[label],
-    }));
+    filteredPeriods.value = ["Утро", "День", "Вечер"]
+      .map((label) => ({
+        label,
+        times: availablePeriods.value[label],
+      }))
+      .filter((period) => period.times && period.times.length > 0); // Фильтрация блоков без доступных слотов
   }
 });
 </script>

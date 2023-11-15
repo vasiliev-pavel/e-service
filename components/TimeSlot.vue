@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col items-center justify-center">
     <div
       v-for="period in filteredPeriodsByTime"
       :key="period.label"
@@ -27,7 +27,14 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  selectedDate: Date, // Добавляем prop для выбранной даты
 });
+
+const isToday = (date) => {
+  const today = new Date();
+  const selectedDay = new Date(date);
+  return selectedDay.toDateString() === today.toDateString();
+};
 
 const getCurrentTime = () => {
   const now = new Date();
@@ -35,21 +42,25 @@ const getCurrentTime = () => {
 };
 
 const filteredPeriodsByTime = computed(() => {
-  const currentTime = getCurrentTime();
+  // Проверяем, является ли выбранный день текущим
+  if (isToday(props.selectedDate)) {
+    const currentTime = getCurrentTime();
 
-  // Фильтрация временных слотов внутри каждого блока
-  const filteredPeriods = props.filteredPeriods.map((period) => {
-    return {
-      ...period,
-      times: period.times.filter((time) => {
-        const [hours, minutes] = time.split(":").map(Number);
-        // Проверка, чтобы временной слот не был в прошлом
-        return hours + minutes / 60 >= currentTime;
-      }),
-    };
-  });
-
-  // Удаление блоков, где нет доступных временных слотов
-  return filteredPeriods.filter((period) => period.times.length > 0);
+    // Фильтрация временных слотов внутри каждого блока для текущего дня
+    return props.filteredPeriods
+      .map((period) => {
+        return {
+          ...period,
+          times: period.times.filter((time) => {
+            const [hours, minutes] = time.split(":").map(Number);
+            return hours + minutes / 60 >= currentTime;
+          }),
+        };
+      })
+      .filter((period) => period.times.length > 0);
+  } else {
+    // Возвращаем все периоды без фильтрации, если это не текущий день
+    return props.filteredPeriods;
+  }
 });
 </script>

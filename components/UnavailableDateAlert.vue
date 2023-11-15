@@ -13,11 +13,3 @@
     </button>
   </div>
 </template>
-
-<script setup>
-// Your script here
-</script>
-
-<style>
-/* You can add global styles here */
-</style>
