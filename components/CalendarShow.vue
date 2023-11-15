@@ -27,12 +27,12 @@
         v-for="date in visibleDates"
         :key="date.toString()"
         @click="selectDate(date)"
-        class="flex flex-col items-center mx-1 bg-gray-700 rounded-lg w-9 px-4 py-1 cursor-pointer hover:bg-gray-600 hover:shadow-lg transition-all duration-300 ease-in-out"
+        class="flex flex-col items-center mx-1 bg-gray-700 rounded-lg w-9 px-1 py-1 cursor-pointer hover:bg-gray-600 hover:shadow-lg transition-all duration-300 ease-in-out"
       >
         <div class="text-white text-xs">
           {{ date.toLocaleDateString("en", { weekday: "short" }) }}
         </div>
-        <div class="flex items-center justify-center h-6">
+        <div class="flex items-center justify-center h-7">
           {{ date.getDate() }}
         </div>
       </div>
@@ -57,6 +57,7 @@ import {
   parseTime,
   createTimeSlots,
   getServiceDuration,
+  getWorkingHoursEnd,
 } from "~/utils/appointmentUtils";
 
 const now = ref(new Date());
@@ -75,15 +76,33 @@ const endIndex = ref(visibleCount);
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const specialistId = userStore.selectedSpecialist.id;
+const selectedService = userStore.selectedServices;
+const selectedServiceId = Object.keys(selectedService)[0];
 const categories = businessStore.businessData.categories;
+const selectedServiceDuration = ref(
+  getServiceDuration(Number(selectedServiceId), categories)
+);
 
 // Assuming useAsyncData is a custom hook for async data fetching
 const { data, pending, error } = await useAsyncData("data", () =>
   $fetch(`http://192.168.1.123:8000/specialist/${specialistId}/schedule`)
 );
 
-const availability = data.value.availability;
-const appointment = data.value.appointments;
+async function fetchData() {
+  try {
+    const response = await $fetch(
+      `http://192.168.1.123:8000/specialist/${specialistId}/schedule`
+    );
+    // Обновление реактивных свойств на основе полученных данных
+    availability.value = response.availability;
+    appointment.value = response.appointments;
+  } catch (error) {
+    console.error("Ошибка при загрузке данных: ", error);
+  }
+}
+
+const availability = ref(data.value.availability);
+const appointment = ref(data.value.appointments);
 
 const dayNumber = ref({
   day: now.value.getDate(),
@@ -111,6 +130,8 @@ function scroll(direction) {
 }
 
 function selectDate(date) {
+  fetchData();
+
   const dayOfWeek = date
     .toLocaleDateString("en", { weekday: "long" })
     .toLowerCase();
@@ -121,6 +142,7 @@ function selectDate(date) {
     day: date.getDate(),
     month: date.toLocaleString("en-EN", { month: "long" }),
   };
+  console.log(typeof workingHoursEnd.value);
 }
 
 //logic for time slots
@@ -153,41 +175,70 @@ const getAvailableTimeSlots = (dailyAvailability) => {
   return periods;
 };
 
-const removeBookedSlots = (periods, appointments) => {
+const removeBookedSlots = (
+  periods,
+  appointments,
+  serviceDuration,
+  workingHoursEnd
+) => {
   appointments.forEach((appointment) => {
-    const appointmentDate = new Date(appointment.date_time);
-    if (
-      appointmentDate.getDate() === dayNumber.value.day &&
-      appointmentDate.toLocaleString("en-EN", { month: "long" }) ===
-        dayNumber.value.month
-    ) {
-      const serviceDuration = getServiceDuration(
-        appointment.service_id,
-        categories
+    const appointmentStartTime = new Date(appointment.date_time);
+    const appointmentEndTime = new Date(
+      appointmentStartTime.getTime() +
+        getServiceDuration(appointment.service_id, categories) * 60000
+    );
+
+    Object.values(periods).forEach((period) => {
+      for (let i = period.length - 1; i >= 0; i--) {
+        const slotTime = parseTime(period[i]);
+        const slotEndTime = new Date(
+          slotTime.getTime() + serviceDuration * 60000
+        );
+
+        // Удаляем слот, если он начинается во время другого назначения или если его окончание перекрывает другое назначение
+        if (
+          (slotTime >= appointmentStartTime && slotTime < appointmentEndTime) ||
+          (slotEndTime > appointmentStartTime &&
+            slotEndTime < appointmentEndTime)
+        ) {
+          period.splice(i, 1);
+        }
+      }
+    });
+  });
+
+  Object.values(periods).forEach((period) => {
+    for (let i = period.length - 1; i >= 0; i--) {
+      const slotTime = parseTime(period[i]);
+      const slotEndTime = new Date(
+        slotTime.getTime() + serviceDuration * 60000
       );
-      const endTime = new Date(
-        appointmentDate.getTime() + serviceDuration * 60000
-      );
-      Object.values(periods).forEach((period) => {
-        createTimeSlots(appointmentDate, endTime).forEach((slot) => {
-          const index = period.indexOf(slot);
-          if (index > -1) period.splice(index, 1);
-        });
-      });
+
+      if (slotEndTime > workingHoursEnd) {
+        period.splice(i, 1);
+      }
     }
   });
 };
 
 const availablePeriods = computed(() =>
   getAvailableTimeSlots({
-    [weekdaySelect.value]: availability[weekdaySelect.value],
+    [weekdaySelect.value]: availability.value[weekdaySelect.value],
   })
+);
+const workingHoursEnd = ref(
+  getWorkingHoursEnd(availability.value[weekdaySelect.value])
 );
 const filteredPeriods = ref([]);
 
 watchEffect(() => {
   if (availablePeriods.value) {
-    removeBookedSlots(availablePeriods.value, appointment);
+    removeBookedSlots(
+      availablePeriods.value,
+      appointment.value,
+      selectedServiceDuration.value,
+      workingHoursEnd.value
+    );
     filteredPeriods.value = ["Утро", "День", "Вечер"]
       .map((label) => ({
         label,

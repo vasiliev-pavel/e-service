@@ -18,6 +18,7 @@ export function generateDates() {
 export const getServiceDuration = (serviceId, categories) => {
   for (const services of Object.values(categories)) {
     const service = services.find((s) => s.id === serviceId);
+
     if (service) return service.duration;
   }
   return 0;
@@ -51,4 +52,12 @@ export const createTimeSlots = (startTime, endTime) => {
   }
 
   return slots;
+};
+
+export const getWorkingHoursEnd = (availability) => {
+  if (availability === "weekend" || !availability.includes("-")) {
+    return null; // Если выходной или неверный формат, возвращаем null
+  }
+  const [, endTime] = availability.split("-"); // Разделяем строку на начало и конец рабочего времени
+  return parseTime(endTime); // Возвращаем время окончания рабочего дня
 };
