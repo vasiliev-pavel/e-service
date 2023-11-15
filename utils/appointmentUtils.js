@@ -61,3 +61,8 @@ export const getWorkingHoursEnd = (availability) => {
   const [, endTime] = availability.split("-"); // Разделяем строку на начало и конец рабочего времени
   return parseTime(endTime); // Возвращаем время окончания рабочего дня
 };
+export const isToday = (date) => {
+  const today = new Date();
+  const selectedDay = new Date(date);
+  return selectedDay.toDateString() === today.toDateString();
+};

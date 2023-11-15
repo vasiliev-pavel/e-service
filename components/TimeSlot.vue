@@ -21,6 +21,7 @@
 
 <script setup>
 import { computed } from "vue";
+import { isToday } from "~/utils/appointmentUtils";
 
 const props = defineProps({
   filteredPeriods: {
@@ -29,12 +30,6 @@ const props = defineProps({
   },
   selectedDate: Date, // Добавляем prop для выбранной даты
 });
-
-const isToday = (date) => {
-  const today = new Date();
-  const selectedDay = new Date(date);
-  return selectedDay.toDateString() === today.toDateString();
-};
 
 const getCurrentTime = () => {
   const now = new Date();

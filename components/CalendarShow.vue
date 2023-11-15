@@ -40,11 +40,12 @@
   </div>
 
   <TimeSlot
-    v-if="!isWeekend"
+    v-if="!isWeekend && !showUnavailableAlert"
     :filteredPeriods="filteredPeriods"
     :selectedDate="selectedDate"
   />
-  <SpecUnavNotification v-else :selectedDay="dayNumber" />
+  <UnavailableDateAlert v-if="showUnavailableAlert" :selectedDay="dayNumber" />
+  <SpecUnavNotification v-else-if="isWeekend" :selectedDay="dayNumber" />
 </template>
 
 <script setup>
@@ -58,21 +59,25 @@ import {
   createTimeSlots,
   getServiceDuration,
   getWorkingHoursEnd,
+  isToday,
 } from "~/utils/appointmentUtils";
 
 const now = ref(new Date());
+const currentTime = ref(new Date());
 const defaultSelectDay = now.value
   .toLocaleString("en", { weekday: "long" })
   .toLowerCase();
+
 const weekdaySelect = ref(defaultSelectDay);
 const isWeekend = ref(true);
+
 const selectedDate = ref(now);
+
 const allDates = ref(generateDates());
 const visibleCount = 7;
 const startIndex = ref(0);
 const endIndex = ref(visibleCount);
 
-// Assuming useUserStore and useBusinessStore are part of a Vue composition API
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const specialistId = userStore.selectedSpecialist.id;
@@ -135,14 +140,19 @@ function selectDate(date) {
   const dayOfWeek = date
     .toLocaleDateString("en", { weekday: "long" })
     .toLowerCase();
-  selectedDate.value = new Date(date);
+
   weekdaySelect.value = dayOfWeek;
 
   dayNumber.value = {
     day: date.getDate(),
     month: date.toLocaleString("en-EN", { month: "long" }),
   };
-  console.log(typeof workingHoursEnd.value);
+
+  currentTime.value = new Date();
+
+  selectedDate.value = new Date(date);
+
+  console.log(selectedDate.value);
 }
 
 //logic for time slots
@@ -246,5 +256,16 @@ watchEffect(() => {
       }))
       .filter((period) => period.times && period.times.length > 0); // Фильтрация блоков без доступных слотов
   }
+});
+
+const showUnavailableAlert = computed(() => {
+  return isToday(selectedDate.value) && isCurrentTimePastWorkingHours.value;
+});
+
+const isCurrentTimePastWorkingHours = computed(() => {
+  if (workingHoursEnd && currentTime.value > workingHoursEnd.value) {
+    return true;
+  }
+  return false;
 });
 </script>
