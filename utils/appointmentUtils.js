@@ -24,9 +24,9 @@ export const getServiceDuration = (serviceId, categories) => {
   return 0;
 };
 
-export const parseTime = (timeStr) => {
+export const parseTime = (timeStr, selectedDay = new Date()) => {
   const [hours, minutes] = timeStr.split(":").map(Number);
-  const nowDate = new Date();
+  const nowDate = new Date(selectedDay);
   return new Date(
     nowDate.getFullYear(),
     nowDate.getMonth(),
@@ -54,15 +54,41 @@ export const createTimeSlots = (startTime, endTime) => {
   return slots;
 };
 
-export const getWorkingHoursEnd = (availability) => {
+export const getWorkingHoursEnd = (availability, selectedDate) => {
   if (availability === "weekend" || !availability.includes("-")) {
     return null; // Если выходной или неверный формат, возвращаем null
   }
   const [, endTime] = availability.split("-"); // Разделяем строку на начало и конец рабочего времени
-  return parseTime(endTime); // Возвращаем время окончания рабочего дня
+  return parseTime(endTime, selectedDate); // Возвращаем время окончания рабочего дня
 };
+
 export const isToday = (date) => {
   const today = new Date();
   const selectedDay = new Date(date);
   return selectedDay.toDateString() === today.toDateString();
 };
+
+export const isSameDay = (date, { day, month, year }) =>
+  date.getDate() === day &&
+  date.getMonth() === month &&
+  date.getFullYear() === year;
+
+export function processPeriods(
+  periods,
+  serviceDuration,
+  selectedDate,
+  callback
+) {
+  Object.values(periods).forEach((period) => {
+    for (let i = period.length - 1; i >= 0; i--) {
+      const slotTime = parseTime(period[i], selectedDate);
+      const slotEndTime = new Date(
+        slotTime.getTime() + serviceDuration * 60000
+      );
+
+      if (callback(slotTime, slotEndTime)) {
+        period.splice(i, 1);
+      }
+    }
+  });
+}

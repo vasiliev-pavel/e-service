@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <div class="flex flex-col h-screen bg-gradient-to-tr from-start to-end">
     <!-- Container for content -->
@@ -19,49 +17,52 @@
           Choice, booking, service — all in your rhythm, with no excess noise.
         </p>
       </div>
+      <!-- Footer with Sign in button -->
       <footer class="p-4 shadow-t">
-        <NuxtLink
-          to="/booking"
+        <button
+          @click="signInWithGoogle"
           class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-lg block text-center"
         >
-          Get Started
-        </NuxtLink>
+          Sign in with Google
+        </button>
       </footer>
     </div>
-    <!-- Fixed button at the bottom -->
   </div>
 </template>
 
-<script setup>
-import { useAsyncData } from "nuxt/app";
-import { useRoute } from "vue-router";
+<script setup lang="ts">
+import { onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useBusinessStore } from "~/stores/business";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "~/firebaseInit";
 
 const route = useRoute();
+const router = useRouter();
 const businessStore = useBusinessStore();
 
 // Функция для загрузки данных о бизнесе
-const loadBusinessData = async (id) => {
-  // Проверяем, что мы находимся на главной странице и что данные еще не были загружены
+const loadBusinessData = async (id: string) => {
   if (!businessStore.businessData) {
     await businessStore.fetchBusiness(id);
   }
 };
 
 onMounted(() => {
-  const id = route.query.id;
+  const id = route.query.id as string; // Приведение типа, если уверены, что это строка
   if (id && route.path === "/") {
     loadBusinessData(id);
   }
 });
 
-// Используем useAsyncData для загрузки данных асинхронно
-// и устанавливаем ключ, чтобы избежать коллизии, если используется на разных страницах
-// const { data, error } = useAsyncData("businessData", () => {
-//   const id = route.query.id;
-//   // Выполняем запрос только если id существует и мы находимся на главной странице
-//   if (id && route.path === "/") {
-//     return fetchBusinessData(id);
-//   }
-// });
+// Функция для входа через Google
+const signInWithGoogle = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+    router.push("/booking"); // Перенаправление на следующую страницу после входа
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>

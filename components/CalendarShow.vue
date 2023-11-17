@@ -40,17 +40,22 @@
   </div>
 
   <TimeSlot
-    v-if="!isWeekend && !showUnavailableAlert"
+    v-if="!isWeekend && !showUnavailableAlert && hasAvailableTimeSlots"
     :filteredPeriods="filteredPeriods"
     :selectedDate="selectedDate"
   />
-  <UnavailableDateAlert v-if="showUnavailableAlert" :selectedDay="dayNumber" />
+  <UnavailableDateAlert
+    v-if="
+      (showUnavailableAlert && !isWeekend) ||
+      (!hasAvailableTimeSlots && !isWeekend)
+    "
+    :selectedDay="dayNumber"
+  />
   <SpecUnavNotification v-else-if="isWeekend" :selectedDay="dayNumber" />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-
 import { useUserStore } from "~/stores/user";
 import { useBusinessStore } from "~/stores/business";
 import {
@@ -60,7 +65,10 @@ import {
   getServiceDuration,
   getWorkingHoursEnd,
   isToday,
+  isSameDay,
+  processPeriods,
 } from "~/utils/appointmentUtils";
+// const MINUTE_IN_MS = 60000;
 
 const now = ref(new Date());
 const currentTime = ref(new Date());
@@ -72,7 +80,9 @@ const weekdaySelect = ref(defaultSelectDay);
 const isWeekend = ref(true);
 
 const selectedDate = ref(now);
-
+onMounted(() => {
+  console.log(selectedDate.value);
+});
 const allDates = ref(generateDates());
 const visibleCount = 7;
 const startIndex = ref(0);
@@ -87,6 +97,7 @@ const categories = businessStore.businessData.categories;
 const selectedServiceDuration = ref(
   getServiceDuration(Number(selectedServiceId), categories)
 );
+const hasAvailableTimeSlots = ref(false);
 
 // Assuming useAsyncData is a custom hook for async data fetching
 const { data, pending, error } = await useAsyncData("data", () =>
@@ -151,8 +162,6 @@ function selectDate(date) {
   currentTime.value = new Date();
 
   selectedDate.value = new Date(date);
-
-  console.log(selectedDate.value);
 }
 
 //logic for time slots
@@ -181,7 +190,6 @@ const getAvailableTimeSlots = (dailyAvailability) => {
   } else {
     console.error("Invalid format for hours in availability", hours);
   }
-
   return periods;
 };
 
@@ -189,73 +197,102 @@ const removeBookedSlots = (
   periods,
   appointments,
   serviceDuration,
-  workingHoursEnd
+  workingHoursEnd,
+  selectedDate
 ) => {
-  appointments.forEach((appointment) => {
-    const appointmentStartTime = new Date(appointment.date_time);
+  const selectedDayDetails = {
+    day: selectedDate.getDate(),
+    month: selectedDate.getMonth(),
+    year: selectedDate.getFullYear(),
+  };
+
+  appointments.forEach(({ date_time, service_id }) => {
+    const appointmentStartTime = new Date(date_time);
     const appointmentEndTime = new Date(
       appointmentStartTime.getTime() +
-        getServiceDuration(appointment.service_id, categories) * 60000
+        getServiceDuration(service_id, categories) * 60000
     );
 
-    Object.values(periods).forEach((period) => {
-      for (let i = period.length - 1; i >= 0; i--) {
-        const slotTime = parseTime(period[i]);
-        const slotEndTime = new Date(
-          slotTime.getTime() + serviceDuration * 60000
-        );
-
-        // Удаляем слот, если он начинается во время другого назначения или если его окончание перекрывает другое назначение
-        if (
-          (slotTime >= appointmentStartTime && slotTime < appointmentEndTime) ||
-          (slotEndTime > appointmentStartTime &&
-            slotEndTime < appointmentEndTime)
-        ) {
-          period.splice(i, 1);
+    if (isSameDay(appointmentStartTime, selectedDayDetails)) {
+      processPeriods(
+        periods,
+        serviceDuration,
+        selectedDate,
+        (slotTime, slotEndTime) => {
+          return (
+            (slotTime >= appointmentStartTime &&
+              slotTime < appointmentEndTime) ||
+            (slotEndTime > appointmentStartTime &&
+              slotEndTime <= appointmentEndTime)
+          );
         }
-      }
-    });
-  });
-
-  Object.values(periods).forEach((period) => {
-    for (let i = period.length - 1; i >= 0; i--) {
-      const slotTime = parseTime(period[i]);
-      const slotEndTime = new Date(
-        slotTime.getTime() + serviceDuration * 60000
       );
-
-      if (slotEndTime > workingHoursEnd) {
-        period.splice(i, 1);
-      }
     }
+
+    processPeriods(
+      periods,
+      serviceDuration,
+      selectedDate,
+      (slotTime, slotEndTime) => {
+        return slotEndTime > workingHoursEnd;
+      }
+    );
   });
 };
+
+const filteredPeriods = ref([]);
+const workingHoursEnd = computed(() =>
+  getWorkingHoursEnd(
+    availability.value[weekdaySelect.value],
+    selectedDate.value
+  )
+);
 
 const availablePeriods = computed(() =>
   getAvailableTimeSlots({
     [weekdaySelect.value]: availability.value[weekdaySelect.value],
   })
 );
-const workingHoursEnd = ref(
-  getWorkingHoursEnd(availability.value[weekdaySelect.value])
-);
-const filteredPeriods = ref([]);
 
 watchEffect(() => {
+  hasAvailableTimeSlots.value = false; // Reset to false each time
+
   if (availablePeriods.value) {
     removeBookedSlots(
       availablePeriods.value,
       appointment.value,
       selectedServiceDuration.value,
-      workingHoursEnd.value
+      workingHoursEnd.value,
+      selectedDate.value
     );
-    filteredPeriods.value = ["Утро", "День", "Вечер"]
+    let periodsToFilter = ["Утро", "День", "Вечер"]
       .map((label) => ({
         label,
         times: availablePeriods.value[label],
       }))
-      .filter((period) => period.times && period.times.length > 0); // Фильтрация блоков без доступных слотов
+      .filter((period) => period.times && period.times.length > 0);
+
+    // Filter based on current time if it's the current day
+    if (isToday(selectedDate.value)) {
+      periodsToFilter = periodsToFilter
+        .map((period) => ({
+          ...period,
+          times: period.times.filter((time) => {
+            const [hours, minutes] = time.split(":").map(Number);
+            return hours + minutes / 60 >= currentTime;
+          }),
+        }))
+        .filter((period) => period.times.length > 0);
+    }
+
+    filteredPeriods.value = periodsToFilter;
   }
+
+  Object.values(filteredPeriods.value).forEach((period) => {
+    if (period.times.length > 0) {
+      hasAvailableTimeSlots.value = true;
+    }
+  });
 });
 
 const showUnavailableAlert = computed(() => {
@@ -263,7 +300,7 @@ const showUnavailableAlert = computed(() => {
 });
 
 const isCurrentTimePastWorkingHours = computed(() => {
-  if (workingHoursEnd && currentTime.value > workingHoursEnd.value) {
+  if (workingHoursEnd.value && currentTime.value > workingHoursEnd.value) {
     return true;
   }
   return false;
