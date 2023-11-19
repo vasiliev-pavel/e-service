@@ -1,20 +1,29 @@
 import { defineStore } from "pinia";
+import { onValue, ref as firebaseRef } from "firebase/database";
+import { database } from "~/firebaseInit"; // Импорт database
 
 export const useBusinessStore = defineStore("business", {
   state: () => ({
     businessData: null,
+    unsubscribe: null, // Для хранения функции отписки
   }),
   actions: {
-    async fetchBusiness(id) {
-      try {
-        const response = await fetch(
-          `http://192.168.1.123:8000/business/${id}`
-        );
-        if (!response.ok) throw new Error("Error fetching business data");
-        this.businessData = await response.json();
-      } catch (error) {
-        // Обработка ошибок
-        console.error(error);
+    async subscribeToBusiness(id) {
+      const businessRef = firebaseRef(database, `business_data/${id}`);
+
+      this.unsubscribe = onValue(
+        businessRef,
+        (snapshot) => {
+          this.businessData = snapshot.val();
+        },
+        (error) => {
+          console.error(error);
+        }
+      );
+    },
+    unsubscribeFromBusiness() {
+      if (this.unsubscribe) {
+        this.unsubscribe();
       }
     },
   },

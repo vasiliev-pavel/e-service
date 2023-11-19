@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBusinessStore } from "~/stores/business";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
@@ -41,18 +41,16 @@ const route = useRoute();
 const router = useRouter();
 const businessStore = useBusinessStore();
 
-// Функция для загрузки данных о бизнесе
-const loadBusinessData = async (id: string) => {
-  if (!businessStore.businessData) {
-    await businessStore.fetchBusiness(id);
-  }
-};
-
 onMounted(() => {
-  const id = route.query.id as string; // Приведение типа, если уверены, что это строка
+  const id = route.query.id as string;
   if (id && route.path === "/") {
-    loadBusinessData(id);
+    businessStore.subscribeToBusiness(id);
   }
+  console.log(id);
+});
+
+onUnmounted(() => {
+  // businessStore.unsubscribeFromBusiness();
 });
 
 // Функция для входа через Google

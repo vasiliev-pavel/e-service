@@ -4,7 +4,7 @@
   >
     <div class="p-4">
       <h2 class="text-sm uppercase tracking-wide">e-service</h2>
-      <h1 class="font-bold text-xl mt-2">{{ nameBusinnes }}</h1>
+      <h1 class="font-bold text-xl mt-2">{{ nameBusiness }}</h1>
     </div>
     <div class="flex-grow flex flex-col items-center justify-center">
       <h3 class="text-2xl font-semibold mb-8">Where do I begin?</h3>
@@ -23,11 +23,15 @@
 </template>
 
 <script setup>
+import { computed } from "vue";
 import { useBusinessStore } from "~/stores/business";
-import { useUserStore } from "~/stores/user";
 
 const businessStore = useBusinessStore();
-const nameBusinnes = businessStore.businessData.name;
+
+// Создаем вычисляемое свойство
+const nameBusiness = computed(
+  () => businessStore.businessData?.name ?? "Loading..."
+);
 const userStore = useUserStore();
 </script>
 <style>

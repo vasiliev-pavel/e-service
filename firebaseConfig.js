@@ -1,9 +1,11 @@
 // firebaseConfig.js
 export const firebaseConfig = {
-  apiKey: "AIzaSyAiK6nO-D1XKBSm1Oqc_MaAMKpWtQ1n7uk",
-  authDomain: "e-service-1fc34.firebaseapp.com",
-  projectId: "e-service-1fc34",
-  storageBucket: "e-service-1fc34.appspot.com",
-  messagingSenderId: "841433880717",
-  appId: "1:841433880717:web:cf322c5ad31154473feac4",
+  apiKey: "AIzaSyBFKUANRCz8TtkvwHltHMG6Qzwusfl7Lto",
+  authDomain: "appointment-service-e3d18.firebaseapp.com",
+  projectId: "appointment-service-e3d18",
+  storageBucket: "appointment-service-e3d18.appspot.com",
+  messagingSenderId: "525181408279",
+  appId: "1:525181408279:web:51d0e721afd582e18b3852",
+  databaseURL:
+    "https://appointment-service-e3d18-default-rtdb.europe-west1.firebasedatabase.app",
 };
