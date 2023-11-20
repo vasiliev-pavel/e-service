@@ -1,4 +1,4 @@
-// миддлварь чтобы не зареганым не переходить по другим путям кроме главной страницы
+// миддлварь чтобы не зареганым нельзя было переходить по другим путям кроме главной страницы
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const user = await getCurrentUser();
