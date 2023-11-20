@@ -35,7 +35,9 @@ import { onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBusinessStore } from "~/stores/business";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { auth } from "~/firebaseInit";
+import { useCurrentUser, useFirebaseAuth } from "vuefire";
+
+const auth = useFirebaseAuth()!;
 
 const route = useRoute();
 const router = useRouter();

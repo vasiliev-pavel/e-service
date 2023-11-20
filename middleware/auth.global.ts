@@ -1,21 +1,11 @@
-import { defineNuxtRouteMiddleware } from "nuxt/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { auth } from "~/firebaseInit";
+// миддлварь чтобы не зареганым не переходить по другим путям кроме главной страницы
 
-//тут происходит ошибка из за того что navigateTo находится вне компонента nuxt3
-export default defineNuxtRouteMiddleware((to, from) => {
-  // skip middleware on server
-  if (process.server) return;
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Пользователь залогинен, продолжаем навигацию
-      console.log("logged");
-    } else {
-      console.log("unlogged");
-      // Пользователь не залогинен, перенаправляем на главную страницу
-      //   return navigateTo("/");
-    }
-  });
-
-  //   });
+export default defineNuxtRouteMiddleware(async (to, from) => {
+  const user = await getCurrentUser();
+  if (!user) {
+    console.log("unlogged");
+    if (to.path !== "/") return navigateTo("/");
+  } else {
+    console.log("logged");
+  }
 });

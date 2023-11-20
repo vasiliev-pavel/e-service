@@ -1,0 +1,7 @@
+{
+      apiKey: '...',
+      authDomain: '...',
+      projectId: '...',
+      appId: '...',
+      // there could be other properties depending on the project
+}
