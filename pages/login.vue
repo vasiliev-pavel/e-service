@@ -6,7 +6,7 @@ const signInWithOtp = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: "http://localhost:3000/confirm",
+      redirectTo: "https://e-service-six.vercel.app/confirm",
     },
   });
   if (error) console.log(error);
