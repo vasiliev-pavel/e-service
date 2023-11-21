@@ -63,7 +63,7 @@ function selectSpecialist(specialist) {
 
   if (Object.keys(userStore.selectedServices).length === 0) {
     router.push("/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги
-  } else router.push("/book-appointment");
+  } else router.push("/appointment/book-appointment");
   // Перенаправление на страницу записи или другое действие
 }
 

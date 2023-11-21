@@ -20,7 +20,6 @@
       <!-- Footer with Sign in button -->
       <footer class="p-4 shadow-t">
         <button
-          @click="signInWithGoogle"
           class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-lg block text-center"
         >
           Sign in with Google
@@ -34,10 +33,6 @@
 import { onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBusinessStore } from "~/stores/business";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { useCurrentUser, useFirebaseAuth } from "vuefire";
-
-const auth = useFirebaseAuth()!;
 
 const route = useRoute();
 const router = useRouter();
@@ -56,13 +51,4 @@ onUnmounted(() => {
 });
 
 // Функция для входа через Google
-const signInWithGoogle = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-    router.push("/booking"); // Перенаправление на следующую страницу после входа
-  } catch (error) {
-    console.error(error);
-  }
-};
 </script>
