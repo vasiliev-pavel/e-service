@@ -1,4 +1,6 @@
-<script setup lang="ts">
+<!-- не удалять может пригодится в будушем -->
+
+<!-- <script setup lang="ts">
 const user = useSupabaseUser();
 watch(
   user,
@@ -9,7 +11,7 @@ watch(
   },
   { immediate: true }
 );
-</script>
+ </script> -->
 <template>
   <div>Waiting for login...</div>
 </template>

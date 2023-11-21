@@ -5,9 +5,12 @@ const password = ref("");
 const signInWithOtp = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: {
-      redirectTo: "https://e-service-six.vercel.app/confirm",
-    },
+    // не удалять может пригодится в будушем
+    // options: {
+    // redirectTo: `${process.env.BASE_URL}/confirm`,
+
+    //   redirectTo: "https://e-service-six.vercel.app/confirm",
+    // },
   });
   if (error) console.log(error);
 };
