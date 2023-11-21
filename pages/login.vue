@@ -1,13 +1,12 @@
 <script setup lang="ts">
 const supabase = useSupabaseClient();
-const email = ref("");
-const password = ref("");
+
 const signInWithOtp = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     // не удалять может пригодится в будушем
     options: {
-      redirectTo: `${process.env.BASE_URL}/confirm`,
+      redirectTo: `${window.location.origin}/confirm`,
 
       // redirectTo: "https://e-service-six.vercel.app/confirm",
     },
