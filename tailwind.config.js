@@ -21,7 +21,6 @@ export default {
       backgroundImage: {
         "gradient-to-tr":
           "linear-gradient(to top right, var(--tw-gradient-stops))",
-        "salon-image": "url('~/assets/img/salon.jpg')",
       },
       gradientColorStops: (theme) => ({
         ...theme("colors"),
