@@ -22,7 +22,7 @@ const signInWithOtp = async () => {
     <div class="relative w-full h-screen lg:max-w-5xl lg:mx-auto">
       <!-- Фоновое изображение с классами Tailwind для обложки и центрирования -->
       <div class="absolute inset-0 w-full bg-salon-image bg-center bg-cover h-[640px] lg:h-screen">
-        <video autoplay loop muted>
+        <video playsinline autoplay loop muted disablepictureinpicture>
           <source src="~/assets/video/waiter.mp4" type="video/mp4" controls muted>
           Your browser does not support the video tag.
         </video>
