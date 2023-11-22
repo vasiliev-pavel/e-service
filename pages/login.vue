@@ -36,22 +36,22 @@ const signInWithOtp = async () => {
       ></div>
 
       <!-- Контент, который начинается после изображения с градиентом -->
-      <div
-        class="absolute bottom-0 w-full p-4 md:p-8 bg-opacity-90 rounded-t-3xl shadow-lg"
-      >
+      <div class="absolute bottom-0 w-full p-4 md:p-8 rounded-t-3xl shadow-lg">
         <h1
-          class="font-sora text-4xl md:text-3xl text-center text-white font-semibold"
+          class="text-4xl md:text-3xl text-center text-white font-sora font-semibold"
         >
           Just make<br />
           an appointment<br />
           with e-service
         </h1>
-        <p class="text-gray-300 my-4 text-center font-sora">
+        <p class="text-gray-400 my-4 text-center font-sora">
           Choice, booking, service — all in your rhythm,<br />
           with no excess noise.
         </p>
         <hr class="my-3 border-gray-300 w-5/6 mx-auto" />
-        <div class="text-center mb-4 font-semibold text-base font-sora">
+        <div
+          class="text-center mb-4 font-semibold text-base font-sora text-white"
+        >
           Connect with
         </div>
         <!-- Social icons -->

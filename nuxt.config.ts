@@ -1,6 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
+  css: [
+    "~/assets/css/main.css", // Путь к вашему файлу CSS
+  ],
   devtools: { enabled: true },
   devServer: {
     host: "0.0.0.0",

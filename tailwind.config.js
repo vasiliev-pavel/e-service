@@ -11,7 +11,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sora: ["Sora", "sans-serif"],
+        sora: ["Sora", "ui-sans-serif", "system-ui"],
+        // roboto: ["ui-sans-serif", "system-ui", "Roboto"], // other font families...
       },
       colors: {
         "custom-gray-dark": "#313131",

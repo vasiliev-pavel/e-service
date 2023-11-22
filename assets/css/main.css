@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;600&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -7,6 +9,6 @@
 }
 
 body {
-  @apply font-sans text-gray-800;
+  @apply text-gray-800;
   /* Другие стили Tailwind... */
 }
