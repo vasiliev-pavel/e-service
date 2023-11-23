@@ -3,7 +3,7 @@
     <!-- <div>{{ salons }}</div> -->
     <ul>
       <li
-        v-for="salon in data.data"
+        v-for="salon in businessStore.business.data"
         :key="salon.id"
         class="border-b last:border-b-0"
       >
@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-const { data } = await useFetch("/api/business");
+const businessStore = useBusinessStore();
 
 watchEffect(() => {
   //   console.log(data.value);
