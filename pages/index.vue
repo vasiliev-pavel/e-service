@@ -1,4 +1,5 @@
 <template>
+  <SearchBody />
   <div>Its index page</div>
   <button
     @click="logout"
@@ -14,7 +15,7 @@ const user = useSupabaseUser();
 
 watchEffect(() => {
   if (user.value) {
-    console.log(user.value);
+    // console.log(user.value);
     // navigateTo("/booking");
   }
 });
