@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
+    selectedSalon: {},
     firstPageVisited: null,
     selectedServices: {},
     totalSum: 0,
@@ -9,6 +10,10 @@ export const useUserStore = defineStore("user", {
   }),
 
   actions: {
+    setSelectedSalon(salon) {
+      this.selectedSalon = salon;
+    },
+
     setFirstPageVisited(page) {
       if (!this.firstPageVisited) {
         // Установить только если не было установлено ранее

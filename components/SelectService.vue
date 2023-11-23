@@ -1,9 +1,10 @@
 <template>
   <div
-    class="select-services w-150 h-200 bg-blue-500 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-600"
+    class="select-services bg-gray-800 rounded-lg flex justify-start cursor-pointer hover:bg-gray-600"
+    style="width: 150px; height: 150px"
   >
-    <div>
-      <span class="text-white text-lg">{{ label }}</span>
+    <div class="text-white text-lg pl-4 pt-4">
+      <span>{{ label }}</span>
       <i class="fas fa-chevron-right text-white text-lg ml-2"></i>
     </div>
   </div>

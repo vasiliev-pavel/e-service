@@ -12,35 +12,9 @@ export const useBusinessStore = defineStore("business", () => {
     }
   }
 
-  // Проверка и восстановление данных из localStorage при инициализации
-
-  // // Немедленно проверить наличие данных при создании store
-  // watch(
-  //   () => process.client,
-  //   (client) => {
-  //     if (client) {
-  //       const storedData = localStorage.getItem("business");
-  //       if (storedData) {
-  //         business.value = JSON.parse(storedData);
-  //       }
-  //     }
-  //   },
-  //   { immediate: true }
-  // );
-
-  // // Сохранение данных в localStorage при изменении
-  // watch(
-  //   business,
-  //   (newData) => {
-  //     if (process.client) {
-  //       localStorage.setItem("business", JSON.stringify(newData));
-  //     }
-  //   },
-  //   { deep: true }
-  // );
-
   return { business, updateBusiness };
 });
+
 // import { defineStore } from 'pinia';
 
 // export const useBusinessStore = defineStore({
