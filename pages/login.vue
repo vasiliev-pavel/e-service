@@ -24,7 +24,7 @@ const signInWithOtp = async () => {
       <div
         class="absolute inset-0 w-full bg-salon-image bg-center bg-cover h-[640px] lg:h-screen"
       >
-        <video playsinline autoplay loop muted disablepictureinpicture>
+        <!-- <video playsinline autoplay loop muted disablepictureinpicture>
           <source
             src="~/assets/video/waiter.mp4"
             type="video/mp4"
@@ -32,7 +32,7 @@ const signInWithOtp = async () => {
             muted
           />
           Your browser does not support the video tag.
-        </video>
+        </video> -->
       </div>
 
       <!-- Черный градиент поверх изображения -->

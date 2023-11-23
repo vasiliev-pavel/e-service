@@ -22,7 +22,13 @@
 <script setup>
 const businessStore = useBusinessStore();
 
-watchEffect(() => {
-  //   console.log(data.value);
+onMounted(() => {
+  if (process.client) {
+    const storedData = localStorage.getItem("business");
+    if (storedData) {
+      console.log(JSON.parse(storedData));
+      businessStore.updateBusiness(JSON.parse(storedData));
+    }
+  }
 });
 </script>

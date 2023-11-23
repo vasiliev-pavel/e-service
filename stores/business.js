@@ -1,40 +1,46 @@
 import { defineStore } from "pinia";
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 
 export const useBusinessStore = defineStore("business", () => {
   const business = ref([]);
 
+  // Функция для обновления данных business
   function updateBusiness(newData) {
     business.value = newData;
+    if (process.client) {
+      localStorage.setItem("business", JSON.stringify(newData));
+    }
   }
 
-  // Проверка и восстановление данных из localStorage
-  const loadFromLocalStorage = () => {
-    if (process.client) {
-      const storedData = localStorage.getItem("business");
-      if (storedData) {
-        business.value = JSON.parse(storedData);
-      }
-    }
-  };
+  // Проверка и восстановление данных из localStorage при инициализации
 
-  // Сохранение данных в localStorage при изменении
-  watch(
-    business,
-    (newData) => {
-      if (process.client) {
-        localStorage.setItem("business", JSON.stringify(newData));
-      }
-    },
-    { deep: true }
-  );
+  // // Немедленно проверить наличие данных при создании store
+  // watch(
+  //   () => process.client,
+  //   (client) => {
+  //     if (client) {
+  //       const storedData = localStorage.getItem("business");
+  //       if (storedData) {
+  //         business.value = JSON.parse(storedData);
+  //       }
+  //     }
+  //   },
+  //   { immediate: true }
+  // );
 
-  // Инициализация загрузки из localStorage
-  onMounted(loadFromLocalStorage);
+  // // Сохранение данных в localStorage при изменении
+  // watch(
+  //   business,
+  //   (newData) => {
+  //     if (process.client) {
+  //       localStorage.setItem("business", JSON.stringify(newData));
+  //     }
+  //   },
+  //   { deep: true }
+  // );
 
   return { business, updateBusiness };
 });
-
 // import { defineStore } from 'pinia';
 
 // export const useBusinessStore = defineStore({
