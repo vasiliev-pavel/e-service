@@ -1,10 +1,10 @@
 <template>
   <div>
     <DropdownList
-      v-for="(items, title) in filteredCategories"
-      :key="title"
-      :title="title"
-      :items="items"
+      v-for="category in filteredCategories"
+      :key="category.category_id"
+      :title="category.category_name"
+      :items="category.services"
     />
     <div
       v-show="hasSelectedServices"
@@ -30,35 +30,43 @@ import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
-const routePairs = [{ from: "/services", to: "/booking" }];
-
+// const routePairs = [{ from: "/services", to: "/booking" }];
+const categories = businessStore?.categories || {};
 const filteredCategories = computed(() => {
   const specialistServicesIds = userStore.selectedSpecialist?.services || [];
-  const categories = businessStore.businessData?.categories || {};
 
-  if (specialistServicesIds.length === 0) {
-    // Если  специалист не выбран, возвращаем все категории
-    return categories;
-  } else {
-    const filtered = {};
-    for (const [category, services] of Object.entries(categories)) {
-      // Фильтрация услуг по id, которые есть у специалиста
-      const filteredServices = services.filter((service) =>
-        specialistServicesIds.includes(service.id)
-      );
-      // Если в категории есть услуги, добавляем её в объект filtered
-      if (filteredServices.length > 0) {
-        filtered[category] = filteredServices;
-      }
-    }
-    return filtered;
-  }
+  const categories = businessStore?.categories || {};
+  console.log(categories);
+  return categories;
+
+  // if (specialistServicesIds.length === 0) {
+  //   // Если  специалист не выбран, возвращаем все категории
+  //   return categories;
+  // }
+  // } else {
+  //   const filtered = {};
+  //   for (const [category, services] of Object.entries(categories)) {
+  //     // Фильтрация услуг по id, которые есть у специалиста
+  //     const filteredServices = services.filter((service) =>
+  //       specialistServicesIds.includes(service.id)
+  //     );
+  //     // Если в категории есть услуги, добавляем её в объект filtered
+  //     if (filteredServices.length > 0) {
+  //       filtered[category] = filteredServices;
+  //     }
+  //   }
+  //   return filtered;
+  // }
 });
 
 // Вычисляемое свойство, которое возвращает true, если есть выбранные услуги
 const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
+
+// watchEffect(() => {
+//   console.log(filteredCategories);
+// });
 
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
 useRouteLeaveGuard();

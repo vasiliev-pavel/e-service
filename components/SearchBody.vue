@@ -2,7 +2,7 @@
   <div class="p-6">
     <ul>
       <li
-        v-for="salon in businessStore.business.data"
+        v-for="salon in businessStore.businesses.data"
         :key="salon.id"
         class="border-b last:border-b-0"
       >
@@ -25,6 +25,7 @@ const router = useRouter();
 const user = useUserStore();
 
 const selectSalon = (salon) => {
+  businessStore.selectedSalonId = salon.id;
   // Save the selected salon to local storage
   user.setSelectedSalon(salon);
   localStorage.setItem("selectedSalon", JSON.stringify(salon));
@@ -33,11 +34,12 @@ const selectSalon = (salon) => {
 };
 
 onMounted(() => {
-  if (process.client) {
-    const storedData = localStorage.getItem("business");
-    if (storedData) {
-      businessStore.updateBusiness(JSON.parse(storedData));
-    }
-  }
+  if (!process.client) return;
+
+  const businessesData = localStorage.getItem("businesses");
+  const categoriesData = localStorage.getItem("categories");
+
+  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
+  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
 });
 </script>

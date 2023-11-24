@@ -12,11 +12,14 @@
 <script setup lang="ts">
 const client = useSupabaseClient();
 const user = useSupabaseUser();
+const businessStore = useBusinessStore();
+const { data } = await useFetch("/api/business");
 
 watchEffect(() => {
   if (user.value) {
-    // console.log(user.value);
-    // navigateTo("/booking");
+    if (data.value) {
+      businessStore.setBusiness(data.value);
+    }
   }
 });
 

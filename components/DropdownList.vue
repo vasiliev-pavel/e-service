@@ -21,7 +21,7 @@
             @change="() => store.toggleCheckbox(item.id, item.price)"
           />
           <span class="ml-2 text-gray-700"
-            >{{ item.label }} - {{ item.price }} ₽</span
+            >{{ item.name }} - {{ item.price }} ₽</span
           >
         </label>
       </li>

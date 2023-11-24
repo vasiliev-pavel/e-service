@@ -20,12 +20,3 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* Ensure the width and height are set to 150x200 pixels if not defined in Tailwind's config */
-.w-150 {
-  width: 150px;
-}
-.h-200 {
-  height: 200px;
-}
-</style>

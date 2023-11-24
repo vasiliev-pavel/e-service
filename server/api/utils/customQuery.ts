@@ -1,5 +1,5 @@
 // server/api/customQuery.ts
-import { supabaseQuery } from "~/server/api/services/supabaseService";
+import { supabaseQuery } from "~/server/api/utils/supabaseService";
 
 export default defineEventHandler(async (event) => {
   const query = event.context.params;
