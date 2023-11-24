@@ -5,6 +5,7 @@ export const useBusinessStore = defineStore("business", () => {
   const businesses = ref([]);
   const selectedSalonId = ref(null);
   const categories = ref([]);
+  const specialists = ref([]);
 
   // Функция для обновления данных business
   const setBusiness = (newData) => {
@@ -20,6 +21,31 @@ export const useBusinessStore = defineStore("business", () => {
     // и хранеия их в store в случае если мы на стороне клиента
     if (process.client) {
       localStorage.setItem("categories", JSON.stringify(newData));
+    }
+  };
+
+  const fetchSpecialistServices = async (specialistId) => {
+    const { data: servicesData } = await useFetch(
+      `/api/specialist_services/${specialistId}`
+    );
+    // Здесь может быть код для обработки и сохранения данных сервисов
+  };
+  // Получение cпециалистов и услуги которые они выполняют
+  const fetchSpecialistsAndServices = async (salonId) => {
+    const { data: specialistsData } = await useFetch(
+      `/api/specialists/${salonId}`
+    );
+
+    specialists.value = specialistsData.value.data;
+
+    const { data: servicesData } = await useFetch(
+      `/api/specialist_services/${salonId}`
+    );
+
+    for (const specialist of specialists.value) {
+      specialist.services = servicesData.value.data
+        .filter((service) => service.specialist_id === specialist.id)
+        .map((service) => service.service_id);
     }
   };
 
@@ -61,6 +87,7 @@ export const useBusinessStore = defineStore("business", () => {
   watch(selectedSalonId, async (newId, oldId) => {
     if (newId && newId !== oldId) {
       await fetchCategoriesAndServices(newId);
+      await fetchSpecialistsAndServices(newId);
     }
     setCategories(categories.value);
   });
@@ -69,6 +96,7 @@ export const useBusinessStore = defineStore("business", () => {
     businesses,
     selectedSalonId,
     categories,
+    specialists,
     setBusiness,
     setCategories,
   };
