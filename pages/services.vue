@@ -30,33 +30,29 @@ import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
-// const routePairs = [{ from: "/services", to: "/booking" }];
-const categories = businessStore?.categories || {};
+
 const filteredCategories = computed(() => {
   const specialistServicesIds = userStore.selectedSpecialist?.services || [];
+  const categories = businessStore.categories ? businessStore.categories : {};
 
-  const categories = businessStore?.categories || {};
-  console.log(categories);
-  return categories;
-
-  // if (specialistServicesIds.length === 0) {
-  //   // Если  специалист не выбран, возвращаем все категории
-  //   return categories;
-  // }
-  // } else {
-  //   const filtered = {};
-  //   for (const [category, services] of Object.entries(categories)) {
-  //     // Фильтрация услуг по id, которые есть у специалиста
-  //     const filteredServices = services.filter((service) =>
-  //       specialistServicesIds.includes(service.id)
-  //     );
-  //     // Если в категории есть услуги, добавляем её в объект filtered
-  //     if (filteredServices.length > 0) {
-  //       filtered[category] = filteredServices;
-  //     }
-  //   }
-  //   return filtered;
-  // }
+  if (specialistServicesIds.length === 0) {
+    // Если  специалист не выбран, возвращаем все категории
+    return categories;
+  } else {
+    // Иначе выбираем только те категории и данные, которые соответствуют специалисту
+    return businessStore.categories
+      .map((category) => {
+        // Фильтрация услуг в каждой категории по id, которые есть у специалиста
+        const filteredServices = category.services.filter((service) =>
+          specialistServicesIds.includes(service.id)
+        );
+        return {
+          ...category,
+          services: filteredServices,
+        };
+      })
+      .filter((category) => category.services.length > 0); // Убираем категории без услуг
+  }
 });
 
 // Вычисляемое свойство, которое возвращает true, если есть выбранные услуги

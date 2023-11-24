@@ -1,5 +1,8 @@
 <template>
-  <section class="bg-white shadow-md rounded-lg overflow-hidden my-1">
+  <section
+    class="bg-white shadow-md rounded-lg overflow-hidden my-1"
+    v-if="hasItems"
+  >
     <h2
       class="text-lg font-semibold text-gray-800 px-3 py-2 cursor-pointer hover:bg-gray-100"
       @click="isListOpen = !isListOpen"
@@ -21,7 +24,7 @@
             @change="() => store.toggleCheckbox(item.id, item.price)"
           />
           <span class="ml-2 text-gray-700"
-            >{{ item.name }} - {{ item.price }} ₽</span
+            >{{ item.name }} - {{ item.price }}$</span
           >
         </label>
       </li>
@@ -30,7 +33,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 
 const props = defineProps({
@@ -40,4 +43,6 @@ const props = defineProps({
 
 const store = useUserStore();
 const isListOpen = ref(false);
+
+const hasItems = computed(() => props.items && props.items.length > 0);
 </script>

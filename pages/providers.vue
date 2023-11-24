@@ -47,14 +47,17 @@ const filteredSpecialists = computed(() => {
   // Если selectedServices не пуст, фильтруем специалистов
   if (Object.keys(userStore.selectedServices).length > 0) {
     const selectedServiceIds = Object.keys(userStore.selectedServices);
-    return businessStore.businessData?.specialists.filter((specialist) =>
+
+    //Ищем совпадения по выбранному сервису у всех специалистов
+    //чтобы потом отообразить их в провайдерах
+    return businessStore.specialists?.filter((specialist) =>
       specialist.services.some((serviceId) =>
         selectedServiceIds.includes(serviceId.toString())
       )
     );
   } else {
     // Если selectedServices пуст, возвращаем всех специалистов
-    return businessStore.businessData?.specialists;
+    return businessStore.specialists ? businessStore.specialists : undefined;
   }
 });
 
@@ -63,9 +66,19 @@ function selectSpecialist(specialist) {
 
   if (Object.keys(userStore.selectedServices).length === 0) {
     router.push("/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги
-  } else router.push("/appointment/book-appointment");
+  } else router.push("/book-appointment");
   // Перенаправление на страницу записи или другое действие
 }
+
+onMounted(() => {
+  if (!process.client) return;
+
+  const businessesData = localStorage.getItem("businesses");
+  const categoriesData = localStorage.getItem("categories");
+
+  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
+  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
+});
 
 useRouteLeaveGuard();
 </script>

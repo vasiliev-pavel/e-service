@@ -25,7 +25,7 @@ const hasSelectedSpecialistAndServices = computed(() => {
 });
 
 const nextRoute = computed(() =>
-  hasSelectedSpecialistAndServices.value ? "/appointment" : "/providers"
+  hasSelectedSpecialistAndServices.value ? "/book-appointment" : "/providers"
 );
 
 const buttonText = computed(() =>
