@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   }
   const { data } = await client
     .from("services")
-    .select("*")
+    .select("id,name,category_id,duration,price")
     .eq("business_id", salonId);
   return { data };
 });

@@ -24,12 +24,6 @@ export const useBusinessStore = defineStore("business", () => {
     }
   };
 
-  const fetchSpecialistServices = async (specialistId) => {
-    const { data: servicesData } = await useFetch(
-      `/api/specialist_services/${specialistId}`
-    );
-    // Здесь может быть код для обработки и сохранения данных сервисов
-  };
   // Получение cпециалистов и услуги которые они выполняют
   const fetchSpecialistsAndServices = async (salonId) => {
     const { data: specialistsData } = await useFetch(
@@ -60,6 +54,7 @@ export const useBusinessStore = defineStore("business", () => {
     const { data: categoriesData } = await useFetch(
       `/api/business_categories/${salonId}`
     );
+
     categories.value = categoriesData.value.data.map((category) => ({
       category_id: category.category_id,
       category_name: categoriesNames.get(category.category_id),
@@ -71,14 +66,9 @@ export const useBusinessStore = defineStore("business", () => {
 
     // Фильтрация услуг по каждой категории и исключение лишних данных
     for (const category of categories.value) {
-      category.services = allServices.value.data
-        .filter((service) => service.category_id === category.category_id)
-        .map((service) => ({
-          id: service.id,
-          name: service.name,
-          duration: service.duration,
-          price: service.price,
-        }));
+      category.services = allServices.value.data.filter(
+        (service) => service.category_id === category.category_id
+      );
     }
   };
 
@@ -86,8 +76,13 @@ export const useBusinessStore = defineStore("business", () => {
   //и если он выбрал новый, то обновляем данные
   watch(selectedSalonId, async (newId, oldId) => {
     if (newId && newId !== oldId) {
-      await fetchCategoriesAndServices(newId);
-      await fetchSpecialistsAndServices(newId);
+      // Параллельная загрузка данных
+      await Promise.all([
+        fetchCategoriesAndServices(newId),
+        fetchSpecialistsAndServices(newId),
+      ]);
+      // await fetchCategoriesAndServices(newId);
+      // await fetchSpecialistsAndServices(newId);
     }
     setCategories(categories.value);
   });
