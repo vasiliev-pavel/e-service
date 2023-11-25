@@ -23,6 +23,7 @@
   "dependencies": {
     "@nuxt/ui": "^2.10.0",
     "@pinia/nuxt": "^0.5.1",
+    "moment": "^2.29.4",
     "pinia": "^2.1.7"
   }
 }

@@ -8,7 +8,7 @@
   >
     <template v-slot:tab1>
       <!-- Содержимое для вкладки конкретного специалиста -->
-      <CalendarShow />
+      <CalendarShow2 />
     </template>
 
     <template v-slot:tab2>
@@ -21,6 +21,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
+import CalendarShow2 from "~/components/appointment/CalendarShow2.vue";
 // Импортируем остальной необходимый код
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
@@ -29,7 +30,7 @@ const specialistName = userStore.selectedSpecialist.name;
 // Данные для вкладок
 const tabsItems = [
   { slot: "tab1", label: specialistName },
-  { slot: "tab2", label: "Все специалисты" },
+  { slot: "tab2", label: "Доступные специалисты" },
 ];
 
 // Компоненты SpecialistCalendar и AllSpecialistsCalendar - это компоненты, которые вы должны создать или импортировать.

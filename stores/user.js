@@ -1,45 +1,79 @@
 import { defineStore } from "pinia";
+import { ref, reactive } from "vue";
 
-export const useUserStore = defineStore("user", {
-  state: () => ({
-    selectedSalon: {},
-    firstPageVisited: null,
-    selectedServices: {},
-    totalSum: 0,
-    selectedSpecialist: null,
-  }),
+export const useUserStore = defineStore("user", () => {
+  const selectedSalon = ref({});
+  const firstPageVisited = ref(null);
+  const selectedServices = reactive({});
+  const totalSum = ref(0);
+  const selectedSpecialist = ref(null);
 
-  actions: {
-    setSelectedSalon(salon) {
-      this.selectedSalon = salon;
-    },
+  const setSelectedSalon = (salon) => {
+    selectedSalon.value = salon;
+  };
 
-    setFirstPageVisited(page) {
-      if (!this.firstPageVisited) {
-        // Установить только если не было установлено ранее
-        this.firstPageVisited = page;
-      }
-    },
+  const setFirstPageVisited = (page) => {
+    if (!firstPageVisited.value) {
+      firstPageVisited.value = page;
+    }
+  };
 
-    toggleCheckbox(id, price) {
-      if (this.selectedServices[id]) {
-        this.totalSum -= price;
-        delete this.selectedServices[id];
-      } else {
-        this.totalSum += price;
-        this.selectedServices[id] = true;
-      }
-    },
-    resetSelectedServices() {
-      this.selectedServices = {};
-      this.totalSum = 0;
-    },
+  const toggleCheckbox = (id, price) => {
+    if (selectedServices[id]) {
+      totalSum.value -= price;
+      delete selectedServices[id];
+    } else {
+      totalSum.value += price;
+      selectedServices[id] = true;
+    }
+  };
 
-    setSelectedSpecialist(specialist) {
-      this.selectedSpecialist = specialist;
-    },
-    resetSelectedSpecialist() {
-      this.selectedSpecialist = null;
-    },
-  },
+  const resetSelectedServices = () => {
+    Object.keys(selectedServices).forEach((key) => {
+      delete selectedServices[key];
+    });
+    totalSum.value = 0;
+  };
+
+  const setSelectedSpecialist = (specialist) => {
+    selectedSpecialist.value = specialist;
+  };
+
+  const resetSelectedSpecialist = () => {
+    selectedSpecialist.value = null;
+  };
+
+  const fetchAvailability = async (specialistId) => {
+    const { data: availability } = await useFetch(
+      `/api/availability/${specialistId}`
+    );
+
+    if (availability && availability.value) {
+      selectedSpecialist.value.availability = availability.value.data[0];
+    }
+  };
+  // Watcher for selectedSpecialist
+  watch(selectedSpecialist, async (newSpecialist, oldSpecialist) => {
+    if (
+      newSpecialist &&
+      newSpecialist.id &&
+      (!oldSpecialist || newSpecialist.id !== oldSpecialist.id)
+    ) {
+      fetchAvailability(newSpecialist.id);
+    }
+  });
+
+  return {
+    selectedSalon,
+    firstPageVisited,
+    selectedServices,
+    totalSum,
+    selectedSpecialist,
+    setSelectedSalon,
+    setFirstPageVisited,
+    toggleCheckbox,
+    resetSelectedServices,
+    setSelectedSpecialist,
+    resetSelectedSpecialist,
+  };
 });
