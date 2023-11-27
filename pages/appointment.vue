@@ -39,6 +39,7 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 mb-2"
             id="phone"
             type="text"
+            inputmode="numeric"
             placeholder="Телефон"
             value="+0 000 000 00 00"
           />
