@@ -21,7 +21,16 @@
             :id="item.id"
             class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
             :checked="store.selectedServices[item.id]"
-            @change="() => store.toggleCheckbox(item.id, item.price)"
+            @change="
+              () =>
+                store.toggleCheckbox(
+                  item.id,
+                  item.name,
+                  item.price,
+                  item.duration,
+                  title
+                )
+            "
           />
           <span class="ml-2 text-gray-700"
             >{{ item.name }} - {{ item.price }}$</span

@@ -1,12 +1,14 @@
 <template>
-  <div class="flex flex-col items-center m-5">
+  <div class="flex flex-col items-center m-5 text-gray-300">
+    <!-- <div class="flex items-center w-full"> -->
     <CalendarHeader
       :visibleMonths="visibleMonths"
       :isPrevDisabled="isPrevDisabled"
       :isNextDisabled="isNextDisabled"
       @scroll="scroll"
     />
-    <div class="flex justify-center">
+    <!-- </div> -->
+    <div class="flex justify-center items-center w-full">
       <DateCell
         v-for="date in visibleDates"
         :key="date.toString()"
@@ -16,11 +18,7 @@
     </div>
   </div>
 
-  <!-- <TimeSlot
-    v-if="!isWeekend && !showUnavailableAlert && hasAvailableTimeSlots"
-    :filteredPeriods="filteredPeriods"
-    :selectedDate="selectedDate"
-  /> -->
+  <TimeSlot :selectedDate="selectedDate" />
 
   <!-- <UnavailableDateAlert
     v-if="
@@ -34,12 +32,19 @@
 
 <script setup>
 import DateCell from "~/components/appointment/DateCell.vue";
+import TimeSlot from "~/components/appointment/TimeSlot.vue";
 import CalendarHeader from "~/components/appointment/CalendarHeader.vue";
 
 import { ref, computed } from "vue";
 import moment from "moment";
 
 const userStore = useUserStore();
+
+const selectedDate = ref(moment());
+
+// const availability = computed(() => {
+//   userStore.selectedSpecialist.availability || {};
+// });
 
 const now = moment(); // Базовая дата, которая будет использоваться для всех расчетов
 const visibleCount = 7;
@@ -75,6 +80,10 @@ function scroll(direction) {
 }
 
 const selectDate = async (date) => {
+  // console.log(selectedDate.value);
+
+  selectedDate.value = date;
+  // console.log(selectedDate.value);
   // const { data: availability } = await useFetch(
   //   `/api/availability/${userStore.selectedSpecialist.id}`
   // );

@@ -6,6 +6,7 @@ export const useBusinessStore = defineStore("business", () => {
   const selectedSalonId = ref(null);
   const categories = ref([]);
   const specialists = ref([]);
+  const availabilitySpecialist = ref([]);
 
   // Функция для обновления данных business
   const setBusiness = (newData) => {
@@ -72,6 +73,16 @@ export const useBusinessStore = defineStore("business", () => {
     }
   };
 
+  const fetchAvailability = async (salonId) => {
+    const { data: availability } = await useFetch(
+      `/api/availability/${salonId}`
+    );
+
+    if (availability && availability.value) {
+      availabilitySpecialist.value = availability.value.data;
+    }
+  };
+
   //следим за выбранным пользователем салоном
   //и если он выбрал новый, то обновляем данные
   watch(selectedSalonId, async (newId, oldId) => {
@@ -80,6 +91,7 @@ export const useBusinessStore = defineStore("business", () => {
       await Promise.all([
         fetchCategoriesAndServices(newId),
         fetchSpecialistsAndServices(newId),
+        fetchAvailability(newId),
       ]);
       // await fetchCategoriesAndServices(newId);
       // await fetchSpecialistsAndServices(newId);
@@ -92,6 +104,7 @@ export const useBusinessStore = defineStore("business", () => {
     selectedSalonId,
     categories,
     specialists,
+    availabilitySpecialist,
     setBusiness,
     setCategories,
   };

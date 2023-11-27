@@ -1,5 +1,5 @@
 <template>
-  <header class="flex w-full justify-between items-center mb-2">
+  <header class="flex justify-between items-center mb-2 w-full px-1">
     <h1 class="text-left font-bold">
       <span v-if="visibleMonths.length === 1">{{ visibleMonths[0] }}</span>
       <span v-else>{{ visibleMonths.join(" - ") }}</span>
@@ -8,21 +8,23 @@
       <button
         @click="$emit('scroll', -1)"
         :disabled="isPrevDisabled"
-        class="p-2 disabled:opacity-50"
+        class="pr-2 disabled:opacity-50"
       >
-        &lt;
+        <BackIcon />
       </button>
       <button
         @click="$emit('scroll', 1)"
         :disabled="isNextDisabled"
-        class="p-2 disabled:opacity-50"
+        class="pl-2 disabled:opacity-50"
       >
-        &gt;
+        <ForwardIcon />
       </button>
     </nav>
   </header>
 </template>
 
 <script setup>
+import BackIcon from "@/components/icons/BackIcon.vue";
+import ForwardIcon from "@/components/icons/ForwardIcon.vue";
 defineProps(["visibleMonths", "isPrevDisabled", "isNextDisabled"]);
 </script>

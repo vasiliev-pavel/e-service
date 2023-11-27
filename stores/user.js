@@ -2,11 +2,19 @@ import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
 
 export const useUserStore = defineStore("user", () => {
+  const useBusiness = useBusinessStore();
+
   const selectedSalon = ref({});
   const firstPageVisited = ref(null);
   const selectedServices = reactive({});
   const totalSum = ref(0);
   const selectedSpecialist = ref(null);
+  const selectedDateAndTime = ref({});
+  const selectedCategory = ref();
+
+  const setSelectedDateTime = (salon) => {
+    selectedDateAndTime.value = salon;
+  };
 
   const setSelectedSalon = (salon) => {
     selectedSalon.value = salon;
@@ -18,13 +26,13 @@ export const useUserStore = defineStore("user", () => {
     }
   };
 
-  const toggleCheckbox = (id, price) => {
+  const toggleCheckbox = (id, name, price, duration, category) => {
     if (selectedServices[id]) {
       totalSum.value -= price;
       delete selectedServices[id];
     } else {
       totalSum.value += price;
-      selectedServices[id] = true;
+      selectedServices[id] = { name, category, price, duration };
     }
   };
 
@@ -44,12 +52,15 @@ export const useUserStore = defineStore("user", () => {
   };
 
   const fetchAvailability = async (specialistId) => {
-    const { data: availability } = await useFetch(
-      `/api/availability/${specialistId}`
+    // const { data: availability } = await useFetch(
+    //   `/api/availability/${specialistId}`
+    // );
+    const specialistAvailability = useBusiness.availabilitySpecialist.find(
+      (specialist) => specialist.specialist_id === specialistId
     );
 
-    if (availability && availability.value) {
-      selectedSpecialist.value.availability = availability.value.data[0];
+    if (specialistAvailability) {
+      selectedSpecialist.value.availability = specialistAvailability;
     }
   };
   // Watcher for selectedSpecialist
@@ -69,7 +80,9 @@ export const useUserStore = defineStore("user", () => {
     selectedServices,
     totalSum,
     selectedSpecialist,
+    selectedDateAndTime,
     setSelectedSalon,
+    setSelectedDateTime,
     setFirstPageVisited,
     toggleCheckbox,
     resetSelectedServices,

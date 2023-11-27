@@ -1,36 +1,22 @@
 <template>
   <div class="max-w-sm mx-auto p-6 bg-transparent">
     <!-- Conditional rendering based on whether the data is loaded -->
-    <div v-if="!isLoaded">
-      <!-- Skeleton placeholder -->
-      <div class="flex items-center space-x-4">
-        <USkeleton class="h-12 w-12" :ui="{ rounded: 'rounded-full' }" />
-        <div class="space-y-2">
-          <USkeleton class="h-4 w-[250px]" />
-          <USkeleton class="h-4 w-[200px]" />
-          <USkeleton class="h-4 w-[150px]" />
-        </div>
-      </div>
-    </div>
-    <div v-else>
+
+    <div>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center">
-          <img
-            class="h-12 w-12 rounded-full mr-2"
-            src="~/public/cat.jpg"
-            alt="Avatar"
-          />
+          <img class="h-12 w-12 rounded-full mr-2" alt="Avatar" />
           <div>
-            <div class="font-bold text-lg">Альбина</div>
-            <div class="text-sm text-gray-600">Парикмахер-стилист</div>
+            <div class="font-bold text-lg">{{ specialistName }}</div>
+            <div class="text-sm text-gray-600">{{ specialistType }}</div>
           </div>
         </div>
         <!-- The 'Edit' button seems not to be in the provided design -->
       </div>
 
       <div class="mb-4">
-        <div class="text-gray-700 font-semibold">17 ноября, пятница</div>
-        <div class="text-gray-500 text-sm">14:30-15:30, 1 ч</div>
+        <div class="text-gray-700 font-semibold">{{ selectedDate }}</div>
+        <div class="text-gray-500 text-sm">{{ selectedTime }}</div>
       </div>
 
       <div class="mb-4">
@@ -54,7 +40,7 @@
             id="phone"
             type="text"
             placeholder="Телефон"
-            value="+7 986 907 36 47"
+            value="+0 000 000 00 00"
           />
         </div>
       </div>
@@ -72,12 +58,13 @@
 
       <div class="flex items-center justify-between">
         <div class="text-xl font-semibold">1 услуга</div>
-        <div class="text-xl font-semibold">900 Р</div>
+        <div class="text-xl font-semibold">{{ sum }}</div>
       </div>
 
       <div class="mt-4">
         <button
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          @click="confirmAppointment"
         >
           Подтвердить запись
         </button>
@@ -88,15 +75,37 @@
 
 <script setup>
 import { ref } from "vue";
-// State to control when the content is loaded
-const isLoaded = ref(false);
+const userStore = useUserStore();
+const useBusiness = useBusinessStore();
+const router = useRouter();
+const supabase = useSupabaseClient();
 
-// Simulate data loading with a timeout
-setTimeout(() => {
-  isLoaded.value = true;
-}, 2000); // 2 seconds loading simulation
+const specialistName = ref(userStore.selectedSpecialist.name);
+const specialistType = ref(userStore.selectedSpecialist.type);
+const specialistId = ref(userStore.selectedSpecialist.id);
+const sum = ref(userStore.selectedSpecialist.totalSum);
+const selectedDateTime = ref(userStore.selectedDateAndTime);
+const user = useSupabaseUser();
+// Извлечение даты и времени
+const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
+const selectedTime = selectedDateTime.value.format("HH:mm"); //
+
+const appointmentObject = ref({
+  client_id: user.value.id,
+  specialist_id: specialistId.value,
+  // service_id: "1",
+  date_time: selectedDateTime.value.utc().toISOString(),
+});
+
+const confirmAppointment = async () => {
+  try {
+    await $fetch(`/api/appointment/`, {
+      method: "post",
+      body: appointmentObject.value,
+    });
+    // Обработка ответа от сервера
+  } catch (error) {
+    console.error(error);
+  }
+};
 </script>
-
-<style scoped>
-/* You can add page-specific styles here */
-</style>
