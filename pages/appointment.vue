@@ -107,5 +107,6 @@ const confirmAppointment = async () => {
   } catch (error) {
     console.error(error);
   }
+  router.push("/");
 };
 </script>
