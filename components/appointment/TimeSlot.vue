@@ -94,7 +94,7 @@ const selectTime = (time) => {
   // Сохранение выбранного времени в userStore
   userStore.setSelectedDateTime(selectedDateTime);
 
-  console.log(selectedDateTime);
+  // console.log(selectedDateTime);
   // Программный переход на страницу appointment
   router.push("/appointment");
 };

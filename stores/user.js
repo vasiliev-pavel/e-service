@@ -10,7 +10,10 @@ export const useUserStore = defineStore("user", () => {
   const totalSum = ref(0);
   const selectedSpecialist = ref(null);
   const selectedDateAndTime = ref({});
-  const selectedCategory = ref();
+
+  const removeSelectedServices = (id) => {
+    delete selectedServices[id];
+  };
 
   const setSelectedDateTime = (salon) => {
     selectedDateAndTime.value = salon;
@@ -88,5 +91,6 @@ export const useUserStore = defineStore("user", () => {
     resetSelectedServices,
     setSelectedSpecialist,
     resetSelectedSpecialist,
+    removeSelectedServices,
   };
 });

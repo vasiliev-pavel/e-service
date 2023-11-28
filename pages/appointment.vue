@@ -19,13 +19,11 @@
         <div class="text-gray-500 text-sm">{{ selectedTime }}</div>
       </div>
 
-      <div class="mb-4">
-        <div class="font-semibold">Стрижка короткие (комплекс)</div>
-        <div class="text-gray-500">900 Р</div>
-      </div>
+      <SelectedServices :selectedServices="selectedServices" />
 
       <div class="grid grid-cols-2 gap-4 mb-4">
         <div class="col-span-1">
+          <div class="font-bold mb-1 text-base">Name</div>
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 mb-2"
             id="name"
@@ -35,6 +33,8 @@
           />
         </div>
         <div class="col-span-1">
+          <div class="font-bold text-base mb-1">Phone-number</div>
+
           <input
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100 mb-2"
             id="phone"
@@ -47,19 +47,20 @@
       </div>
 
       <div class="mb-4">
+        <div class="font-bold text-base mb-1">Comment</div>
         <textarea
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-100"
           id="comment"
-          placeholder="Комментарий"
-        >
-необязательно</textarea
-        >
+          placeholder="Optional"
+        ></textarea>
         <!-- Changed placeholder to content inside textarea -->
       </div>
 
       <div class="flex items-center justify-between">
-        <div class="text-xl font-semibold">1 услуга</div>
-        <div class="text-xl font-semibold">{{ sum }}</div>
+        <div class="text-xl font-semibold">
+          {{ Object.keys(selectedServices).length }} service
+        </div>
+        <div class="text-xl font-semibold">{{ sum }} $</div>
       </div>
 
       <div class="mt-4">
@@ -67,7 +68,7 @@
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           @click="confirmAppointment"
         >
-          Подтвердить запись
+          Confirm appointment
         </button>
       </div>
     </div>
@@ -76,26 +77,32 @@
 
 <script setup>
 import { ref } from "vue";
+import SelectedServices from "~/components/appointment/SelectedServices.vue";
+
 const userStore = useUserStore();
 const useBusiness = useBusinessStore();
 const router = useRouter();
-const supabase = useSupabaseClient();
 
 const specialistName = ref(userStore.selectedSpecialist.name);
 const specialistType = ref(userStore.selectedSpecialist.type);
 const specialistId = ref(userStore.selectedSpecialist.id);
-const sum = ref(userStore.selectedSpecialist.totalSum);
+const sum = ref(userStore.totalSum);
+
 const selectedDateTime = ref(userStore.selectedDateAndTime);
+const selectedServices = ref(userStore.selectedServices);
 const user = useSupabaseUser();
+
 // Извлечение даты и времени
 const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
 const selectedTime = selectedDateTime.value.format("HH:mm"); //
-
-const appointmentObject = ref({
-  client_id: user.value.id,
-  specialist_id: specialistId.value,
-  // service_id: "1",
-  date_time: selectedDateTime.value.utc().toISOString(),
+const appointmentObject = ref([]);
+Object.keys(selectedServices.value).forEach((serviceId) => {
+  appointmentObject.value.push({
+    client_id: user.value.id,
+    specialist_id: specialistId.value,
+    service_id: serviceId,
+    date_time: selectedDateTime.value.utc().toISOString(),
+  });
 });
 
 const confirmAppointment = async () => {
@@ -108,6 +115,6 @@ const confirmAppointment = async () => {
   } catch (error) {
     console.error(error);
   }
-  router.push("/");
+  // router.push("/");
 };
 </script>
