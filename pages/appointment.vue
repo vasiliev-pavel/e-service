@@ -60,7 +60,7 @@
         <div class="text-xl font-semibold">
           {{ Object.keys(selectedServices).length }} service
         </div>
-        <div class="text-xl font-semibold">{{ sum }} $</div>
+        <div class="text-xl font-semibold">{{ totalSum }} $</div>
       </div>
 
       <div class="mt-4">
@@ -86,7 +86,7 @@ const router = useRouter();
 const specialistName = ref(userStore.selectedSpecialist.name);
 const specialistType = ref(userStore.selectedSpecialist.type);
 const specialistId = ref(userStore.selectedSpecialist.id);
-const sum = ref(userStore.totalSum);
+const sum = ref();
 
 const selectedDateTime = ref(userStore.selectedDateAndTime);
 const selectedServices = ref(userStore.selectedServices);
@@ -96,6 +96,13 @@ const user = useSupabaseUser();
 const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
 const selectedTime = selectedDateTime.value.format("HH:mm"); //
 const appointmentObject = ref([]);
+
+const totalSum = computed(() => {
+  return Object.values(selectedServices.value).reduce((sum, service) => {
+    return sum + service.price;
+  }, 0);
+});
+
 Object.keys(selectedServices.value).forEach((serviceId) => {
   appointmentObject.value.push({
     client_id: user.value.id,
@@ -115,6 +122,6 @@ const confirmAppointment = async () => {
   } catch (error) {
     console.error(error);
   }
-  // router.push("/");
+  router.push("/");
 };
 </script>

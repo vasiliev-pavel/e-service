@@ -12,7 +12,7 @@
     >
       <div>
         Общая сумма:
-        <span class="text-green-500">{{ userStore.totalSum }} ₽</span>
+        <span class="text-green-500">{{ userStore.totalSum }} $</span>
       </div>
       <NavigationButton />
     </div>
