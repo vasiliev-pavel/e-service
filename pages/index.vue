@@ -49,7 +49,6 @@ onMounted(async () => {
     const subscribed = await registration.pushManager.getSubscription();
     if (subscribed) {
       console.info("User is already subscribed.");
-      return;
     }
 
     const subscription = await registration.pushManager.subscribe({
