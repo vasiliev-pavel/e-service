@@ -95,17 +95,35 @@ const logout = async () => {
 };
 
 const sendNotification = async () => {
-  const registration = await navigator.serviceWorker.getRegistration();
-  if (registration) {
-    const subscription = await registration.pushManager.getSubscription();
-    if (subscription && user.value) {
-      console.log(subscription);
-      console.log(subscription.getKey("p256dh"));
-      console.log(subscription.getKey("auth"));
-      await $fetch("/api/notification/sendNotification", {
-        method: "POST",
-        body: user.value.id,
-      });
+  if (user.value) {
+    const { data: pushSubscription } = await useFetch(
+      `/api/notification/getSubscriptions/${user.value.id}`
+    );
+    if (!pushSubscription.value) {
+      console.error("No data received from fetch");
+      return;
+    }
+    const data = pushSubscription.value;
+    const temp = JSON.parse(data.data[0].endpoint);
+    await useFetch(`/api/notification/sendNotification/${user.value.id}`);
+    const tempData = {
+      endpoint: temp.endpoint,
+      keys: {
+        p256dh: temp.keys.p256dh,
+        auth: temp.keys.auth,
+      },
+    };
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (registration) {
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription && user.value) {
+        console.log(subscription);
+
+        await $fetch("/api/notification/sendNotification", {
+          method: "POST",
+          body: tempData,
+        });
+      }
     }
   }
 };

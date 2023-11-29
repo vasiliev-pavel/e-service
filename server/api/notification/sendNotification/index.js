@@ -15,28 +15,12 @@ webpush.setVapidDetails(
 
 export default defineEventHandler(async (event) => {
   try {
-    const userId = await readBody(event);
-    const { data: subscription } = await $fetch(
-      `/api/notification/getSubscriptions`,
-      {
-        method: "post",
-        body: userId,
-      }
-    );
-
-    const pushSubscription = {
-      endpoint: subscription.data.endpoint,
-      keys: {
-        p256dh: subscription.data.keys.p256dh,
-        auth: subscription.data.keys.auth,
-      },
-    };
+    const tempData = await readBody(event);
     // const user_id = await readBody(event); // Получение ID пользователя из тела запроса
     // const subscription = await $fetch(`/api/notification/getSubscriptions/`, {
     //   method: "post",
     //   body: user_id,
     // });
-
     // Создание содержимого уведомления
     const notification = JSON.stringify({
       title: "Hello, Notifications123!",
@@ -44,14 +28,12 @@ export default defineEventHandler(async (event) => {
         body: `ID: ${Math.floor(Math.random() * 100)}`,
       },
     });
-
     const options = {
       TTL: 10000,
       vapidDetails: vapidDetails,
     };
-
     // Отправка уведомления
-    await webpush.sendNotification(pushSubscription, notification, options);
+    await webpush.sendNotification(tempData, notification, options);
     console.log(subscription);
     console.log("пуш уведомление отправилось");
     return { success: true };
