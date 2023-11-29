@@ -26,47 +26,41 @@ const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
 
 onMounted(async () => {
   if ("serviceWorker" in navigator && "PushManager" in window) {
-    try {
-      const serviceWorkerRegistration = await navigator.serviceWorker.register(
-        "./sw.js"
-      );
-      console.info("Service worker was registered.", serviceWorkerRegistration);
+    const serviceWorkerRegistration = await navigator.serviceWorker.register(
+      "./sw.js"
+    );
+    console.info("Service worker was registered.", serviceWorkerRegistration);
 
-      const result = await Notification.requestPermission();
-      if (result === "denied") {
-        console.error("The user explicitly denied the permission request.");
-        return;
-      }
-      if (result === "granted") {
-        console.info("The user accepted the permission request.");
-      }
-
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (!registration) {
-        console.error("Service Worker registration not found.");
-        return;
-      }
-
-      const subscribed = await registration.pushManager.getSubscription();
-      if (subscribed) {
-        console.info("User is already subscribed.");
-        return;
-      }
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
-      });
-      console.log("Subscription:", subscription);
-      if (user.value) console.log("user_id,:", user.value.id);
-
-      // Обновление состояния кнопок
-    } catch (error) {
-      console.error(
-        "An error occurred while registering the service worker.",
-        error
-      );
+    const result = await Notification.requestPermission();
+    if (result === "denied") {
+      console.error("The user explicitly denied the permission request.");
+      return;
     }
+    if (result === "granted") {
+      console.info("The user accepted the permission request.");
+    }
+
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+      console.error("Service Worker registration not found.");
+      return;
+    }
+
+    const subscribed = await registration.pushManager.getSubscription();
+    if (subscribed) {
+      console.info("User is already subscribed.");
+      return;
+    }
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
+    });
+
+    console.log("Subscription:", subscription);
+    if (user.value) console.log("user_id,:", user.value.id);
+
+    // Обновление состояния кнопок
   } else {
     console.error("Browser does not support service workers or push messages.");
   }
