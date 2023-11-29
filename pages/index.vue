@@ -96,8 +96,10 @@ const logout = async () => {
 
 const sendNotification = async () => {
   const registration = await navigator.serviceWorker.getRegistration();
+  console.log("Registration:", registration);
   if (registration) {
     const subscription = await registration.pushManager.getSubscription();
+    console.log("Subscription:", subscription);
     if (subscription) {
       await $fetch("/api/notification/sendNotification", {
         method: "POST",
