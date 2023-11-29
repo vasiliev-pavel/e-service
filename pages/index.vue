@@ -57,10 +57,24 @@ onMounted(async () => {
       userVisibleOnly: true,
       applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
     });
+
     console.log("tyt3");
     console.log("Subscription:", subscription);
-    if (user.value) console.log("user_id,:", user.value.id);
 
+    if (user.value) {
+      await $fetch("/api/notification/addSubscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: [
+          {
+            user_id: user.value.id,
+            endpoint: subscription.endpoint,
+          },
+        ],
+      });
+    }
     // Обновление состояния кнопок
   } else {
     console.error("Browser does not support service workers or push messages.");
@@ -81,7 +95,18 @@ const logout = async () => {
 };
 
 const sendNotification = async () => {
-  // await client.auth.signOut();
-  // navigateTo("/login");
+  // const registration = await navigator.serviceWorker.getRegistration();
+  // if (registration) {
+  //   const subscription = await registration.pushManager.getSubscription();
+  //   if (subscription) {
+  //     await $fetch("/notify-me", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ endpoint: subscription.endpoint }),
+  //     });
+  //   }
+  // }
 };
 </script>
