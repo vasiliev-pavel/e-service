@@ -26,9 +26,9 @@ export default defineEventHandler(async (event) => {
     // Создание содержимого уведомления
     const notification = JSON.stringify({
       title: "Hello, Notifications123!",
-      //   options: {
-      //     body: `ID: ${Math.floor(Math.random() * 100)}`,
-      //   },
+      options: {
+        body: `ID: ${Math.floor(Math.random() * 100)}`,
+      },
     });
 
     const options = {
@@ -38,8 +38,10 @@ export default defineEventHandler(async (event) => {
 
     // Отправка уведомления
     await webpush.sendNotification(subscription, notification, options);
+    console.log("success");
     return { success: true };
   } catch (error) {
+    console.log("error");
     return { success: false, error: error };
   }
 });
