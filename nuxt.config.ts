@@ -25,5 +25,12 @@ export default defineNuxtConfig({
       exclude: [],
     },
   },
-  pwa: { strategies: "injectManifest" },
+  pwa: {
+    strategies: "injectManifest",
+    srcDir: "./", // Директория исходного кода Service Worker
+    filename: "my-sw.js", // Имя файла Service Worker
+    injectManifest: {
+      injectionPoint: undefined,
+    },
+  },
 });
