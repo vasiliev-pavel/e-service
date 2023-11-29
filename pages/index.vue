@@ -28,7 +28,7 @@ onMounted(async () => {
   if ("serviceWorker" in navigator && "PushManager" in window) {
     try {
       const serviceWorkerRegistration = await navigator.serviceWorker.register(
-        "./service-worker.js"
+        "./sw.js"
       );
       console.info("Service worker was registered.", serviceWorkerRegistration);
 
