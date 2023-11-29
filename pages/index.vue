@@ -105,7 +105,7 @@ const sendNotification = async () => {
     }
     const data = pushSubscription.value;
     const temp = JSON.parse(data.data[0].endpoint);
-    await useFetch(`/api/notification/sendNotification/${user.value.id}`);
+    // await useFetch(`/api/notification/sendNotification/${user.value.id}`);
     const tempData = {
       endpoint: temp.endpoint,
       keys: {
