@@ -95,18 +95,18 @@ const logout = async () => {
 };
 
 const sendNotification = async () => {
-  // const registration = await navigator.serviceWorker.getRegistration();
-  // if (registration) {
-  //   const subscription = await registration.pushManager.getSubscription();
-  //   if (subscription) {
-  //     await $fetch("/notify-me", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ endpoint: subscription.endpoint }),
-  //     });
-  //   }
-  // }
+  const registration = await navigator.serviceWorker.getRegistration();
+  if (registration) {
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      await $fetch("/api/notification/sendNotification", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ endpoint: subscription.endpoint }),
+      });
+    }
+  }
 };
 </script>

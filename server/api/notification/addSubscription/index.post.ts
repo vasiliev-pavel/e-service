@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
     return { error: "body are required" };
   }
 
-  const { error } = await client.from("notifications").insert(body);
+  const { error } = await client.from("notifications").upsert(body);
   // console.error(error);
   return { error };
 });
