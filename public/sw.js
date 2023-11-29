@@ -10,8 +10,8 @@ self.addEventListener("push", (event) => {
   const title = data.title || "Новое уведомление";
   const options = {
     body: data.options?.body || "У вас новое уведомление",
-    icon: "https://your-icon-url.png",
-    badge: "https://your-badge-url.png",
+    // icon: "https://your-icon-url.png",
+    // badge: "https://your-badge-url.png",
   };
 
   event.waitUntil(self.registration.showNotification(title, options));
