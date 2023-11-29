@@ -22,7 +22,8 @@ const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const { data } = await useFetch("/api/business");
-const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
+const VAPID_PUBLIC_KEY =
+  "BO7QziEK_cUB-ZBrx5aSfcwidid6FOQckMWdnbTA6XFAnZzl-KGF3IBI1hviD7qmX1Hw-822wDAZ_Cm35x5ZylY";
 
 onMounted(async () => {
   if ("serviceWorker" in navigator && "PushManager" in window) {
