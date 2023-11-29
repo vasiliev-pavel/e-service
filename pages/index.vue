@@ -7,13 +7,70 @@
   >
     Sign out
   </button>
+  <button
+    @click="sendNotification"
+    class="w-full bg-blue-200 text-white p-3 rounded-lg font-semibold text-lg block text-center"
+  >
+    send notification
+  </button>
 </template>
 
 <script setup lang="ts">
+import { urlB64ToUint8Array } from "~/composables/urlB64ToUint8Array";
+
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const { data } = await useFetch("/api/business");
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
+
+onMounted(async () => {
+  if ("serviceWorker" in navigator && "PushManager" in window) {
+    try {
+      const serviceWorkerRegistration = await navigator.serviceWorker.register(
+        "./service-worker.js"
+      );
+      console.info("Service worker was registered.", serviceWorkerRegistration);
+
+      const result = await Notification.requestPermission();
+      if (result === "denied") {
+        console.error("The user explicitly denied the permission request.");
+        return;
+      }
+      if (result === "granted") {
+        console.info("The user accepted the permission request.");
+      }
+
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration) {
+        console.error("Service Worker registration not found.");
+        return;
+      }
+
+      const subscribed = await registration.pushManager.getSubscription();
+      if (subscribed) {
+        console.info("User is already subscribed.");
+        return;
+      }
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+      console.log("Subscription:", subscription);
+      if (user.value) console.log("user_id,:", user.value.id);
+
+      // Обновление состояния кнопок
+    } catch (error) {
+      console.error(
+        "An error occurred while registering the service worker.",
+        error
+      );
+    }
+  } else {
+    console.error("Browser does not support service workers or push messages.");
+  }
+});
 
 watchEffect(() => {
   if (user.value) {
@@ -26,5 +83,10 @@ watchEffect(() => {
 const logout = async () => {
   await client.auth.signOut();
   navigateTo("/login");
+};
+
+const sendNotification = async () => {
+  // await client.auth.signOut();
+  // navigateTo("/login");
 };
 </script>

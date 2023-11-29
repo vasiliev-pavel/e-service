@@ -13,6 +13,7 @@
     "@nuxt/devtools": "latest",
     "@nuxtjs/supabase": "^1.1.4",
     "@nuxtjs/tailwindcss": "^6.9.4",
+    "@types/web-push": "^3.6.3",
     "autoprefixer": "^10.4.16",
     "nuxt": "^3.8.1",
     "postcss": "^8.4.31",
@@ -24,6 +25,7 @@
     "@nuxt/ui": "^2.10.0",
     "@pinia/nuxt": "^0.5.1",
     "moment": "^2.29.4",
-    "pinia": "^2.1.7"
+    "pinia": "^2.1.7",
+    "web-push": "^3.6.6"
   }
 }
