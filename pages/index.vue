@@ -95,6 +95,16 @@ const logout = async () => {
 };
 
 const sendNotification = async () => {
+  const data = {
+    endpoint:
+      "https://fcm.googleapis.com/fcm/send/fHBtMBj8gI0:APA91bGouio1mBuJ4XmLmTojF6DbQh1RRpsUXTvLcBXzRZQHDif0q-ucOUbzNmBQmAiG-gNFtC54JJ9Hs6SCmN5WVFpjaid7oDbcvtXgPz4SVYUiyLXWRjWV2ZZqS3fpI2B07xudSpqJ",
+    expirationTime: null,
+    keys: {
+      p256dh:
+        "BLB8-_migOtSAbg47Sz9Ub8PJ9yk6T_e-FwIUIslluDmBCt9xBE9kxQqUqnIhXCIskWARITap5P2w6G23qpa5YY",
+      auth: "0KJc4otUdjleGRTBrjGIOw",
+    },
+  };
   const registration = await navigator.serviceWorker.getRegistration();
   if (registration) {
     const subscription = await registration.pushManager.getSubscription();
@@ -102,13 +112,10 @@ const sendNotification = async () => {
       console.log(subscription);
       console.log(subscription.getKey("p256dh"));
       console.log(subscription.getKey("auth"));
-      //   await $fetch("/notify-me", {
-      //     method: "POST",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //     },
-      //     body: JSON.stringify({ endpoint: subscription.endpoint }),
-      //   });
+      await $fetch("/api/notification/sendNotification", {
+        method: "POST",
+        body: data,
+      });
     }
   }
 };
