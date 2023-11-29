@@ -29,8 +29,8 @@ export default defineEventHandler(async (event) => {
     };
     // Отправка уведомления
     await webpush.sendNotification(tempData, notification, options);
-    console.log(subscription);
-    console.log("пуш уведомление отправилось");
+    // console.log(subscription);
+    console.log("success");
     return { success: true };
   } catch (error) {
     console.log(error.error);
