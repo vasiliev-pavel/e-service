@@ -54,9 +54,8 @@ onMounted(async () => {
 
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: VAPID_PUBLIC_KEY,
+      applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
     });
-
     console.log("tyt3");
     console.log("Subscription:", subscription);
     if (user.value) console.log("user_id,:", user.value.id);
