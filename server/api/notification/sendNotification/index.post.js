@@ -1,4 +1,3 @@
-import { defineEventHandler } from "h3";
 // import webpush from "web-push";
 import webpush from "web-push";
 
