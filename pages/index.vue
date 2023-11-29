@@ -102,14 +102,14 @@ const sendNotification = async () => {
       console.log(subscription);
       console.log(subscription.getKey("p256dh"));
       console.log(subscription.getKey("auth"));
-    //   await $fetch("/notify-me", {
-    //     method: "POST",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ endpoint: subscription.endpoint }),
-    //   });
-    // }
+      //   await $fetch("/notify-me", {
+      //     method: "POST",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({ endpoint: subscription.endpoint }),
+      //   });
+    }
   }
 };
 </script>
