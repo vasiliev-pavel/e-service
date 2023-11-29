@@ -39,23 +39,23 @@ onMounted(async () => {
     if (result === "granted") {
       console.info("The user accepted the permission request.");
     }
-
+    console.log("tyt0");
     const registration = await navigator.serviceWorker.getRegistration();
     if (!registration) {
       console.error("Service Worker registration not found.");
       return;
     }
-
+    console.log("tyt1");
     const subscribed = await registration.pushManager.getSubscription();
     if (subscribed) {
       console.info("User is already subscribed.");
     }
-
+    console.log("tyt2");
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
     });
-
+    console.log("tyt3");
     console.log("Subscription:", subscription);
     if (user.value) console.log("user_id,:", user.value.id);
 
