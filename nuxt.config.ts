@@ -25,5 +25,5 @@ export default defineNuxtConfig({
       exclude: [],
     },
   },
-  pwa: { strategies: "generateSW" },
+  pwa: { strategies: "injectManifest" },
 });
