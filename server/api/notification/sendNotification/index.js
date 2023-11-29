@@ -16,12 +16,7 @@ webpush.setVapidDetails(
 export default defineEventHandler(async (event) => {
   try {
     const tempData = await readBody(event);
-    // const user_id = await readBody(event); // Получение ID пользователя из тела запроса
-    // const subscription = await $fetch(`/api/notification/getSubscriptions/`, {
-    //   method: "post",
-    //   body: user_id,
-    // });
-    // Создание содержимого уведомления
+
     const notification = JSON.stringify({
       title: "Hello, Notifications123!",
       options: {
