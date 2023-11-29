@@ -29,8 +29,8 @@ export default defineNuxtConfig({
     strategies: "injectManifest",
     srcDir: "./", // Директория исходного кода Service Worker
     filename: "my-sw.js", // Имя файла Service Worker
-    // injectManifest: {
-    //   injectionPoint: undefined,
-    // },
+    injectManifest: {
+      injectionPoint: undefined,
+    },
   },
 });
