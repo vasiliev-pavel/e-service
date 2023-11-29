@@ -98,14 +98,14 @@ const sendNotification = async () => {
   const registration = await navigator.serviceWorker.getRegistration();
   if (registration) {
     const subscription = await registration.pushManager.getSubscription();
-    if (subscription) {
+    if (subscription && user.value) {
       console.log(subscription);
       console.log(subscription.getKey("p256dh"));
       console.log(subscription.getKey("auth"));
-      // await $fetch("/api/notification/sendNotification", {
-      //   method: "POST",
-      //   body: data,
-      // });
+      await $fetch("/api/notification/sendNotification", {
+        method: "POST",
+        body: user.value.id,
+      });
     }
   }
 };
