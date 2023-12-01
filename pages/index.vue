@@ -71,7 +71,7 @@ watchEffect(async () => {
           });
 
           console.log("Subscription:", subscription);
-
+          console.log(deviceInfo.value);
           if (user.value) {
             await $fetch("/api/notification/addSubscription", {
               method: "POST",
@@ -82,8 +82,8 @@ watchEffect(async () => {
                 {
                   user_id: user.value.id,
                   endpoint: subscription,
-                  device: deviceInfo.os,
-                  os: deviceInfo.browser,
+                  device: deviceInfo.value.os,
+                  os: deviceInfo.value.browser,
                 },
               ],
             });
