@@ -30,7 +30,7 @@ const businessStore = useBusinessStore();
 const { data } = await useFetch("/api/business");
 const VAPID_PUBLIC_KEY =
   "BO7QziEK_cUB-ZBrx5aSfcwidid6FOQckMWdnbTA6XFAnZzl-KGF3IBI1hviD7qmX1Hw-822wDAZ_Cm35x5ZylY";
-const notificationPermission = ref(Notification.permission);
+const notificationPermission = ref("default"); // Инициализируем с 'default' или другим подходящим значением
 
 watchEffect(async () => {
   if (user.value) {
