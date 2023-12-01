@@ -15,9 +15,8 @@ export default defineEventHandler(async (event) => {
     .from("notifications")
     .select("endpoint")
     .eq("user_id", query.userId)
-    .eq("user_id", query.browser)
-    .eq("user_id", query.os);
-  console.log(data);
+    .eq("browser", query.browser)
+    .eq("device", query.os);
   if (error) {
     return { error };
   }

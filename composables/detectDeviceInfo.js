@@ -1,6 +1,11 @@
 export function detectDeviceInfo() {
   const ua = navigator.userAgent;
-  const platform = navigator.platform;
+  let platform;
+  if (navigator.userAgentData && navigator.userAgentData.platform) {
+    platform = navigator.userAgentData.platform;
+  } else {
+    platform = navigator.platform || "unknown";
+  }
   const browsers = {
     Firefox: ua.includes("Firefox"),
     SamsungInternet: ua.includes("SamsungBrowser"),

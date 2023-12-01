@@ -108,45 +108,41 @@ const logout = async () => {
 const sendUserNotification = async () => {
   if (!user.value) return;
 
-  try {
-    const { data: subscriptionData } = await useFetch(
-      `/api/notification/getSubscriptions/query?userId=${user.value.id}&browser=${deviceInfo.value.browser}&os=${deviceInfo.value.os}`
-    );
+  const { data: subscriptionData } = await useFetch(
+    `/api/notification/getSubscriptions/query?userId=${user.value.id}&browser=${deviceInfo.value.browser}&os=${deviceInfo.value.os}`
+  );
 
-    if (!subscriptionData.value) {
-      throw new Error("No subscription data available");
-    }
-
-    const subscriptionDetails = JSON.parse(
-      subscriptionData.value.data[0].endpoint
-    );
-
-    const notificationPayload = {
-      endpoint: subscriptionDetails.endpoint,
-      keys: {
-        p256dh: subscriptionDetails.keys.p256dh,
-        auth: subscriptionDetails.keys.auth,
-      },
-    };
-
-    const serviceWorkerRegistration =
-      await navigator.serviceWorker.getRegistration();
-    if (!serviceWorkerRegistration)
-      throw new Error("Service Worker registration not found");
-
-    const activeSubscription =
-      await serviceWorkerRegistration.pushManager.getSubscription();
-
-    if (!activeSubscription) throw new Error("No active subscription found");
-
-    console.log(activeSubscription);
-    await $fetch("/api/notification/sendNotification", {
-      method: "POST",
-      body: notificationPayload,
-    });
-  } catch (error) {
-    console.error("Notification Error:", error);
+  if (!subscriptionData.value) {
+    throw new Error("No subscription data available");
   }
+
+  const subscriptionDetails = JSON.parse(
+    subscriptionData.value.data[0].endpoint
+  );
+
+  const notificationPayload = {
+    endpoint: subscriptionDetails.endpoint,
+    keys: {
+      p256dh: subscriptionDetails.keys.p256dh,
+      auth: subscriptionDetails.keys.auth,
+    },
+  };
+
+  const serviceWorkerRegistration =
+    await navigator.serviceWorker.getRegistration();
+  if (!serviceWorkerRegistration)
+    throw new Error("Service Worker registration not found");
+
+  const activeSubscription =
+    await serviceWorkerRegistration.pushManager.getSubscription();
+
+  if (!activeSubscription) throw new Error("No active subscription found");
+
+  console.log(activeSubscription);
+  await $fetch("/api/notification/sendNotification", {
+    method: "POST",
+    body: notificationPayload,
+  });
 };
 
 const requestNotificationPermission = async () => {
