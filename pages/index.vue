@@ -83,7 +83,7 @@ watchEffect(async () => {
                   user_id: user.value.id,
                   endpoint: subscription,
                   device: deviceInfo.value.os,
-                  os: deviceInfo.value.browser,
+                  browser: deviceInfo.value.browser,
                 },
               ],
             });
