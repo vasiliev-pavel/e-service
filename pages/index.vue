@@ -1,6 +1,9 @@
 <template>
+  <div class="text-white font-semibold text-lg block text-center">
+    Device Info {{ deviceInfo.os }} {{ deviceInfo.browser }}
+  </div>
   <SearchBody />
-  <div>Its index page</div>
+
   <button
     @click="logout"
     class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-lg block text-center"
@@ -23,6 +26,7 @@
 
 <script setup lang="ts">
 import { urlB64ToUint8Array } from "~/composables/urlB64ToUint8Array";
+// import { detectDeviceInfo } from "~/composables/detectDeviceInfo";
 
 const client = useSupabaseClient();
 const user = useSupabaseUser();
@@ -31,7 +35,10 @@ const { data } = await useFetch("/api/business");
 const VAPID_PUBLIC_KEY =
   "BO7QziEK_cUB-ZBrx5aSfcwidid6FOQckMWdnbTA6XFAnZzl-KGF3IBI1hviD7qmX1Hw-822wDAZ_Cm35x5ZylY";
 const notificationPermission = ref("default"); // Инициализируем с 'default' или другим подходящим значением
-
+const deviceInfo = ref({});
+onMounted(() => {
+  deviceInfo.value = detectDeviceInfo();
+});
 watchEffect(async () => {
   if (user.value) {
     if (data.value) {
@@ -75,6 +82,8 @@ watchEffect(async () => {
                 {
                   user_id: user.value.id,
                   endpoint: subscription,
+                  device: deviceInfo.os,
+                  os: deviceInfo.browser,
                 },
               ],
             });
@@ -101,7 +110,7 @@ const sendUserNotification = async () => {
 
   try {
     const { data: subscriptionData } = await useFetch(
-      `/api/notification/getSubscriptions/${user.value.id}`
+      `/api/notification/getSubscriptions/query?userId=${user.value.id}&browser=${deviceInfo.value.browser}&os=${deviceInfo.value.os}`
     );
 
     if (!subscriptionData.value) {
@@ -127,6 +136,7 @@ const sendUserNotification = async () => {
 
     const activeSubscription =
       await serviceWorkerRegistration.pushManager.getSubscription();
+
     if (!activeSubscription) throw new Error("No active subscription found");
 
     console.log(activeSubscription);
