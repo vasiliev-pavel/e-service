@@ -5,9 +5,19 @@ import AppleIcon from "@/components/icons/AppleIcon.vue";
 
 const supabase = useSupabaseClient();
 
-const signInWithOtp = async () => {
+const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/confirm`,
+    },
+  });
+  if (error) console.log(error);
+};
+
+const signInWithFacebook = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "facebook",
     options: {
       redirectTo: `${window.location.origin}/confirm`,
     },
@@ -67,12 +77,13 @@ const signInWithOtp = async () => {
         <div class="flex justify-center space-x-7 mb-3">
           <button
             class="w-14 h-14 rounded-[12px] bg-white flex items-center justify-center"
-            @click="signInWithOtp"
+            @click="signInWithGoogle"
           >
             <GoogleIcon />
           </button>
           <button
             class="w-14 h-14 rounded-[12px] bg-white flex items-center justify-center"
+            @click="signInWithFacebook"
           >
             <FacebookIcon />
           </button>
