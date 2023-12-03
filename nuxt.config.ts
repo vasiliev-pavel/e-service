@@ -14,7 +14,7 @@ export default defineNuxtConfig({
       autoprefixer: {},
     },
   },
-  modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxtjs/supabase", "@vite-pwa/nuxt"],
+  modules: ["@nuxt/ui", "@pinia/nuxt", "@nuxtjs/supabase"],
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
@@ -23,14 +23,6 @@ export default defineNuxtConfig({
       login: "/login",
       callback: "/confirm",
       exclude: [],
-    },
-  },
-  pwa: {
-    strategies: "injectManifest",
-    srcDir: "./", // Директория исходного кода Service Worker
-    filename: "my-sw.js", // Имя файла Service Worker
-    injectManifest: {
-      injectionPoint: undefined,
     },
   },
 });
