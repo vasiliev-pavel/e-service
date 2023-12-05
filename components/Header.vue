@@ -3,7 +3,7 @@ const client = useSupabaseClient();
 
 const isOpen = ref(false);
 const user = useSupabaseUser();
-const user_role = ref('customer');
+const user_role = ref('owner');
 
 const panelTitle = computed(() => {
     if (user_role.value === 'admin') return 'Admin Panel';
@@ -15,23 +15,23 @@ const panelTitle = computed(() => {
 const menuItems = computed(() => {
     if (user_role.value === 'admin') {
         return [
-            { title: 'Admin Link 1', icon: 'icon-name-1' },
-            { title: 'Admin Link 2', icon: 'icon-name-2' }
+            { title: 'Admin Link 1', url: '', icon: 'icon-name-1' },
+            { title: 'Admin Link 2', url: '', icon: 'icon-name-2' }
         ];
     } else if (user_role.value === 'customer') {
         return [
-            { title: 'Customer Link A', icon: 'icon-name-a' },
-            { title: 'Customer Link B', icon: 'icon-name-b' }
+            { title: 'Customer Link A', url: '', icon: 'icon-name-a' },
+            { title: 'Customer Link B', url: '', icon: 'icon-name-b' }
         ];
     } else if (user_role.value === 'owner') {
         return [
-            { title: 'Owner Link A', icon: 'icon-name-a' },
-            { title: 'Owner Link B', icon: 'icon-name-b' }
+            { title: 'Appointments', url: '', icon: 'icon-name-a' },
+            { title: 'Owner Link B', url: '', icon: 'icon-name-b' }
         ];
     } else if (user_role.value === 'specialist') {
         return [
-            { title: 'Specialist Link A', icon: 'icon-name-a' },
-            { title: 'Specialist Link B', icon: 'icon-name-b' }
+            { title: 'Specialist Link A', url: '', icon: 'icon-name-a' },
+            { title: 'Specialist Link B', url: '', icon: 'icon-name-b' }
         ];
     }
 });
@@ -44,7 +44,7 @@ const logout = async () => {
 
 <template>
     <div v-if="user">
-        <UButton class="text-3xl" label="=" @click="isOpen = true" />
+        <UButton class="text-3xl my-4" label="=" @click="isOpen = true" />
 
         <USlideover v-model="isOpen" side="left">
             <UCard @click="isOpen = false" class="flex flex-col flex-1"
@@ -60,7 +60,7 @@ const logout = async () => {
                 </template>
 
                 <nav class="flex flex-col">
-                    <UButton class="flex my-4 p-4" v-for="item in menuItems" :key="item.title">
+                    <UButton class="flex my-4 p-4" v-for="item in menuItems" :key="item.title" :to="item.url">
                         <i :class="item.icon"></i> {{ item.title }}
                     </UButton>
                 </nav>
