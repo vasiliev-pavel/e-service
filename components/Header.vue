@@ -25,8 +25,8 @@ const menuItems = computed(() => {
         ];
     } else if (user_role.value === 'owner') {
         return [
-            { title: 'Appointments', url: '', icon: 'icon-name-a' },
-            { title: 'Owner Link B', url: '', icon: 'icon-name-b' }
+            { title: 'Business', url: '/panel/business', icon: 'icon-name-b' },
+            { title: 'Appointments', url: '/panel/appointments', icon: 'icon-name-a' },
         ];
     } else if (user_role.value === 'specialist') {
         return [

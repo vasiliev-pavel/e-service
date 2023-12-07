@@ -30,8 +30,8 @@ const updateStatus = async (appointmentId, newStatus, newTime = null) => {
 };
 </script>
 <template>
-    <UBadge class="my-4" color="primary" variant="subtle" size="lg">Appointments</UBadge>
     <div class="flex flex-col">
+        <UBadge class="my-4" color="primary" variant="subtle" size="lg">Appointments</UBadge>
         <UCard class="my-6 text-white" v-for="appointment in appointments" :key="appointment?.id">
             <template #header>
                 {{ new Date(appointment.date_time).toLocaleString() }}
