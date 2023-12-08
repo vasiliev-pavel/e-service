@@ -33,14 +33,16 @@ const businessStore = useBusinessStore();
 
 const filteredCategories = computed(() => {
   const specialistServicesIds = userStore.selectedSpecialist?.services || [];
-  const categories = businessStore.categories ? businessStore.categories : {};
+  const categories = businessStore.selectedBusiness.categories
+    ? businessStore.selectedBusiness.categories
+    : {};
 
   if (specialistServicesIds.length === 0) {
     // Если  специалист не выбран, возвращаем все категории
     return categories;
   } else {
     // Иначе выбираем только те категории и данные, которые соответствуют специалисту
-    return businessStore.categories
+    return businessStore.selectedBusiness.categories
       .map((category) => {
         // Фильтрация услуг в каждой категории по id, которые есть у специалиста
         const filteredServices = category.services.filter((service) =>

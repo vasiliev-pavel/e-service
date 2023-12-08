@@ -30,7 +30,7 @@ const specialistName = userStore.selectedSpecialist.name;
 // Данные для вкладок
 const tabsItems = [
   { slot: "tab1", label: specialistName },
-  { slot: "tab2", label: "Доступные специалисты" },
+  { slot: "tab2", label: "Все доступные" },
 ];
 
 // Компоненты SpecialistCalendar и AllSpecialistsCalendar - это компоненты, которые вы должны создать или импортировать.

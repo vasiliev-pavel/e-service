@@ -13,7 +13,7 @@
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
-const { data } = await useFetch("/api/business");
+const { data } = await useFetch("/api/businesses");
 
 watchEffect(async () => {
   if (user.value) {

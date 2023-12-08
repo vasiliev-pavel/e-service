@@ -51,9 +51,9 @@ const workingHours = computed(() => {
   // Используйте опциональную цепочку для безопасного доступа к свойствам
 
   const hours = availability.value?.[dayOfWeek];
-  if (hours && hours !== "weekend") {
+  if (hours && hours !== "Closed") {
     const [start, end] = hours.split("-");
-
+    console.log(hours);
     return generateTimeSlots(start.trim(), end.trim());
   }
   return [];

@@ -50,19 +50,27 @@ const filteredSpecialists = computed(() => {
 
     //Ищем совпадения по выбранному сервису у всех специалистов
     //чтобы потом отообразить их в провайдерах
-    return businessStore.specialists?.filter((specialist) =>
-      specialist.services.some((serviceId) =>
-        selectedServiceIds.includes(serviceId.toString())
+    return businessStore.selectedBusiness.specialists?.filter((specialist) =>
+      specialist.categories?.some((category) =>
+        category.services?.some((service) =>
+          selectedServiceIds.includes(service.id)
+        )
       )
     );
   } else {
     // Если selectedServices пуст, возвращаем всех специалистов
-    return businessStore.specialists ? businessStore.specialists : undefined;
+    return businessStore.selectedBusiness.specialists
+      ? businessStore.selectedBusiness.specialists
+      : undefined;
   }
 });
 
 function selectSpecialist(specialist) {
-  userStore.setSelectedSpecialist(specialist);
+  userStore.setSelectedSpecialist({
+    id: specialist.id,
+    name: specialist.name,
+    availability: specialist.availability,
+  });
 
   if (Object.keys(userStore.selectedServices).length === 0) {
     router.push("/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги

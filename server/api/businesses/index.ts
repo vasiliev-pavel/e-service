@@ -9,6 +9,5 @@ export default defineEventHandler(async (event) => {
     console.error("Error fetching businesses", error);
     return { error };
   }
-  console.log(data);
   return { data };
 });

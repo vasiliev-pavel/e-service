@@ -27,8 +27,8 @@ const user = useUserStore();
 const selectSalon = (salon) => {
   businessStore.selectedSalonId = salon.id;
   // Save the selected salon to local storage
-  user.setSelectedSalon(salon);
-  localStorage.setItem("selectedSalon", JSON.stringify(salon));
+  user.setSelectedSalon({ id: salon.id, title: salon.name });
+  // localStorage.setItem("selectedSalon", JSON.stringify(salon));
   // Navigate to a new page, for example, '/salon-details'
   router.push("/booking");
 };
@@ -36,10 +36,10 @@ const selectSalon = (salon) => {
 onMounted(() => {
   if (!process.client) return;
 
-  const businessesData = localStorage.getItem("businesses");
-  const categoriesData = localStorage.getItem("categories");
+  // const businessesData = localStorage.getItem("businesses");
+  // const categoriesData = localStorage.getItem("categories");
 
-  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
-  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
+  // if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
+  // if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
 });
 </script>

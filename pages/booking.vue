@@ -30,15 +30,15 @@ import { useBusinessStore } from "~/stores/business";
 const businessStore = useBusinessStore();
 
 // Создаем вычисляемое свойство
-const nameBusiness = computed(() => userStore.selectedSalon.name);
+const nameBusiness = computed(() => userStore.selectedSalon.title);
 const userStore = useUserStore();
 
 onMounted(() => {
-  if (process.client) {
-    const storedData = localStorage.getItem("selectedSalon");
-    if (storedData) {
-      userStore.setSelectedSalon(JSON.parse(storedData));
-    }
-  }
+  // if (process.client) {
+  //   const storedData = localStorage.getItem("selectedSalon");
+  //   if (storedData) {
+  //     userStore.setSelectedSalon(JSON.parse(storedData));
+  //   }
+  // }
 });
 </script>
