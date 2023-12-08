@@ -8,21 +8,30 @@ export const useBusinessStore = defineStore("business", () => {
   const specialists = ref([]);
   const availabilitySpecialist = ref([]);
 
+  //обновлённая структура
+  const selectedBusiness = ref({});
+
   // Функция для обновления данных business
   const setBusiness = (newData) => {
     businesses.value = newData;
     // и хранеия их в store в случае если мы на стороне клиента
-    if (process.client) {
-      localStorage.setItem("businesses", JSON.stringify(newData));
-    }
+    // if (process.client) {
+    //   localStorage.setItem("businesses", JSON.stringify(newData));
+    // }
   };
 
   const setCategories = (newData) => {
     categories.value = newData;
     // и хранеия их в store в случае если мы на стороне клиента
-    if (process.client) {
-      localStorage.setItem("categories", JSON.stringify(newData));
-    }
+    // if (process.client) {
+    //   localStorage.setItem("categories", JSON.stringify(newData));
+    // }
+  };
+
+  const fetchAllData = async (salonId) => {
+    const { data: businessData } = await useFetch(`/api/businesses/${salonId}`);
+    selectedBusiness.value = businessData.value.data;
+    // console.log(businessData);
   };
 
   // Получение cпециалистов и услуги которые они выполняют
@@ -45,20 +54,14 @@ export const useBusinessStore = defineStore("business", () => {
   };
 
   const fetchCategoriesAndServices = async (salonId) => {
-    // Получение названий категорий
-    const { data: categoriesNamesData } = await useFetch(`/api/categories`);
-    const categoriesNames = new Map(
-      categoriesNamesData.value.data.map((c) => [c.id, c.name])
-    );
-
-    // Получение списка категорий с их ID
+    // Получение списка категорий
     const { data: categoriesData } = await useFetch(
-      `/api/business_categories/${salonId}`
+      `/api/categories/${salonId}`
     );
 
     categories.value = categoriesData.value.data.map((category) => ({
-      category_id: category.category_id,
-      category_name: categoriesNames.get(category.category_id),
+      category_id: category.id,
+      category_name: category.name,
       services: [],
     }));
 
@@ -67,9 +70,12 @@ export const useBusinessStore = defineStore("business", () => {
 
     // Фильтрация услуг по каждой категории и исключение лишних данных
     for (const category of categories.value) {
-      category.services = allServices.value.data.filter(
-        (service) => service.category_id === category.category_id
-      );
+      category.services = allServices.value.data
+        .filter((service) => service.category_id === category.category_id)
+        .map(
+          ({ category_id, ...serviceWithoutCategoryId }) =>
+            serviceWithoutCategoryId
+        );
     }
   };
 
@@ -87,23 +93,25 @@ export const useBusinessStore = defineStore("business", () => {
   //и если он выбрал новый, то обновляем данные
   watch(selectedSalonId, async (newId, oldId) => {
     if (newId && newId !== oldId) {
+      await fetchAllData(newId);
       // Параллельная загрузка данных
-      await Promise.all([
-        fetchCategoriesAndServices(newId),
-        fetchSpecialistsAndServices(newId),
-        fetchAvailability(newId),
-      ]);
-      // await fetchCategoriesAndServices(newId);
-      // await fetchSpecialistsAndServices(newId);
+      //   await Promise.all([
+      //     fetchCategoriesAndServices(newId),
+      //     fetchSpecialistsAndServices(newId),
+      //     fetchAvailability(newId),
+      //   ]);
+      //   await fetchCategoriesAndServices(newId);
+      //   await fetchSpecialistsAndServices(newId);
     }
     setCategories(categories.value);
   });
 
   return {
     businesses,
+    selectedBusiness,
     selectedSalonId,
-    categories,
-    specialists,
+    // categories,
+    // specialists,
     availabilitySpecialist,
     setBusiness,
     setCategories,

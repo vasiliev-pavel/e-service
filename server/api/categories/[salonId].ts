@@ -6,19 +6,20 @@ export default defineEventHandler(async (event) => {
 
   // Получение динамического параметра salonId из URL
   const salonId = event.context.params?.salonId;
+
   if (!salonId) {
     // Обработка ситуации, когда salonId не предоставлен
     return { error: "Salon ID is required" };
   }
 
   const { data, error } = await client
-    .from("business_categories")
+    .from("categories")
     .select("*")
     .eq("business_id", salonId);
 
   if (error) {
     return { error };
   }
-  // console.log(data);
+
   return { data };
 });
