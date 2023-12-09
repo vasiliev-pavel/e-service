@@ -3,7 +3,7 @@ import { serverSupabaseClient } from "#supabase/server";
 export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient(event);
 
-  const { data, error } = await client.rpc('get_appointments');
+  const { data, error } = await client.rpc('get_appointments_json');
   
   if (error) {
     console.error('Error fetching appointments', error);

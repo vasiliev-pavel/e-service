@@ -32,7 +32,7 @@ const validate = (state) => {
 }
 
 async function onSubmit(event) {
-    const { data, error } = await useFetch('/api/business/create', {
+    const { data, error } = await useFetch('/api/businesses/create', {
         method: 'POST',
         body: state
     });

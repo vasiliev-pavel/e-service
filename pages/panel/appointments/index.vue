@@ -1,8 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 
-const { data } = await useFetch('/api/appointments')
+const { data } = await useFetch('/api/appointments/get_all')
 const appointments = data?.value?.data;
+
 
 
 const isModalOpen = ref(false);
@@ -30,16 +31,17 @@ const updateStatus = async (appointmentId, newStatus, newTime = null) => {
 };
 </script>
 <template>
+    <!-- Нужно сверху сделать выбор даты, и показывать на определенную дату и определенную компанию -->
     <div class="flex flex-col">
         <UBadge class="my-4" color="primary" variant="subtle" size="lg">Appointments</UBadge>
-        <UCard class="my-6 text-white" v-for="appointment in appointments" :key="appointment?.id">
+        <UCard class="my-4 text-white" v-for="appointment in appointments" :key="appointment.appointment_id">
             <template #header>
-                {{ new Date(appointment.date_time).toLocaleString() }}
+                {{ new Date(appointment.appointment_date_time).toLocaleString() }}
             </template>
 
-            <p><strong>Customer:</strong> {{ appointment.customer_name }}</p>
-            <p><strong>Specialist:</strong> {{ appointment.specialist_name }}</p>
-            <p><strong>Service:</strong> {{ appointment.service_name }}</p>
+            <p><strong>Customer:</strong> {{ appointment.customer.customer_full_name }}</p>
+            <p><strong>Specialist:</strong> {{ appointment.specialist.specialist_full_name }}</p>
+            <p><strong>Service:</strong> {{ appointment.service.service_name }}</p>
 
             <template #footer>
                 <UButton class="mr-4" @click="openModal(appointment, 'confirm')">Confirm</UButton>
@@ -67,23 +69,24 @@ const updateStatus = async (appointmentId, newStatus, newTime = null) => {
                 </UBadge>
 
                 <UBadge class="mt-4" color="primary" variant="subtle" size="lg">
-                    Time: {{ new Date(currentAppointment.date_time).toLocaleString() }}
+                    Time: {{ new Date(currentAppointment.appointment_date_time).toLocaleString() }}
                 </UBadge>
                 <UBadge class="mt-4" color="primary" variant="subtle" size="lg">
-                    Service: {{ currentAppointment.service_name }}
+                    Service: {{ currentAppointment.service.service_name }}
                 </UBadge>
                 <UBadge class="mt-4" color="primary" variant="subtle" size="lg">
-                    Specialist: {{ currentAppointment.specialist_name }}
+                    Specialist: {{ currentAppointment.specialist.specialist_full_name }}
                 </UBadge>
                 <UBadge class="mt-4" color="primary" variant="subtle" size="lg">
-                    Customer: {{ currentAppointment.customer_name }}
+                    Customer: {{ currentAppointment.customer.customer_full_name }}
                 </UBadge>
                 <USelectMenu class="mt-4" size="lg" v-model="selected" :options="availability" multiple
                     placeholder="Select Time" v-if="modalActionType === 'changeTime'" />
             </div>
 
             <template #footer>
-                <UButton class="mr-4" @click="updateStatus(currentAppointment.id, 'confirmed', null)">Confirm</UButton>
+                <UButton class="mr-4" @click="updateStatus(currentAppointment.appointment_id, 'confirmed', null)">Confirm
+                </UButton>
                 <UButton class="ml-4" @click="isModalOpen = false">Cancel</UButton>
             </template>
         </UCard>

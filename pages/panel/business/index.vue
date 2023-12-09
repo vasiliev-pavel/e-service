@@ -4,7 +4,7 @@ const userID = user.value.id;
 
 const businesses = ref([]);
 
-const { data } = await useFetch('/api/business', {
+const { data } = await useFetch('/api/businesses', {
     method: 'POST',
     body: { owner_id: userID }
 });
@@ -12,7 +12,7 @@ const { data } = await useFetch('/api/business', {
 businesses.value = data?.value?.data;
 
 const deleteBusiness = async (businessId) => {
-    await useFetch('/api/business/remove', {
+    await useFetch('/api/businesses/remove', {
         method: 'POST',
         body: { id: businessId, owner_id: userID }
     });
