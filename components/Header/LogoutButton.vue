@@ -1,4 +1,7 @@
 <script setup>
+
+const client = useSupabaseClient();
+
 const logout = async () => {
     await client.auth.signOut();
     navigateTo("/login");

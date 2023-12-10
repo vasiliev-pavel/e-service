@@ -4,7 +4,10 @@ import { ref } from 'vue';
 const toggleModal = () => {
     isOpen.value = !isOpen.value;
 };
+
 const isOpen = ref(false);
+
+const profileStore = useProfileStore();
 
 const companies = [
     [{

@@ -1,12 +1,18 @@
-<!-- не удалять может пригодится в будушем -->
-
 <script setup lang="ts">
+import { watch } from "vue";
+
 const user = useSupabaseUser();
+
+const userID = user?.value?.id;
+const profileStore = useProfileStore();
+
 watch(
   user,
   async () => {
     if (user.value) {
-      // Перенаправление на главную страницу
+      await profileStore.fetchMyProfile(userID);
+      await profileStore.fetchMyBusinesses(userID);
+
       navigateTo("/");
     }
   },

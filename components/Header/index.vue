@@ -1,5 +1,4 @@
 <script setup lang="ts">
-const client = useSupabaseClient();
 
 const isOpen = ref(false);
 const user = useSupabaseUser();
