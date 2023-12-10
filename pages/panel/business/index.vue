@@ -25,7 +25,6 @@ const deleteBusiness = async (businessId) => {
 <template>
     <div class="flex flex-col">
         <UBadge class="my-4" color="primary" variant="subtle" size="lg">Business</UBadge>
-        <UButton class="my-2" size="lg" to="/panel/business/create">Create</UButton>
         <UCard class="my-6 text-white" v-for="business in businesses" :key="business.id">
             <p><strong>Name:</strong> {{ business.name }}</p>
             <UButton color="red" @click="deleteBusiness(business.id)">Delete</UButton>
