@@ -20,6 +20,7 @@ watch(
 );
 </script>
 <!-- //sadssa -->
+<!-- gi3a status -->
 <template>
   <div>Waiting for login...</div>
 </template>
