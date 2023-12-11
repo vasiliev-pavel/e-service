@@ -78,15 +78,5 @@ function selectSpecialist(specialist) {
   // Перенаправление на страницу записи или другое действие
 }
 
-onMounted(() => {
-  if (!process.client) return;
-
-  const businessesData = localStorage.getItem("businesses");
-  const categoriesData = localStorage.getItem("categories");
-
-  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
-  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
-});
-
 useRouteLeaveGuard();
 </script>

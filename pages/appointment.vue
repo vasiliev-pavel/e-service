@@ -114,7 +114,7 @@ Object.keys(selectedServices.value).forEach((serviceId) => {
 
 const confirmAppointment = async () => {
   try {
-    await $fetch(`/api/appointment/`, {
+    await $fetch(`/api/appointments/`, {
       method: "post",
       body: appointmentObject.value,
     });

@@ -66,16 +66,6 @@ const hasSelectedServices = computed(() => {
 //   console.log(filteredCategories);
 // });
 
-onMounted(() => {
-  if (!process.client) return;
-
-  const businessesData = localStorage.getItem("businesses");
-  const categoriesData = localStorage.getItem("categories");
-
-  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
-  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
-});
-
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
 useRouteLeaveGuard();
 </script>
