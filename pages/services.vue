@@ -38,9 +38,11 @@ const filteredCategories = computed(() => {
     : {};
 
   if (specialistServicesIds.length === 0) {
+    console.log("here1");
     // Если  специалист не выбран, возвращаем все категории
     return categories;
   } else {
+    сonsole.log("here");
     // Иначе выбираем только те категории и данные, которые соответствуют специалисту
     return businessStore.selectedBusiness.categories
       .map((category) => {
@@ -62,18 +64,31 @@ const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
 
-// watchEffect(() => {
-//   console.log(filteredCategories);
-// });
+const specialistsWithSelectedService = computed(() => {
+  const selectedServiceIds = Object.keys(userStore.selectedServices);
 
-onMounted(() => {
-  if (!process.client) return;
+  if (selectedServiceIds.length === 0) {
+    return [];
+  }
+  const specialists = businessStore.selectedBusiness.specialists;
+  return specialists.filter(
+    (specialist) =>
+      specialist.categories &&
+      specialist.categories.some(
+        (category) =>
+          category.services &&
+          category.services.some((service) =>
+            selectedServiceIds.includes(service.id)
+          )
+      )
+  );
+});
 
-  const businessesData = localStorage.getItem("businesses");
-  const categoriesData = localStorage.getItem("categories");
-
-  if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
-  if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
+watch(specialistsWithSelectedService, (newVal) => {
+  console.log(
+    "Специалисты с выбранной услугой:",
+    newVal.map((s) => s.name)
+  );
 });
 
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
