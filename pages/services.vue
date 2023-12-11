@@ -5,6 +5,7 @@
       :key="category.category_id"
       :title="category.category_name"
       :items="category.services"
+      :specialistsWithSelectedService="specialistsWithSelectedService"
     />
     <div
       v-show="hasSelectedServices"
@@ -32,30 +33,30 @@ const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
 const filteredCategories = computed(() => {
-  const specialistServicesIds = userStore.selectedSpecialist?.services || [];
+  const specialistServicesIds = userStore?.selectedSpecialist || [];
   const categories = businessStore.selectedBusiness.categories
     ? businessStore.selectedBusiness.categories
     : {};
 
   if (specialistServicesIds.length === 0) {
-    console.log("here1");
+    // console.log("here1");
     // Если  специалист не выбран, возвращаем все категории
     return categories;
   } else {
-    сonsole.log("here");
-    // Иначе выбираем только те категории и данные, которые соответствуют специалисту
-    return businessStore.selectedBusiness.categories
-      .map((category) => {
-        // Фильтрация услуг в каждой категории по id, которые есть у специалиста
-        const filteredServices = category.services.filter((service) =>
-          specialistServicesIds.includes(service.id)
-        );
-        return {
-          ...category,
-          services: filteredServices,
-        };
-      })
-      .filter((category) => category.services.length > 0); // Убираем категории без услуг
+    // console.log("here");
+    // // Иначе выбираем только те категории и данные, которые соответствуют специалисту
+    // return businessStore.selectedBusiness.categories
+    //   .map((category) => {
+    //     // Фильтрация услуг в каждой категории по id, которые есть у специалиста
+    //     const filteredServices = category.services.filter((service) =>
+    //       specialistServicesIds.includes(service.id)
+    //     );
+    //     return {
+    //       ...category,
+    //       services: filteredServices,
+    //     };
+    //   })
+    //   .filter((category) => category.services.length > 0); // Убираем категории без услуг
   }
 });
 
@@ -66,29 +67,13 @@ const hasSelectedServices = computed(() => {
 
 const specialistsWithSelectedService = computed(() => {
   const selectedServiceIds = Object.keys(userStore.selectedServices);
-
-  if (selectedServiceIds.length === 0) {
-    return [];
-  }
   const specialists = businessStore.selectedBusiness.specialists;
-  return specialists.filter(
-    (specialist) =>
-      specialist.categories &&
-      specialist.categories.some(
-        (category) =>
-          category.services &&
-          category.services.some((service) =>
-            selectedServiceIds.includes(service.id)
-          )
-      )
-  );
+
+  return getMatchingSpecialists(specialists, selectedServiceIds);
 });
 
 watch(specialistsWithSelectedService, (newVal) => {
-  console.log(
-    "Специалисты с выбранной услугой:",
-    newVal.map((s) => s.name)
-  );
+  // userStore.setSelectedSpecialist(newVal);
 });
 
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу

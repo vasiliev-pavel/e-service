@@ -46,17 +46,12 @@ const businessStore = useBusinessStore();
 const filteredSpecialists = computed(() => {
   // Если selectedServices не пуст, фильтруем специалистов
   if (Object.keys(userStore.selectedServices).length > 0) {
-    const selectedServiceIds = Object.keys(userStore.selectedServices);
-
     //Ищем совпадения по выбранному сервису у всех специалистов
     //чтобы потом отообразить их в провайдерах
-    return businessStore.selectedBusiness.specialists?.filter((specialist) =>
-      specialist.categories?.some((category) =>
-        category.services?.some((service) =>
-          selectedServiceIds.includes(service.id)
-        )
-      )
-    );
+    const selectedServiceIds = Object.keys(userStore.selectedServices);
+    const specialists = businessStore.selectedBusiness.specialists;
+
+    return getMatchingSpecialists(specialists, selectedServiceIds);
   } else {
     // Если selectedServices пуст, возвращаем всех специалистов
     return businessStore.selectedBusiness.specialists

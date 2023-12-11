@@ -15,8 +15,7 @@
         :key="item.id"
         class="flex items-center justify-between py-1"
         :class="{
-          'text-disabl':
-            isAnyServiceSelected && !store.selectedServices[item.id],
+          'text-disabl': !isServiceAvailable(item.id),
         }"
       >
         <label :for="item.id" class="flex items-center cursor-pointer">
@@ -27,7 +26,14 @@
             :checked="store.selectedServices[item.id]"
             :disabled="!isServiceAvailable(item.id)"
             @change="
-              onChange(item.id, item.name, item.price, item.duration, title)
+              () =>
+                store.toggleCheckbox(
+                  item.id,
+                  item.name,
+                  item.price,
+                  item.duration,
+                  title
+                )
             "
           />
           <span class="ml-2 text-gray-700"
@@ -46,15 +52,28 @@ import { useUserStore } from "@/stores/user";
 const props = defineProps({
   title: String,
   items: Array,
+  specialistsWithSelectedService: Array,
 });
 
 const store = useUserStore();
 const isListOpen = ref(false);
 
 const hasItems = computed(() => props.items && props.items.length > 0);
-const isAnyServiceSelected = computed(() => {
-  return Object.keys(store.selectedServices).length > 0;
-});
+
+const isServiceAvailable = (serviceId) => {
+  const selectedServiceIds = [
+    ...Object.keys(store.selectedServices),
+    serviceId,
+  ];
+
+  return props.specialistsWithSelectedService.some((specialist) =>
+    selectedServiceIds.every((id) =>
+      specialist.categories.some((category) =>
+        category.services?.some((service) => service.id === id)
+      )
+    )
+  );
+};
 </script>
 
 <style scoped>
