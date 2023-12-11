@@ -1,12 +1,5 @@
 <template>
   <SearchBody />
-
-  <button
-    @click="logout"
-    class="w-full bg-blue-500 text-white p-3 rounded-lg font-semibold text-lg block text-center"
-  >
-    Sign out
-  </button>
 </template>
 
 <script setup lang="ts">
@@ -24,9 +17,4 @@ watchEffect(async () => {
     }
   }
 });
-
-const logout = async () => {
-  await client.auth.signOut();
-  navigateTo("/login");
-};
 </script>

@@ -2,7 +2,8 @@
 
 const isOpen = ref(false);
 const user = useSupabaseUser();
-const user_role = ref('owner');
+const profileStore = useProfileStore();
+const user_role = profileStore.myProfile?.role;
 
 const menuTitle = computed(() => {
     if (user_role.value === 'admin') return 'Admin Panel';
