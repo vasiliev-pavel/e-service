@@ -38,9 +38,11 @@ const filteredCategories = computed(() => {
     : {};
 
   if (specialistServicesIds.length === 0) {
+    console.log("here1");
     // Если  специалист не выбран, возвращаем все категории
     return categories;
   } else {
+    сonsole.log("here");
     // Иначе выбираем только те категории и данные, которые соответствуют специалисту
     return businessStore.selectedBusiness.categories
       .map((category) => {
@@ -62,9 +64,32 @@ const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
 
-// watchEffect(() => {
-//   console.log(filteredCategories);
-// });
+const specialistsWithSelectedService = computed(() => {
+  const selectedServiceIds = Object.keys(userStore.selectedServices);
+
+  if (selectedServiceIds.length === 0) {
+    return [];
+  }
+  const specialists = businessStore.selectedBusiness.specialists;
+  return specialists.filter(
+    (specialist) =>
+      specialist.categories &&
+      specialist.categories.some(
+        (category) =>
+          category.services &&
+          category.services.some((service) =>
+            selectedServiceIds.includes(service.id)
+          )
+      )
+  );
+});
+
+watch(specialistsWithSelectedService, (newVal) => {
+  console.log(
+    "Специалисты с выбранной услугой:",
+    newVal.map((s) => s.name)
+  );
+});
 
 // // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
 useRouteLeaveGuard();

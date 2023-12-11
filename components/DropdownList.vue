@@ -14,6 +14,10 @@
         v-for="item in items"
         :key="item.id"
         class="flex items-center justify-between py-1"
+        :class="{
+          'text-disabl':
+            isAnyServiceSelected && !store.selectedServices[item.id],
+        }"
       >
         <label :for="item.id" class="flex items-center cursor-pointer">
           <input
@@ -21,15 +25,9 @@
             :id="item.id"
             class="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500 border-gray-300"
             :checked="store.selectedServices[item.id]"
+            :disabled="!isServiceAvailable(item.id)"
             @change="
-              () =>
-                store.toggleCheckbox(
-                  item.id,
-                  item.name,
-                  item.price,
-                  item.duration,
-                  title
-                )
+              onChange(item.id, item.name, item.price, item.duration, title)
             "
           />
           <span class="ml-2 text-gray-700"
@@ -54,4 +52,13 @@ const store = useUserStore();
 const isListOpen = ref(false);
 
 const hasItems = computed(() => props.items && props.items.length > 0);
+const isAnyServiceSelected = computed(() => {
+  return Object.keys(store.selectedServices).length > 0;
+});
 </script>
+
+<style scoped>
+.text-disabl span {
+  color: #a0aec0 !important; /* Пример серого цвета, указывающего на неактивность */
+}
+</style>
