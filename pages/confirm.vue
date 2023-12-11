@@ -5,22 +5,25 @@ const user = useSupabaseUser();
 
 const userID = user?.value?.id;
 const profileStore = useProfileStore();
-// asd
+
+const isLoading = ref(false);
+
 watch(
   user,
   async () => {
+    isLoading.value = true;
     if (user.value) {
       await profileStore.fetchMyProfile(userID);
       await profileStore.fetchMyBusinesses(userID);
-
+      isLoading.value = false;
       navigateTo("/");
     }
   },
   { immediate: true }
 );
 </script>
-<!-- //sadssa -->
-<!-- gi3a status -->
+
+
 <template>
-  <div>Waiting for login...</div>
+  <Loader :is-loading="true" />
 </template>
