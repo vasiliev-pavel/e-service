@@ -33,30 +33,26 @@ const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
 const filteredCategories = computed(() => {
-  const specialistServicesIds = userStore?.selectedSpecialist || [];
+  const selectedSpecialist = userStore.selectedSpecialist ?? [];
   const categories = businessStore.selectedBusiness.categories
     ? businessStore.selectedBusiness.categories
     : {};
 
-  if (specialistServicesIds.length === 0) {
-    // console.log("here1");
+  if (selectedSpecialist.length === 0) {
     // Если  специалист не выбран, возвращаем все категории
     return categories;
   } else {
-    // console.log("here");
-    // // Иначе выбираем только те категории и данные, которые соответствуют специалисту
-    // return businessStore.selectedBusiness.categories
-    //   .map((category) => {
-    //     // Фильтрация услуг в каждой категории по id, которые есть у специалиста
-    //     const filteredServices = category.services.filter((service) =>
-    //       specialistServicesIds.includes(service.id)
-    //     );
-    //     return {
-    //       ...category,
-    //       services: filteredServices,
-    //     };
-    //   })
-    //   .filter((category) => category.services.length > 0); // Убираем категории без услуг
+    // Иначе выбираем только те категории и данные, которые соответствуют специалисту
+    const specialists = businessStore.selectedBusiness.specialists ?? [];
+
+    // Убираем категории без услуг
+    return (
+      specialists
+        .find((specialist) => specialist.id === selectedSpecialist.id)
+        ?.categories.filter(
+          (category) => category.services && category.services.length > 0
+        ) ?? []
+    );
   }
 });
 
