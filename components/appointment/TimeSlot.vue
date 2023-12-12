@@ -96,6 +96,6 @@ const selectTime = (time) => {
 
   // console.log(selectedDateTime);
   // Программный переход на страницу appointment
-  router.push("/appointment");
+  router.push("/user/appointment");
 };
 </script>

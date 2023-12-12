@@ -18,7 +18,7 @@ export const useBusinessStore = defineStore(
     const setCategories = (newData) => {
       // categories.value = newData;
     };
-
+    // Получение cпециалистов и услуги которые они выполняют
     const fetchAllData = async (salonId) => {
       const { data: businessData } = await useFetch(
         `/api/user/businesses/${salonId}`
@@ -26,7 +26,10 @@ export const useBusinessStore = defineStore(
       selectedBusiness.value = businessData.value.data;
     };
 
-    // Получение cпециалистов и услуги которые они выполняют
+    const resetSelected = () => {
+      selectedBusiness.value = {};
+      selectedSalonId.value = null;
+    };
 
     //следим за выбранным пользователем салоном
     //и если он выбрал новый, то обновляем данные
@@ -42,6 +45,7 @@ export const useBusinessStore = defineStore(
       selectedSalonId,
       setBusiness,
       setCategories,
+      resetSelected,
     };
   },
   { persist: true }

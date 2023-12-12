@@ -30,16 +30,11 @@ const selectSalon = (salon) => {
   user.setSelectedSalon({ id: salon.id, title: salon.name });
   // localStorage.setItem("selectedSalon", JSON.stringify(salon));
   // Navigate to a new page, for example, '/salon-details'
-  router.push("/booking");
+  router.push("/user/booking");
 };
 
 onMounted(() => {
   if (!process.client) return;
-
-  // const businessesData = localStorage.getItem("businesses");
-  // const categoriesData = localStorage.getItem("categories");
-
-  // if (businessesData) businessStore.setBusiness(JSON.parse(businessesData));
-  // if (categoriesData) businessStore.setCategories(JSON.parse(categoriesData));
+  businessStore.resetSelected();
 });
 </script>

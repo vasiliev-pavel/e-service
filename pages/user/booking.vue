@@ -11,11 +11,11 @@
     <!-- Update the grid to have 2 columns and adjust the width as necessary -->
     <div class="flex-grow flex flex-col items-center">
       <div class="grid grid-cols-2 gap-4 max-w-md">
-        <NuxtLink to="/services">
+        <NuxtLink to="/user/services">
           <SelectService label="Select services" />
         </NuxtLink>
 
-        <NuxtLink to="/providers">
+        <NuxtLink to="/user/providers">
           <SelectService label="Select provider" />
         </NuxtLink>
       </div>
@@ -32,4 +32,11 @@ const businessStore = useBusinessStore();
 // Создаем вычисляемое свойство
 const nameBusiness = computed(() => userStore.selectedSalon.title);
 const userStore = useUserStore();
+
+onMounted(() => {
+  if (!process.client) return;
+  userStore.resetSelectedServices();
+  userStore.resetSelectedSpecialist();
+});
+useRouteLeaveGuard();
 </script>

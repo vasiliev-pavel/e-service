@@ -11,12 +11,9 @@
             :key="specialist.name"
             @click="selectSpecialist(specialist)"
           >
+            <!-- src="`cat.jpg`" -->
             <div class="w-10 h-10 mr-3">
-              <img
-                class="rounded-full"
-                :src="`cat.jpg`"
-                :alt="specialist.name"
-              />
+              <img class="rounded-full" :alt="specialist.name" />
             </div>
             <div class="flex flex-col">
               <span class="font-semibold text-gray-900">{{
@@ -68,8 +65,8 @@ function selectSpecialist(specialist) {
   });
 
   if (Object.keys(userStore.selectedServices).length === 0) {
-    router.push("/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги
-  } else router.push("/book-appointment");
+    router.push("/user/services"); // Перенаправление на страницу услуг, в случае если не выбраны услуги
+  } else router.push("/user/book-appointment");
   // Перенаправление на страницу записи или другое действие
 }
 

@@ -1,37 +1,32 @@
-import { onBeforeRouteLeave } from "vue-router";
-import { useUserStore } from "~/stores/user";
-
 export function useRouteLeaveGuard() {
   const userStore = useUserStore();
-
   onBeforeRouteLeave((to, from) => {
-    // Сброс состояния при переходе с страницы провайдеров на страницу услуг, если выбраны услуги
+    const isLeavingProviders = from.path === "/user/providers";
+    const isLeavingServices = from.path === "/user/services";
+    const isGoingToServices = to.path === "/user/services";
+    const isGoingToProviders = to.path === "/user/providers";
+    const isGoingToBooking = to.path === "/user/booking";
+    const hasSelectedServices =
+      Object.keys(userStore.selectedServices).length > 0;
+    const hasSelectedSpecialist = !!userStore.selectedSpecialist;
+
     if (
-      from.path === "/providers" &&
-      to.path === "/services" &&
-      Object.keys(userStore.selectedServices).length > 0
+      // Сброс состояния при переходе с страницы провайдеров на страницу услуг, если выбраны услуги
+      (isLeavingProviders && isGoingToServices && hasSelectedServices) ||
+      // Сброс выбранного специалиста при переходе на страницу бронирования
+      (isLeavingProviders && isGoingToBooking)
     ) {
       userStore.resetSelectedSpecialist();
     }
 
-    // Сброс выбранного специалиста при переходе на страницу бронирования
-    if (from.path === "/providers" && to.path === "/booking") {
-      userStore.resetSelectedSpecialist();
-    }
-
-    // Сброс выбранных услуг при переходе с страницы услуг на страницу провайдеров, если выбран специалист
     if (
-      from.path === "/services" &&
-      to.path === "/providers" &&
-      userStore.selectedSpecialist
+      // Сброс выбранных услуг при переходе с страницы услуг на страницу провайдеров, если выбран специалист
+      (isLeavingServices && isGoingToProviders && hasSelectedSpecialist) ||
+      // Сброс всего при переходе на страницу бронирования
+      (isLeavingServices && isGoingToBooking)
     ) {
-      userStore.resetSelectedServices();
-    }
-
-    // Сброс всего при переходе на страницу бронирования
-    if (from.path === "/services" && to.path === "/booking") {
-      userStore.resetSelectedServices();
       userStore.resetSelectedSpecialist();
+      userStore.resetSelectedServices();
     }
   });
 }
