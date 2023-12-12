@@ -78,7 +78,9 @@
 <script setup>
 import { ref } from "vue";
 import SelectedServices from "~/components/appointment/SelectedServices.vue";
-
+definePageMeta({
+  middleware: ["no-back-navigation"],
+});
 const userStore = useUserStore();
 const useBusiness = useBusinessStore();
 const router = useRouter();

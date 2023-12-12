@@ -3,6 +3,10 @@
 </template>
 
 <script setup lang="ts">
+definePageMeta({
+  middleware: ["no-back-navigation"],
+});
+
 const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
@@ -17,4 +21,5 @@ watchEffect(async () => {
     }
   }
 });
+// useRouteLeaveGuard();
 </script>
