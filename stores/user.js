@@ -37,7 +37,7 @@ export const useUserStore = defineStore(
         },
         {}
       );
-      selectedSpecialist.value.appointments = appointmentsObject;
+      selectedSpecialist.value.appointments = appointmentsObject ?? null;
     };
 
     const setFirstPageVisited = (page) => {

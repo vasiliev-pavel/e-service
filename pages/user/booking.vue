@@ -28,10 +28,10 @@ import { computed } from "vue";
 import { useBusinessStore } from "~/stores/business";
 
 const businessStore = useBusinessStore();
+const userStore = useUserStore();
 
 // Создаем вычисляемое свойство
-const nameBusiness = computed(() => userStore.selectedSalon.title);
-const userStore = useUserStore();
+const nameBusiness = ref(userStore.selectedSalon.title);
 
 onMounted(() => {
   if (!process.client) return;
