@@ -25,6 +25,21 @@ export const useUserStore = defineStore(
       selectedSalon.value = salon;
     };
 
+    const getSpecialistAppointments = async (speciliastId) => {
+      const { data: specialistAppointments } = await useFetch(
+        `/api/user/appointments/${speciliastId}`
+      );
+
+      const appointmentsObject = specialistAppointments.value.data.reduce(
+        (acc, appointment) => {
+          acc[appointment.id] = appointment;
+          return acc;
+        },
+        {}
+      );
+      selectedSpecialist.value.appointments = appointmentsObject;
+    };
+
     const setFirstPageVisited = (page) => {
       if (!firstPageVisited.value) {
         firstPageVisited.value = page;
@@ -65,6 +80,13 @@ export const useUserStore = defineStore(
       selectedSalon.value = null;
       selectedDateAndTime.value = {};
     };
+
+    watch(selectedSpecialist, async (newSpecialist, oldSpecialist) => {
+      if (selectedSpecialist)
+        if (newSpecialist && newSpecialist !== oldSpecialist) {
+          await getSpecialistAppointments(newSpecialist.id);
+        }
+    });
 
     return {
       selectedSalon,

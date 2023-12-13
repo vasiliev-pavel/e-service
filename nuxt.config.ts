@@ -29,5 +29,8 @@ export default defineNuxtConfig({
       callback: "/confirm",
       exclude: [],
     },
+    // realtime: {
+    //   eventsPerSecond: 2,
+    // },
   },
 });

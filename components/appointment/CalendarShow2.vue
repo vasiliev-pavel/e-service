@@ -42,10 +42,6 @@ const userStore = useUserStore();
 
 const selectedDate = ref(moment());
 
-// const availability = computed(() => {
-//   userStore.selectedSpecialist.availability || {};
-// });
-
 const now = moment(); // Базовая дата, которая будет использоваться для всех расчетов
 const visibleCount = 7;
 const startIndex = ref(0);
