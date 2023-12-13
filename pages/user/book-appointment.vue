@@ -26,14 +26,36 @@ import CalendarShow2 from "~/components/appointment/CalendarShow2.vue";
 import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const specialistName = userStore.selectedSpecialist.name;
+const supabase = useSupabaseClient();
 
 // Данные для вкладок
 const tabsItems = [
   { slot: "tab1", label: specialistName },
   { slot: "tab2", label: "Все доступные" },
 ];
+let appointmentChanges;
 
-// Компоненты SpecialistCalendar и AllSpecialistsCalendar - это компоненты, которые вы должны создать или импортировать.
+onMounted(() => {
+  // Инициализация подписки на события
+  appointmentChanges = supabase
+    .channel("schema-db-changes")
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "appointments" },
+      (payload) => {
+        console.log("New appointment added:", payload);
+      }
+    )
+    .subscribe();
+});
+
+onBeforeUnmount(() => {
+  // Отписка от событий при уходе со страницы
+  if (appointmentChanges) {
+    // console.log("Отписался от событий");
+    supabase.removeChannel(appointmentChanges);
+  }
+});
 </script>
 
 <style>
