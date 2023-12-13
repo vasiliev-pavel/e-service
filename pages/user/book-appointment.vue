@@ -35,16 +35,37 @@ const tabsItems = [
 ];
 let appointmentChanges;
 
+const addNewAppointments = (payload) => {
+  if (!payload.new) {
+    console.error("Payload does not contain new data");
+    return null;
+  }
+
+  const { date_time, id, service_id, specialist_id, status } = payload.new;
+
+  console.log("Появилась новая запись");
+
+  userStore.specialistAppointments[id] = {
+    dateTime: date_time,
+    serviceId: service_id,
+    specialistId: specialist_id,
+    status: status,
+  };
+};
+
 onMounted(() => {
   // Инициализация подписки на события
   appointmentChanges = supabase
     .channel("schema-db-changes")
     .on(
       "postgres_changes",
-      { event: "INSERT", schema: "public", table: "appointments" },
-      (payload) => {
-        console.log("New appointment added:", payload);
-      }
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "appointments",
+        filter: `specialist_id=eq.${userStore.selectedSpecialist.id}`,
+      },
+      addNewAppointments
     )
     .subscribe();
 });

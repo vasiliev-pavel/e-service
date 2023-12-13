@@ -16,12 +16,13 @@ export default defineEventHandler(async (event) => {
   const { data, error } = await client
     .from("appointments")
     .select("id,date_time,service_id,status")
-    .eq("specialist_id", speciliastId)
-    .gte("date_time", now); // Использование текущего времени в формате ISO 8601
+    .eq("specialist_id", speciliastId);
+  // .gte("date_time", now); // Использование текущего времени в формате ISO 8601
 
   if (error) {
     console.error(error);
     return { error };
   }
+
   return { data };
 });
