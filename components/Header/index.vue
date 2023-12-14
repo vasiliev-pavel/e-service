@@ -3,21 +3,23 @@
 const isOpen = ref(false);
 const user = useSupabaseUser();
 const profileStore = useProfileStore();
-const user_role = profileStore.myProfile?.role;
+const user_role = profileStore?.myProfile?.role;
 
 const menuTitle = computed(() => {
-    if (user_role.value === 'admin') return 'Admin Panel';
-    else if (user_role.value === 'owner') return 'Bussiness Dashboard';
-    else if (user_role.value === 'specialist') return 'Specialist Dashboard';
+    if (user_role === 'admin') return 'Admin Panel';
+    else if (user_role === 'owner') return 'Bussiness Dashboard';
+    else if (user_role === 'specialist') return 'Specialist Dashboard';
     else return 'Customer Dashboard';
 });
+
 
 </script>
 
 <template>
     <div v-if="user" class="flex justify-between align-center">
         <UButton class="text-3xl my-4 p-4" trailing-icon="i-heroicons-bars-3-20-solid" @click="isOpen = true" />
-        <HeaderBusinessButton />
+
+        <HeaderBusinessButton v-if="user_role === 'owner'" />
         <span />
 
         <USlideover v-model="isOpen" side="left">
