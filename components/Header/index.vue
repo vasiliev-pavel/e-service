@@ -4,6 +4,7 @@ const isOpen = ref(false);
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const profileStore = useProfileStore();
+const user_role = profileStore?.myProfile?.role;
 
 const logout = async () => {
     await client.auth.signOut();
@@ -14,6 +15,7 @@ const logout = async () => {
 <template>
     <div v-if="user" class="flex justify-between align-center">
         <UButton class="text-3xl my-4 p-4" trailing-icon="i-heroicons-bars-3-20-solid" @click="isOpen = true" />
+        <HeaderBusiness v-if="user_role === 'owner'" />
         <span />
 
         <USlideover v-model="isOpen" side="left">

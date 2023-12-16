@@ -9,7 +9,6 @@ export const useProfileStore = defineStore(
     const currentBusiness = ref(null);
 
     const setCurrentBusiness = (businessId) => {
-      console.log(businessId)
       const business = myBusinesses.value.find(b => b.id === businessId);
       if (business) {
         currentBusiness.value = business;
@@ -52,6 +51,9 @@ export const useProfileStore = defineStore(
 
         const { data } = await response.json();
         myBusinesses.value = data;
+        if (data.length > 0) {
+          setCurrentBusiness(data[0].id);
+        }
       } catch (error) {
         console.error("Error fetching businesses:", error.message);
       }

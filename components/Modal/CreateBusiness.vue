@@ -1,15 +1,13 @@
 <script setup>
-import { ref } from "vue";
-
 const toast = useToast();
 const props = defineProps({
-  isOpen: Boolean,
+  isOpenCreate: Boolean,
 });
 
-const emits = defineEmits(["update:isOpen"]);
+const emits = defineEmits(["update:isOpenCreate"]);
 
 const closeModal = () => {
-  emits("update:isOpen", false);
+  emits("update:isOpenCreate", false);
 };
 
 const user = useSupabaseUser();
@@ -38,36 +36,21 @@ async function onSubmit(event) {
 }
 </script>
 <template>
-  <UModal v-model="props.isOpen" prevent-close>
-    <UCard
-      :ui="{
-        ring: '',
-        divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-      }"
-    >
+  <UModal v-model="props.isOpenCreate" prevent-close>
+    <UCard :ui="{
+      ring: '',
+      divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+    }">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3
-            class="text-base font-semibold leading-6 text-gray-900 dark:text-white"
-          >
+          <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
             New Business
           </h3>
-          <UButton
-            color="gray"
-            variant="ghost"
-            icon="i-heroicons-x-mark-20-solid"
-            class="-my-1"
-            @click="closeModal"
-          />
+          <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1" @click="closeModal" />
         </div>
       </template>
 
-      <UForm
-        :validate="validate"
-        :state="state"
-        class="space-y-4"
-        @submit="onSubmit"
-      >
+      <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
         <UFormGroup label="Business Name" name="name">
           <UInput v-model="state.name" />
         </UFormGroup>
