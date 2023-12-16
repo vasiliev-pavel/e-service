@@ -13,11 +13,12 @@ const closeModal = () => {
 };
 
 const user = useSupabaseUser();
+const profileStore = useProfileStore();
 const userID = user.value.id;
 
 const state = reactive({
     name: undefined,
-    owner_id: userID,
+    business_id: profileStore.currentBusiness.id,
 });
 
 const response = ref(null);
@@ -25,13 +26,11 @@ const response = ref(null);
 const validate = (state) => {
     const errors = [];
     if (!state.name) errors.push({ path: "name", message: "Required" });
-    if (!state.duration) errors.push({ path: "duration", message: "Required" });
-    if (!state.price) errors.push({ path: "price", message: "Required" });
     return errors;
 };
 
 async function onSubmit(event) {
-    const { data, error } = await useFetch("/api/services/create", {
+    const { data, error } = await useFetch("/api/categories/create", {
         method: "POST",
         body: state,
     });
@@ -59,14 +58,6 @@ async function onSubmit(event) {
                 <UFormGroup label="Category Name" name="name">
                     <UInput v-model="state.name" placeholder="Hair Cut" />
                 </UFormGroup>
-                <!-- <UFormGroup label="Category" name="category">
-                    <USelect v-model="category" :options="categories" option-attribute="category" />
-                </UFormGroup> -->
-                <!-- <UFormGroup label="Specialist" name="specialist">
-                    <USelect v-model="specialist" :options="specialists" option-attribute="specialist" />
-                </UFormGroup> -->
-
-
                 <UButton type="submit"> Create </UButton>
             </UForm>
         </UCard>
