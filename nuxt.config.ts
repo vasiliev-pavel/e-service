@@ -2,7 +2,7 @@
 
 export default defineNuxtConfig({
   css: [
-    "~/assets/css/main.css", // Путь к вашему файлу CSS
+    "~/assets/css/main.css",
   ],
   devtools: { enabled: true },
   devServer: {

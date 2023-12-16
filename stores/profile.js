@@ -6,6 +6,17 @@ export const useProfileStore = defineStore(
   () => {
     const myBusinesses = ref([]);
     const myProfile = ref(null);
+    const currentBusiness = ref(null);
+
+    const setCurrentBusiness = (businessId) => {
+      console.log(businessId)
+      const business = myBusinesses.value.find(b => b.id === businessId);
+      if (business) {
+        currentBusiness.value = business;
+      } else {
+        console.error("Business not found:", businessId);
+      }
+    };
 
     const fetchMyProfile = async (userId) => {
       try {
@@ -21,6 +32,7 @@ export const useProfileStore = defineStore(
 
         const { data } = await response.json();
         myProfile.value = data;
+        return data;
       } catch (error) {
         console.error("Error fetching profile:", error.message);
       }
@@ -45,11 +57,20 @@ export const useProfileStore = defineStore(
       }
     };
 
+    const resetProfile = () => {
+      myBusinesses = [];
+      myProfile = null;
+      currentBusiness = null;
+    };
+
     return {
       myBusinesses,
       myProfile,
+      currentBusiness,
+      setCurrentBusiness,
       fetchMyProfile,
       fetchMyBusinesses,
+      resetProfile
     };
   },
   { persist: true }

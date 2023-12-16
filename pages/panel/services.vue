@@ -6,6 +6,8 @@ const toggleModal = () => {
 const isOpen = ref(false);
 const user = useSupabaseUser();
 const userID = user.value.id;
+const profileStore = useProfileStore();
+
 
 const services = ref([]);
 
@@ -15,7 +17,6 @@ const { data } = await useFetch('/api/services/get_services_by_owner_json', {
 });
 
 services.value = data?.value?.data;
-console.log(services)
 
 
 </script>
