@@ -3,6 +3,7 @@ import moment from "moment";
 
 export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient(event);
+
   const now = moment().toISOString(); // Преобразование текущего времени в строку ISO 8601
   // Получение динамического параметра salonId из URL
   const speciliastId = event.context.params?.speciliastId;

@@ -9,7 +9,7 @@ export const useProfileStore = defineStore(
     const currentBusiness = ref(null);
 
     const setCurrentBusiness = (businessId) => {
-      const business = myBusinesses.value.find(b => b.id === businessId);
+      const business = myBusinesses.value.find((b) => b.id === businessId);
       if (business) {
         currentBusiness.value = business;
       } else {
@@ -60,9 +60,9 @@ export const useProfileStore = defineStore(
     };
 
     const resetProfile = () => {
-      myBusinesses = [];
-      myProfile = null;
-      currentBusiness = null;
+      myBusinesses.value = [];
+      myProfile.value = null;
+      currentBusiness.value = null;
     };
 
     return {
@@ -72,7 +72,7 @@ export const useProfileStore = defineStore(
       setCurrentBusiness,
       fetchMyProfile,
       fetchMyBusinesses,
-      resetProfile
+      resetProfile,
     };
   },
   { persist: true }

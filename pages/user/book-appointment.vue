@@ -27,7 +27,7 @@ import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const specialistName = userStore.selectedSpecialist.name;
 const supabase = useSupabaseClient();
-
+// supabase.
 // Данные для вкладок
 const tabsItems = [
   { slot: "tab1", label: specialistName },

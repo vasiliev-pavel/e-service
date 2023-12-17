@@ -1,9 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
 export default defineNuxtConfig({
-  css: [
-    "~/assets/css/main.css",
-  ],
+  css: ["~/assets/css/main.css"],
   devtools: { enabled: true },
   devServer: {
     host: "0.0.0.0",
@@ -23,6 +21,7 @@ export default defineNuxtConfig({
   supabase: {
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
+    serviceKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
     redirect: true,
     redirectOptions: {
       login: "/login",

@@ -15,11 +15,18 @@
         </a>
       </li>
     </ul>
+    <a
+      @click="button()"
+      class="text-white block p-4 rounded hover:bg-gray-50 hover:text-black"
+    >
+      <p class="font-semibold">Сообщение</p>
+    </a>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from "vue-router";
+
 const businessStore = useBusinessStore();
 const router = useRouter();
 const user = useUserStore();
@@ -33,8 +40,13 @@ const selectSalon = (salon) => {
   router.push("/user/booking");
 };
 
-onMounted(() => {
+onMounted(async () => {
   if (!process.client) return;
   businessStore.resetSelected();
 });
+
+const button = () => {
+  const { data: data } = useFetch("/api/user/appointments");
+  console.log(data.value);
+};
 </script>
