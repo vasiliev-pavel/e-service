@@ -1,6 +1,5 @@
 <script setup>
-import { ref } from "vue";
-
+const loaderStore = useLoaderStore();
 const toast = useToast();
 const props = defineProps({
     isOpen: Boolean,
@@ -30,11 +29,13 @@ const validate = (state) => {
 };
 
 async function onSubmit(event) {
+    loaderStore.show();
     const { data, error } = await useFetch("/api/categories/create", {
         method: "POST",
         body: state,
     });
     closeModal();
+    loaderStore.hide();
     toast.add({ title: "Category Created Successfully" });
 }
 </script>

@@ -1,27 +1,31 @@
 <script setup lang="ts">
 import { watch } from "vue";
 
-const isLoading = ref(false);
+
+const loaderStore = useLoaderStore();
 const user = useSupabaseUser();
 const profileStore = useProfileStore();
 
 watch(
   user,
   async () => {
-    // Modal
-    isLoading.value = true;
+    // Показать загрузчик
+    loaderStore.show();
     if (user.value) {
       // Fetch Profile Data
       const profile = await profileStore.fetchMyProfile(user.value.id);
       if (profile.role === 'owner') {
         await profileStore.fetchMyBusinesses(user.value.id);
+        loaderStore.hide();
         navigateTo("/panel");
       }
       if (profile.role === 'specialist') {
         await profileStore.fetchMyBusinesses(user.value.id);
+        loaderStore.hide();
         navigateTo("/panel");
       }
       if (profile.role === 'customer') {
+        loaderStore.hide();
         navigateTo("/");
       }
     }
@@ -30,7 +34,3 @@ watch(
 );
 </script>
 
-
-<template>
-  <Loader :is-loading="true" />
-</template>

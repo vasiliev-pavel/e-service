@@ -16,6 +16,7 @@ const { data } = await useFetch("/api/user/businesses");
 
 watchEffect(async () => {
   if (user.value) {
+    await client.auth.signOut();
     userStore.resetSelected();
     profileStore.resetProfile();
   }

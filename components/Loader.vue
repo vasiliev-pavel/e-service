@@ -5,11 +5,8 @@
 </template>
   
 <script setup>
-import { defineProps } from 'vue';
-
-const props = defineProps({
-    isLoading: Boolean
-});
+const loaderStore = useLoaderStore();
+const isLoading = computed(() => loaderStore.isLoading);
 </script>
   
 <style scoped>

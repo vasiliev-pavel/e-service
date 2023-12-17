@@ -6,4 +6,5 @@
     </main>
     <UNotifications />
   </UContainer>
+  <Loader />
 </template>

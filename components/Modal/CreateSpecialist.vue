@@ -13,28 +13,30 @@ const closeModal = () => {
 };
 
 const user = useSupabaseUser();
+const profileStore = useProfileStore();
 const userID = user.value.id;
 
 const state = reactive({
-    name: undefined,
-    owner_id: userID,
+    full_name: undefined,
+    business_id: profileStore.currentBusiness.id,
+    role: 'specialist'
 });
+
+const response = ref(null);
 
 const validate = (state) => {
     const errors = [];
-    if (!state.name) errors.push({ path: "name", message: "Required" });
-    if (!state.duration) errors.push({ path: "duration", message: "Required" });
-    if (!state.price) errors.push({ path: "price", message: "Required" });
+    if (!state.full_name) errors.push({ path: "full_name", message: "Required" });
     return errors;
 };
 
 async function onSubmit(event) {
-    const { data, error } = await useFetch("/api/services/create", {
+    const { data, error } = await useFetch("/api/specialists/create", {
         method: "POST",
         body: state,
     });
     closeModal();
-    toast.add({ title: "Service Created Successfully" });
+    toast.add({ title: "Specialist Added Successfully" });
 }
 </script>
 <template>
@@ -46,7 +48,7 @@ async function onSubmit(event) {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-base font-semibold leading-6 text-gray-900 dark:text-white">
-                        New Service
+                        New Specialist
                     </h3>
                     <UButton color="gray" variant="ghost" icon="i-heroicons-x-mark-20-solid" class="-my-1"
                         @click="closeModal" />
@@ -54,23 +56,9 @@ async function onSubmit(event) {
             </template>
 
             <UForm :validate="validate" :state="state" class="space-y-4" @submit="onSubmit">
-                <UFormGroup label="Service Name" name="name">
-                    <UInput v-model="state.name" placeholder="Hair Cut" />
+                <UFormGroup label="Full Name" name="full_name">
+                    <UInput v-model="state.full_name" placeholder="Alex Lindman" />
                 </UFormGroup>
-                <UFormGroup label="Duration in Minutes" name="duration">
-                    <UInput v-model="state.duration" placeholder="30" />
-                </UFormGroup>
-                <UFormGroup label="Price in $" name="price">
-                    <UInput v-model="state.price" placeholder="5.99" />
-                </UFormGroup>
-                <!-- <UFormGroup label="Category" name="category">
-                    <USelect v-model="category" :options="categories" option-attribute="category" />
-                </UFormGroup> -->
-                <!-- <UFormGroup label="Specialist" name="specialist">
-                    <USelect v-model="specialist" :options="specialists" option-attribute="specialist" />
-                </UFormGroup> -->
-
-
                 <UButton type="submit"> Create </UButton>
             </UForm>
         </UCard>
