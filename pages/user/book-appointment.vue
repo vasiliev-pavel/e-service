@@ -41,7 +41,8 @@ const addNewAppointments = (payload) => {
     return null;
   }
 
-  const { date_time, id, service_id, specialist_id, status } = payload.new;
+  const { date_time, id, service_id, specialist_id, status, category_id } =
+    payload.new;
 
   console.log("Появилась новая запись");
 
@@ -50,6 +51,7 @@ const addNewAppointments = (payload) => {
     serviceId: service_id,
     specialistId: specialist_id,
     status: status,
+    category_id: category_id,
   };
 };
 

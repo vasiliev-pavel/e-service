@@ -8,18 +8,23 @@
           <div
             class="flex items-center mb-4 bg-slate-300 rounded-lg p-3 cursor-pointer hover:bg-slate-400 transition duration-300 ease-in-out"
             v-for="specialist in filteredSpecialists"
-            :key="specialist.name"
+            :key="specialistsById[specialist].name"
             @click="selectSpecialist(specialist)"
           >
             <!-- src="`cat.jpg`" -->
             <div class="w-10 h-10 mr-3">
-              <img class="rounded-full" :alt="specialist.name" />
+              <img
+                class="rounded-full"
+                :alt="specialistsById[specialist].name"
+              />
             </div>
             <div class="flex flex-col">
               <span class="font-semibold text-gray-900">{{
-                specialist.name
+                specialistsById[specialist].name
               }}</span>
-              <span class="text-gray-600 text-sm">{{ specialist.type }}</span>
+              <span class="text-gray-600 text-sm">{{
+                specialistsById[specialist].type
+              }}</span>
             </div>
           </div>
         </div>
@@ -38,30 +43,29 @@ import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 const router = useRouter();
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
+const specialistsById = businessStore.selectedBusiness.specialistsById || {};
+const specialistIds = businessStore.selectedBusiness.specialistIds || [];
 
 // Вычисляемое свойство для фильтрации специалистов или отображения всех специалистов
 const filteredSpecialists = computed(() => {
-  // Если selectedServices не пуст, фильтруем специалистов
-  if (Object.keys(userStore.selectedServices).length > 0) {
-    //Ищем совпадения по выбранному сервису у всех специалистов
-    //чтобы потом отообразить их в провайдерах
-    const selectedServiceIds = Object.keys(userStore.selectedServices);
-    const specialists = businessStore.selectedBusiness.specialists;
-
-    return getMatchingSpecialists(specialists, selectedServiceIds);
+  const selectedServiceIds = Object.keys(userStore.selectedServices);
+  if (selectedServiceIds.length > 0) {
+    return specialistIds.filter((id) =>
+      selectedServiceIds.every((serviceId) =>
+        specialistsById[id].serviceIds.includes(serviceId)
+      )
+    );
   } else {
-    // Если selectedServices пуст, возвращаем всех специалистов
-    return businessStore.selectedBusiness.specialists
-      ? businessStore.selectedBusiness.specialists
-      : undefined;
+    return specialistIds;
   }
 });
 
 function selectSpecialist(specialist) {
+  // console.log(specialistsById[specialist]);
   userStore.setSelectedSpecialist({
-    id: specialist.id,
-    name: specialist.name,
-    availability: specialist.availability,
+    id: specialist,
+    name: specialistsById[specialist].name,
+    availability: specialistsById[specialist].availability,
   });
 
   if (Object.keys(userStore.selectedServices).length === 0) {

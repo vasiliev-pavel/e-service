@@ -21,11 +21,16 @@
 <script setup>
 import { ref, computed, watch } from "vue";
 import moment from "moment";
-
+import { durationToMinutes } from "~/utils/appointmentUtils";
+const businessStore = useBusinessStore();
 const userStore = useUserStore();
 const router = useRouter();
 
 const availability = ref(userStore.selectedSpecialist?.availability || {});
+const specialistAppointments = ref(userStore.specialistAppointments || {});
+const categoriesById = businessStore.selectedBusiness.categoriesById || {};
+
+// const servicesById = ref(businessStore.selectedBusiness.servicesById || {});
 
 const props = defineProps({
   selectedDate: Object, // Добавляем prop для выбранной даты
@@ -61,6 +66,8 @@ const workingHours = computed(() => {
 
 // Слоты времени делятся на периоды дня
 const filteredPeriods = computed(() => {
+  const occupiedSlots = getOccupiedSlots();
+  console.log(occupiedSlots);
   const periods = {
     Morning: [],
     Afternoon: [],
@@ -68,13 +75,29 @@ const filteredPeriods = computed(() => {
   };
 
   for (const slot of workingHours.value) {
-    const hour = moment(slot, "HH:mm").hour();
-    if (hour < 12) {
-      periods["Morning"].push(slot);
-    } else if (hour >= 12 && hour < 18) {
-      periods["Afternoon"].push(slot);
-    } else {
-      periods["Evening"].push(slot);
+    const slotMoment = moment(slot, "HH:mm");
+    let isAvailable = true;
+
+    for (const occupied of occupiedSlots) {
+      // Проверяем, начинается ли слот во время выполнения услуги
+      if (
+        slotMoment.isSameOrAfter(occupied.start) &&
+        slotMoment.isBefore(occupied.end)
+      ) {
+        isAvailable = false;
+        break;
+      }
+    }
+
+    if (isAvailable) {
+      const hour = slotMoment.hour();
+      if (hour < 12) {
+        periods["Morning"].push(slot);
+      } else if (hour >= 12 && hour < 18) {
+        periods["Afternoon"].push(slot);
+      } else {
+        periods["Evening"].push(slot);
+      }
     }
   }
 
@@ -94,8 +117,28 @@ const selectTime = (time) => {
   // Сохранение выбранного времени в userStore
   userStore.setSelectedDateTime(selectedDateTime);
 
-  // console.log(selectedDateTime);
   // Программный переход на страницу appointment
   router.push("/user/appointment");
+};
+
+const getOccupiedSlots = () => {
+  return Object.values(specialistAppointments.value)
+    .filter((appointment) => {
+      // console.log(appointment);
+      const appointmentDate = moment(appointment.date_time);
+      // console.log(appointmentDate);
+      return appointmentDate.isSame(props.selectedDate, "day");
+    })
+    .map((appointment) => {
+      const durationStr =
+        categoriesById[appointment.category_id].servicesById[
+          appointment.service_id
+        ].duration;
+      const durationInMinutes = durationToMinutes(durationStr);
+      return {
+        start: moment(appointment.date_time),
+        end: moment(appointment.date_time).add(durationInMinutes, "minutes"),
+      };
+    });
 };
 </script>

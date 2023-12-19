@@ -77,12 +77,15 @@
 
 <script setup>
 import { ref } from "vue";
+import { durationToMinutes } from "~/utils/appointmentUtils";
 import SelectedServices from "~/components/appointment/SelectedServices.vue";
+import moment from "moment";
+
 definePageMeta({
   middleware: ["no-back-navigation"],
 });
 const userStore = useUserStore();
-const useBusiness = useBusinessStore();
+const businessStore = useBusinessStore();
 const router = useRouter();
 
 const specialistName = ref(userStore.selectedSpecialist.name);
@@ -92,6 +95,8 @@ const sum = ref();
 
 const selectedDateTime = ref(userStore.selectedDateAndTime);
 const selectedServices = ref(userStore.selectedServices);
+const categoriesById = businessStore.selectedBusiness.categoriesById || {};
+
 const user = useSupabaseUser();
 
 // Извлечение даты и времени
@@ -99,24 +104,51 @@ const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форм�
 const selectedTime = selectedDateTime.value.format("HH:mm"); //
 const appointmentObject = ref([]);
 
+const calculateStartTimes = () => {
+  let currentTime = selectedDateTime.value.clone();
+  const serviceStartTimes = {};
+
+  Object.keys(selectedServices.value).forEach((serviceId) => {
+    const serviceDuration = durationToMinutes(
+      selectedServices.value[serviceId].duration
+    );
+    serviceStartTimes[serviceId] = currentTime.format();
+    currentTime = currentTime.add(serviceDuration, "minutes");
+  });
+
+  return serviceStartTimes;
+};
+
+const serviceStartTimes = calculateStartTimes();
+
 const totalSum = computed(() => {
   return Object.values(selectedServices.value).reduce((sum, service) => {
     return sum + service.price;
   }, 0);
 });
 
-Object.keys(selectedServices.value).forEach((serviceId) => {
-  appointmentObject.value.push({
-    client_id: user.value.id,
-    specialist_id: specialistId.value,
-    service_id: serviceId,
-    date_time: selectedDateTime.value.utc().toISOString(),
-  });
+watchEffect(() => {
+  const serviceStartTimes = calculateStartTimes();
+  appointmentObject.value = Object.keys(selectedServices.value).map(
+    (serviceId) => {
+      const service = selectedServices.value[serviceId];
+      const startTime = serviceStartTimes[serviceId];
+
+      return {
+        client_id: user.value.id,
+        specialist_id: specialistId.value,
+        service_id: serviceId,
+        date_time: moment(startTime).utc().toISOString(),
+        category_id: service.category_id,
+        business_id: userStore.selectedSalon.id,
+      };
+    }
+  );
 });
 
 const confirmAppointment = async () => {
   try {
-    await $fetch(`/api/appointments/`, {
+    await $fetch(`/api/user/appointments/post`, {
       method: "post",
       body: appointmentObject.value,
     });

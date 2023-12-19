@@ -28,14 +28,5 @@ export function useRouteLeaveGuard() {
       userStore.resetSelectedSpecialist();
       userStore.resetSelectedServices();
     }
-
-    // if (
-    //   // Сброс состояния при переходе с страницы провайдеров на страницу услуг, если выбраны услуги
-    //   from.path === "/" &&
-    //   to.path === "/user/appointment"
-    // ) {
-    //   return abortNavigation();
-    //   console.log("tuta");
-    // }
   });
 }

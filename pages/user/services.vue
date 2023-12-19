@@ -2,11 +2,13 @@
   <div>
     <DropdownList
       v-for="category in filteredCategories"
-      :key="category.category_id"
-      :title="category.category_name"
-      :items="category.services"
-      :specialistsWithSelectedService="specialistsWithSelectedService"
+      :key="category"
+      :categoryId="category"
+      :title="categoriesById[category].category_name"
+      :items="categoriesById[category].servicesById"
+      :serviceIds="categoriesById[category].serviceIds"
     />
+
     <div
       v-show="hasSelectedServices"
       class="flex justify-between items-center text-xl font-bold my-4"
@@ -32,28 +34,30 @@ import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
+const selectedSpecialistId = userStore.selectedSpecialist?.id;
+const categoriesById = businessStore.selectedBusiness.categoriesById || {};
+const specialistsById = businessStore.selectedBusiness.specialistsById || {};
+const categoryIds = businessStore.selectedBusiness.categoryIds || [];
+
 const filteredCategories = computed(() => {
-  const selectedSpecialist = userStore.selectedSpecialist ?? [];
-  const categories = businessStore.selectedBusiness.categories
-    ? businessStore.selectedBusiness.categories
-    : {};
-
-  if (selectedSpecialist.length === 0) {
-    // Если  специалист не выбран, возвращаем все категории
-    return categories;
+  if (!selectedSpecialistId) {
+    // Если специалист не выбран, возвращаем все категории
+    return categoryIds;
   } else {
-    // Иначе выбираем только те категории и данные, которые соответствуют специалисту
-    const specialists = businessStore.selectedBusiness.specialists ?? [];
+    // Выбираем только те категории, которые соответствуют специалисту
+    const specialist = specialistsById[selectedSpecialistId];
 
-    // Убираем категории без услуг
-    return (
-      specialists
-        .find((specialist) => specialist.id === selectedSpecialist.id)
-        ?.categories.filter(
-          (category) => category.services && category.services.length > 0
-        ) ?? []
-    );
+    if (specialist && specialist.categoryIds) {
+      return specialist.categoryIds
+        .map((categoryId) => categoriesById[categoryId])
+        .filter(
+          (category) =>
+            category && category.serviceIds && category.serviceIds.length > 0
+        );
+    }
   }
+
+  return [];
 });
 
 // Вычисляемое свойство, которое возвращает true, если есть выбранные услуги
@@ -61,17 +65,6 @@ const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
 
-const specialistsWithSelectedService = computed(() => {
-  const selectedServiceIds = Object.keys(userStore.selectedServices);
-  const specialists = businessStore.selectedBusiness.specialists;
-
-  return getMatchingSpecialists(specialists, selectedServiceIds);
-});
-
-watch(specialistsWithSelectedService, (newVal) => {
-  // userStore.setSelectedSpecialist(newVal);
-});
-
-// // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
+// Сброс состояния в случае если пользователь вернулся на предыдущую страницу
 useRouteLeaveGuard();
 </script>

@@ -29,6 +29,7 @@ import { useBusinessStore } from "~/stores/business";
 
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
+const isLoading = computed(() => businessStore.selectedBusiness);
 
 // Создаем вычисляемое свойство
 const nameBusiness = ref(userStore.selectedSalon.title);

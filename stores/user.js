@@ -47,13 +47,20 @@ export const useUserStore = defineStore(
       }
     };
 
-    const toggleCheckbox = (id, name, price, duration, category) => {
+    const toggleCheckbox = (
+      id,
+      name,
+      price,
+      duration,
+      category,
+      category_id
+    ) => {
       if (selectedServices[id]) {
         totalSum.value -= price;
         delete selectedServices[id];
       } else {
         totalSum.value += price;
-        selectedServices[id] = { name, category, price, duration };
+        selectedServices[id] = { name, category, price, duration, category_id };
       }
     };
 

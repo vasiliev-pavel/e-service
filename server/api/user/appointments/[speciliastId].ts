@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   // @ts-ignore
   const { data, error } = await client
     .from("appointments")
-    .select("id,date_time,service_id,status")
+    .select("id,date_time,service_id,status,category_id")
     .eq("specialist_id", speciliastId);
   // .gte("date_time", now); // Использование текущего времени в формате ISO 8601
 

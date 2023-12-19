@@ -21,5 +21,5 @@ watchEffect(async () => {
   }
   if (data.value) businessStore.setBusiness(data.value);
 });
-// useRouteLeaveGuard();
+useRouteLeaveGuard();
 </script>
