@@ -1,36 +1,27 @@
 <script setup lang="ts">
 import { watch } from "vue";
 
-
 const loaderStore = useLoaderStore();
 const user = useSupabaseUser();
 const profileStore = useProfileStore();
 
-watch(
-  user,
-  async () => {
-    // Показать загрузчик
+watch(() => user.value, async (newUser, oldUser) => {
+  if (newUser) {
     loaderStore.show();
-    if (user.value) {
-      // Fetch Profile Data
-      const profile = await profileStore.fetchMyProfile(user.value.id);
-      if (profile.role === 'owner') {
-        await profileStore.fetchMyBusinesses(user.value.id);
-        loaderStore.hide();
-        navigateTo("/panel");
-      }
-      if (profile.role === 'specialist') {
-        await profileStore.fetchMyBusinesses(user.value.id);
-        loaderStore.hide();
-        navigateTo("/panel");
-      }
-      if (profile.role === 'customer') {
-        loaderStore.hide();
-        navigateTo("/");
-      }
-    }
-  },
-  { immediate: true }
-);
-</script>
 
+    // Fetch Profile Data
+    const profile = await profileStore.fetchMyProfile(newUser.id);
+
+    if (profile.role === 'owner' || profile.role === 'specialist') {
+      await profileStore.fetchMyBusinesses(newUser.id);
+      navigateTo("/panel");
+    } else if (profile.role === 'customer') {
+      navigateTo("/");
+    }
+
+    // Скрыть загрузчик в любом случае
+    loaderStore.hide();
+  }
+}, { immediate: true });
+
+</script>

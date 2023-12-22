@@ -12,19 +12,15 @@ const menuItems = computed(() => {
         ];
     } else if (user_role === 'customer') {
         return [
-            { title: 'Appointments', url: '/user/appointments', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'My Appointments', url: '/user/appointments', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     } else if (user_role === 'owner') {
         return [
-            { title: 'Companies', url: '/panel/companies', icon: 'i-heroicons-building-storefront-20-solid' },
-            { title: 'Appointments', url: '/panel/appointments', icon: 'i-heroicons-bookmark-square-20-solid' },
-            { title: 'Services', url: '/panel/services', icon: 'i-heroicons-scissors-20-solid' },
-            { title: 'Categories', url: '/panel/categories', icon: 'i-heroicons-tag-20-solid' },
-            { title: 'Specialists', url: '/panel/specialists', icon: 'i-heroicons-users-20-solid' },
+            { title: 'My Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     } else if (user_role === 'specialist') {
         return [
-            { title: 'Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'My Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     }
 });

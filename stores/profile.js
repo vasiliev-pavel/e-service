@@ -7,6 +7,11 @@ export const useProfileStore = defineStore(
     const myBusinesses = ref([]);
     const myProfile = ref(null);
     const currentBusiness = ref(null);
+    const currentDate = ref(null);
+
+    const setCurrentDate = (date) => {
+      currentDate.value = date;
+    };
 
     const setCurrentBusiness = (businessId) => {
       const business = myBusinesses.value.find(b => b.id === businessId);
@@ -60,9 +65,10 @@ export const useProfileStore = defineStore(
     };
 
     const resetProfile = () => {
-      myBusinesses = [];
-      myProfile = null;
-      currentBusiness = null;
+      myBusinesses.value = [];
+      myProfile.value = null;
+      currentBusiness.value = null;
+      currentDate.value = null;
     };
 
     return {
@@ -70,6 +76,7 @@ export const useProfileStore = defineStore(
       myProfile,
       currentBusiness,
       setCurrentBusiness,
+      setCurrentDate,
       fetchMyProfile,
       fetchMyBusinesses,
       resetProfile
