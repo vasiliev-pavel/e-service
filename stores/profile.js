@@ -22,6 +22,10 @@ export const useProfileStore = defineStore(
       }
     };
 
+    const addBusiness = (newBusiness) => {
+      myBusinesses.value.push(newBusiness);
+    };
+
     const fetchMyProfile = async (userId) => {
       try {
         const response = await fetch(`/api/profile`, {
@@ -77,6 +81,7 @@ export const useProfileStore = defineStore(
       currentBusiness,
       setCurrentBusiness,
       setCurrentDate,
+      addBusiness,
       fetchMyProfile,
       fetchMyBusinesses,
       resetProfile

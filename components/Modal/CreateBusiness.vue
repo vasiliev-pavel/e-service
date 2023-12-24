@@ -1,5 +1,6 @@
 <script setup>
 const toast = useToast();
+const profileStore = useProfileStore();
 const props = defineProps({
   isOpenCreate: Boolean,
 });
@@ -31,6 +32,7 @@ async function onSubmit(event) {
     method: "POST",
     body: state,
   });
+  profileStore.addBusiness(data);
   closeModal();
   toast.add({ title: "Business Created Successfully" });
 }

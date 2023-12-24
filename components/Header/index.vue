@@ -5,8 +5,12 @@ const isProfileOpen = ref(false);
 const user = useSupabaseUser();
 const client = useSupabaseClient();
 const profileStore = useProfileStore();
-const user_role = profileStore?.myProfile?.role;
-console.log(profileStore.myProfile)
+
+const isOwner = computed(() => {
+    if (profileStore?.myProfile?.role === 'owner')
+        return true;
+    return false;
+})
 
 const logout = async () => {
     profileStore.resetProfile();
@@ -18,10 +22,10 @@ const logout = async () => {
 <template>
     <header v-if="user" class="flex justify-between align-center sticky top-0 left-0 right-0">
         <UButton class="text-3xl my-4 p-4" trailing-icon="i-heroicons-bars-3-20-solid" @click="isMenuOpen = true" />
-        <HeaderBusiness v-if="user_role === 'owner'" />
+        <HeaderBusiness v-if="isOwner" />
         <UButton class="text-3xl my-4 p-4" trailing-icon="i-heroicons-user-20-solid" @click="isProfileOpen = true" />
 
-        <USlideover v-model="isMenuOpen" side="left" prevent-close>
+        <USlideover v-model="isMenuOpen" side="left">
             <UCard @click="isMenuOpen = false" class="flex flex-col flex-1"
                 :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template class="flex flex-col" #header>
@@ -48,7 +52,7 @@ const logout = async () => {
                 </template>
             </UCard>
         </USlideover>
-        <USlideover v-model="isProfileOpen" side="right" prevent-close>
+        <USlideover v-model="isProfileOpen" side="right">
             <UCard @click="isProfileOpen = false" class="flex flex-col flex-1"
                 :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template class="flex flex-col" #header>
