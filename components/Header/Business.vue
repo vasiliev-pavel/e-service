@@ -14,10 +14,11 @@ const businessName = computed(() => {
 
 <template>
     <UButton class="flex my-4 p-4" @click="toggleModaSelect" v-if="profileStore.currentBusiness">
-        <i class="i-heroicons-building-storefront-20-solid"></i>
-        {{ businessName }}
+        <i class="i-heroicons-map-pin-20-solid mr-2"></i>
+        {{ businessName }} <br />
+        <i class="i-heroicons-chevron-up-down-20-solid ml-1"></i>
     </UButton>
-    <UButton class="text-3xl my-4" @click="toggleModalCreate" v-if="!profileStore.currentBusiness">
+    <UButton class="my-4" @click="toggleModalCreate" v-if="!profileStore.currentBusiness">
         <i class="i-heroicons-plus-20-solid"></i>Create Business
     </UButton>
     <ModalCreateBusiness :is-open-create="isOpenCreate" @update:isOpenCreate="isOpenCreate = $event" />

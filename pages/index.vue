@@ -11,13 +11,11 @@ definePageMeta({
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
-const profileStore = useProfileStore();
 const { data } = await useFetch("/api/user/businesses");
 
 watchEffect(async () => {
   if (user.value) {
     userStore.resetSelected();
-    profileStore.resetProfile();
   }
   if (data.value) businessStore.setBusiness(data.value);
 });
