@@ -13,7 +13,7 @@ export const useProfileStore = defineStore(
       if (business) {
         currentBusiness.value = business;
       } else {
-        console.error("Business not found:", businessId);
+        console.error("Business not found.:", businessId);
       }
     };
 
