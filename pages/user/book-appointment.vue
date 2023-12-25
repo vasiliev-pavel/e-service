@@ -47,9 +47,10 @@ const addNewAppointments = (payload) => {
   console.log("Появилась новая запись");
 
   userStore.specialistAppointments[id] = {
-    dateTime: date_time,
-    serviceId: service_id,
-    specialistId: specialist_id,
+    id: id,
+    date_time: date_time,
+    service_id: service_id,
+    specialist_id: specialist_id,
     status: status,
     category_id: category_id,
   };
@@ -71,7 +72,6 @@ onMounted(() => {
     )
     .subscribe();
 });
-
 onBeforeUnmount(() => {
   // Отписка от событий при уходе со страницы
   if (appointmentChanges) {

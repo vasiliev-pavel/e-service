@@ -15,12 +15,12 @@
         </a>
       </li>
     </ul>
-    <a
+    <!-- <a
       @click="button()"
       class="text-white block p-4 rounded hover:bg-gray-50 hover:text-black"
     >
       <p class="font-semibold">Сообщение</p>
-    </a>
+    </a> -->
   </div>
 </template>
 

@@ -61,7 +61,6 @@ const filteredSpecialists = computed(() => {
 });
 
 function selectSpecialist(specialist) {
-  // console.log(specialistsById[specialist]);
   userStore.setSelectedSpecialist({
     id: specialist,
     name: specialistsById[specialist].name,

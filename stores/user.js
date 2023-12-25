@@ -4,6 +4,7 @@ import { ref, reactive } from "vue";
 export const useUserStore = defineStore(
   "user",
   () => {
+    const isLoading = ref(true);
     const selectedSalon = ref({});
     const firstPageVisited = ref(null);
     const selectedServices = reactive({});
@@ -25,6 +26,7 @@ export const useUserStore = defineStore(
     };
 
     const getSpecialistAppointments = async (speciliastId) => {
+      isLoading.value = true;
       const { data: appointments } = await useFetch(
         `/api/user/appointments/${speciliastId}`
       );
@@ -39,6 +41,7 @@ export const useUserStore = defineStore(
       // console.log(appointmentsObject);
 
       specialistAppointments.value = appointmentsObject ?? null;
+      isLoading.value = false;
     };
 
     const setFirstPageVisited = (page) => {
@@ -106,6 +109,7 @@ export const useUserStore = defineStore(
       selectedSpecialist,
       selectedDateAndTime,
       specialistAppointments,
+      isLoading,
       setSelectedSalon,
       setSelectedDateTime,
       setFirstPageVisited,
