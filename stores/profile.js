@@ -14,11 +14,11 @@ export const useProfileStore = defineStore(
     };
 
     const setCurrentBusiness = (businessId) => {
-      const business = myBusinesses.value.find(b => b.id === businessId);
+      const business = myBusinesses.value.find((b) => b.id === businessId);
       if (business) {
         currentBusiness.value = business;
       } else {
-        console.error("Business not found:", businessId);
+        console.error("Business not found.:", businessId);
       }
     };
 
@@ -72,7 +72,6 @@ export const useProfileStore = defineStore(
       myBusinesses.value = [];
       myProfile.value = null;
       currentBusiness.value = null;
-      currentDate.value = null;
     };
 
     return {
@@ -84,7 +83,7 @@ export const useProfileStore = defineStore(
       addBusiness,
       fetchMyProfile,
       fetchMyBusinesses,
-      resetProfile
+      resetProfile,
     };
   },
   { persist: true }

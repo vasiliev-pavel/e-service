@@ -27,7 +27,7 @@ import { useUserStore } from "~/stores/user";
 const userStore = useUserStore();
 const specialistName = userStore.selectedSpecialist.name;
 const supabase = useSupabaseClient();
-
+// supabase.
 // Данные для вкладок
 const tabsItems = [
   { slot: "tab1", label: specialistName },
@@ -41,15 +41,18 @@ const addNewAppointments = (payload) => {
     return null;
   }
 
-  const { date_time, id, service_id, specialist_id, status } = payload.new;
+  const { date_time, id, service_id, specialist_id, status, category_id } =
+    payload.new;
 
   console.log("Появилась новая запись");
 
   userStore.specialistAppointments[id] = {
-    dateTime: date_time,
-    serviceId: service_id,
-    specialistId: specialist_id,
+    id: id,
+    date_time: date_time,
+    service_id: service_id,
+    specialist_id: specialist_id,
     status: status,
+    category_id: category_id,
   };
 };
 
@@ -69,7 +72,6 @@ onMounted(() => {
     )
     .subscribe();
 });
-
 onBeforeUnmount(() => {
   // Отписка от событий при уходе со страницы
   if (appointmentChanges) {

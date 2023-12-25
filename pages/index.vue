@@ -7,6 +7,7 @@ definePageMeta({
   middleware: ["no-back-navigation"],
 });
 
+// const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
@@ -16,8 +17,7 @@ watchEffect(async () => {
   if (user.value) {
     userStore.resetSelected();
   }
-  if (data.value)
-    businessStore.setBusiness(data.value);
+  if (data.value) businessStore.setBusiness(data.value);
 });
-// useRouteLeaveGuard();
+useRouteLeaveGuard();
 </script>
