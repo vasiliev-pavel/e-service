@@ -36,6 +36,7 @@ function onSubmitPhotos() {
 function onSubmitDetails() {
     console.log('Submitted form:', detailsForm)
 }
+
 </script>
 <template>
     <div class="flex flex-row w-full">
@@ -59,6 +60,7 @@ function onSubmitDetails() {
                         <UButton type="submit" color="black">
                             Save General
                         </UButton>
+                        <ModalDeleteCompany />
                     </template>
                 </UCard>
             </template>

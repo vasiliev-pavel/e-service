@@ -22,7 +22,8 @@ const closeModal = () => {
     emits("update:isOpenSelect", false);
 };
 
-const goTo = () => {
+const goTo = (business) => {
+    selectBusiness(business)
     closeModal();
     router.push({ path: "/panel/companies" })
 }
@@ -53,14 +54,15 @@ const toggleModalCreate = () => {
                 <ul class="flex flex-col business_list snap-y">
                     <li class="flex items-center  cursor-pointer text-white flex p-4 hover:bg-black-300"
                         @click="toggleModalCreate()">
-                        <i class="i-heroicons-plus-20-solid mr-2"></i> Create Business
+                        <i class="i-heroicons-plus-20-solid mr-1"></i> Create Business
                     </li>
-                    <li class="flex items-center cursor-pointer text-white flex p-4 hover:bg-black-300" @click="goTo()">
-                        <i class="i-heroicons-building-storefront-20-solid mr-2"></i>All Businesses
-                    </li>
-                    <li class="flex items-center cursor-pointer text-white flex p-4 hover:bg-black-300"
+                    <li class="flex justify-between items-center cursor-pointer text-white flex p-4 hover:bg-black-300"
                         v-for="business in myBusinesses" :key="business.id" @click="selectBusiness(business)">
-                        <i class="i-heroicons-map-pin-20-solid mr-2"></i> {{ business.name }}
+                        <div class="flex items-center">
+                            <i class="i-heroicons-map-pin-20-solid mr-1"></i>
+                            {{ business.name }}
+                        </div>
+                        <i class="i-heroicons-cog-6-tooth-20-solid p-2" @click="goTo(business)"></i>
                     </li>
                 </ul>
             </template>

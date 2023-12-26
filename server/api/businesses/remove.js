@@ -10,26 +10,14 @@ export default defineEventHandler(async (event) => {
     return createError({ statusCode: 400, message: "Business ID is required" });
   }
 
-  // Check if the business belongs to the owner before deleting
-  const { data: businesses, error: fetchError } = await client
+  const { data, error } = await client
     .from("businesses")
-    .select("*")
+    .delete()
     .eq("id", businessId)
     .eq("owner_id", ownerId);
 
-  if (fetchError || businesses.length === 0) {
-    console.error('Error fetching business or business not found:', fetchError);
-    return createError({ statusCode: 404, message: "Business not found or access denied" });
-  }
-
-  const { error: deleteError } = await client
-    .from("businesses")
-    .delete()
-    .eq("id", businessId);
-
-  if (deleteError) {
-    console.error('Error deleting business:', deleteError);
-    return createError({ statusCode: 500, message: "Server error" });
+  if (error) {
+    return { message: error };
   }
 
   return { success: true };

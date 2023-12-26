@@ -26,6 +26,21 @@ export const useProfileStore = defineStore(
       myBusinesses.value.push(newBusiness);
     };
 
+    const deleteBusiness = (businessId) => {
+      const index = myBusinesses.value.findIndex(b => b.id === businessId);
+      if (index !== -1) {
+        myBusinesses.value.splice(index, 1);
+        if (myBusinesses.value.length > 0) {
+          const newIndex = index === myBusinesses.value.length ? index - 1 : index;
+          setCurrentBusiness(myBusinesses.value[newIndex].id);
+        } else {
+          currentBusiness.value = null;
+        }
+      } else {
+        console.error("Business not found for deletion:", businessId);
+      }
+    };
+
     const fetchMyProfile = async (userId) => {
       try {
         const response = await fetch(`/api/profile`, {
@@ -79,6 +94,7 @@ export const useProfileStore = defineStore(
       myProfile,
       currentBusiness,
       setCurrentBusiness,
+      deleteBusiness,
       setCurrentDate,
       addBusiness,
       fetchMyProfile,

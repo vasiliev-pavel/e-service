@@ -7,7 +7,6 @@ definePageMeta({
   middleware: ["no-back-navigation"],
 });
 
-// const client = useSupabaseClient();
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
