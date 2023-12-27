@@ -5,21 +5,17 @@ export default defineEventHandler(async (event) => {
         // Init
         const query = getQuery(event);
         const client = await serverSupabaseClient(event);
-        const businessID = query.business_id;
-
-        // Validation
-        if (typeof businessID !== 'string' || !businessID) {
-            throw createError({
-              statusCode: 400,
-              statusMessage: 'Invalid or missing business_id',
-            });
-        }
+        const ownerID = query.owner_id;
 
         // Query
-        const { data, error } = await client
-        .from("categories")
-        .select("*")
-        // .eq("business_id", businessID);
+        let queryBuilder = client.from("businesses").select("*");
+
+        if (ownerID) {
+            queryBuilder = queryBuilder.eq("owner_id", ownerID);
+        }
+
+        // Executing the query
+        const { data, error } = await queryBuilder;
 
         // Response
         if (error)
@@ -32,6 +28,6 @@ export default defineEventHandler(async (event) => {
         return {data: data, query: query}
     } catch (error) {
         setResponseStatus(event, 500)
-        return {message: error}
+        return {message: error.message}
     }
 })

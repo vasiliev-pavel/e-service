@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
 
         const { data, error } = await client
-        .from('categories')
+        .from('services')
         .delete()
         .eq("id", id)
         .eq("business_id", business_id);

@@ -5,17 +5,18 @@ export default defineEventHandler(async (event) => {
     try {
         const body = await readBody(event);
         const client = await serverSupabaseClient(event);
-        const category_name = typeof body.name === 'string' ? body.name : null;
-        const business_id = typeof body.business_id === 'string' ? body.business_id : null;
 
-        if (!category_name) return createError({ statusCode: 400, message: "Category Name is Required" });
-        if (!business_id) return createError({ statusCode: 400, message: "Business ID is Required" });
+        const name = typeof body.name === 'string' ? body.name : null;
+        const owner_id = typeof body.owner_id === 'string' ? body.owner_id : null;
+
+        if (!name) return createError({ statusCode: 400, message: "Service Name is Required" });
+        if (!owner_id) return createError({ statusCode: 400, message: "Owner ID is Required" });
 
 
-        const { data, error } = await client.from('categories').insert([
+        const { data, error } = await client.from('businesses').insert([
             {
-                name: category_name,
-                business_id: business_id
+                name: name,
+                owner_id: owner_id
             }
         ]);
 
