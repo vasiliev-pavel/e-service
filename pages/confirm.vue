@@ -12,10 +12,11 @@ watch(() => user.value, async (newUser, oldUser) => {
     // Fetch Profile Data
     const profile = await profileStore.fetchMyProfile(newUser.id);
 
+
     if (profile.role === 'owner' || profile.role === 'specialist') {
       await profileStore.fetchMyBusinesses(newUser.id);
       navigateTo("/panel");
-    } else if (profile.role === 'customer') {
+    } else {
       navigateTo("/");
     }
 

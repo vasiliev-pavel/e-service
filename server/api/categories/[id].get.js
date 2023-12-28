@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
         .eq("id", id);
           
         setResponseStatus(event, 200)
-        return {api: "Get Request", body: data  }
+        return { data: data}
     } catch (error) {
         setResponseStatus(event, 500)
         return {message: error.message}

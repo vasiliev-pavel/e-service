@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
             });
 
         setResponseStatus(event, 200)
-        return {api: "Put Request", data: data}
+        return { data: data}
     } catch (error) {
         setResponseStatus(event, 500)
         return {message: error.message}

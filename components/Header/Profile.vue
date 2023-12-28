@@ -9,18 +9,22 @@ const menuItems = computed(() => {
     if (user_role === 'admin') {
         return [
             { title: 'Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'Test', url: '/test', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     } else if (user_role === 'customer') {
         return [
             { title: 'My Appointments', url: '/user/appointments', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'Test', url: '/test', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     } else if (user_role === 'owner') {
         return [
             { title: 'My Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'Test', url: '/test', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     } else if (user_role === 'specialist') {
         return [
             { title: 'My Appointments', url: '/panel', icon: 'i-heroicons-bookmark-square-20-solid' },
+            { title: 'Test', url: '/test', icon: 'i-heroicons-bookmark-square-20-solid' },
         ];
     }
 });

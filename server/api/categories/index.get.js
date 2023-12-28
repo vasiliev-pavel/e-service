@@ -7,11 +7,12 @@ export default defineEventHandler(async (event) => {
         const client = await serverSupabaseClient(event);
         const businessID = query.business_id;
 
-        // Query
-        const { data, error } = await client
-        .from("categories")
-        .select("*")
-        .eq("business_id", businessID);
+        let queryBuilder = client.from("categories").select("*");
+
+        if (businessID) 
+            queryBuilder = queryBuilder.eq("business_id", businessID);
+        
+        const { data, error } = await queryBuilder;
 
         // Response
         if (error)
@@ -21,7 +22,7 @@ export default defineEventHandler(async (event) => {
             });
         
         setResponseStatus(event, 200)
-        return {data: data, query: query}
+        return { data: data}
     } catch (error) {
         setResponseStatus(event, 500)
         return {message: error.message}

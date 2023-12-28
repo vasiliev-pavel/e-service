@@ -63,10 +63,8 @@ export const useProfileStore = defineStore(
 
     const fetchMyBusinesses = async (userId) => {
       try {
-        const response = await fetch(`/api/businesses`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ owner_id: userId }),
+        const response = await fetch(`/api/businesses?owner_id=${userId}`, {
+          method: "GET"
         });
 
         if (!response.ok) {
