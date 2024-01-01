@@ -4,7 +4,6 @@ import { ref, reactive } from "vue";
 export const useUserStore = defineStore(
   "user",
   () => {
-    const isLoading = ref(true);
     const selectedSalon = ref({});
     const firstPageVisited = ref(null);
     const selectedServices = reactive({});
@@ -12,13 +11,18 @@ export const useUserStore = defineStore(
     const selectedSpecialist = ref(null);
     const selectedDateAndTime = ref({});
     const specialistAppointments = ref({});
+    const availableSpecialistIds = ref([]);
 
     const removeSelectedServices = (id) => {
       delete selectedServices[id];
     };
 
-    const setSelectedDateTime = (salon) => {
-      selectedDateAndTime.value = salon;
+    const setSelectedDateTime = (date) => {
+      selectedDateAndTime.value = date;
+    };
+
+    const setAvailableSpecialistIds = (ids) => {
+      availableSpecialistIds.value = ids;
     };
 
     const setSelectedSalon = (salon) => {
@@ -26,11 +30,9 @@ export const useUserStore = defineStore(
     };
 
     const getSpecialistAppointments = async (speciliastId) => {
-      isLoading.value = true;
       const { data: appointments } = await useFetch(
         `/api/user/appointments/${speciliastId}`
       );
-      // console.log(appointments);
       const appointmentsObject = appointments.value.data.reduce(
         (acc, appointment) => {
           acc[appointment.id] = appointment;
@@ -38,10 +40,8 @@ export const useUserStore = defineStore(
         },
         {}
       );
-      // console.log(appointmentsObject);
 
       specialistAppointments.value = appointmentsObject ?? null;
-      isLoading.value = false;
     };
 
     const setFirstPageVisited = (page) => {
@@ -109,8 +109,9 @@ export const useUserStore = defineStore(
       selectedSpecialist,
       selectedDateAndTime,
       specialistAppointments,
-      isLoading,
+      availableSpecialistIds,
       setSelectedSalon,
+      setAvailableSpecialistIds,
       setSelectedDateTime,
       setFirstPageVisited,
       toggleCheckbox,

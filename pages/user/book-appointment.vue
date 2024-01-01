@@ -1,5 +1,14 @@
 <template>
+  <section
+    v-if="userStore.availableSpecialistIds.length < 2"
+    class="flex flex-col items-center justify-center p-3 max-w-sm mx-auto"
+  >
+    <CalendarShow2 />
+  </section>
+
   <UTabs
+    v-else
+    v-model="currentTab"
     :items="tabsItems"
     :ui="{
       list: { background: 'bg-transparent dark:bg-gray-700' },
@@ -7,13 +16,11 @@
     class="flex flex-col items-center justify-center p-3 max-w-sm mx-auto"
   >
     <template v-slot:tab1>
-      <!-- Содержимое для вкладки конкретного специалиста -->
       <CalendarShow2 />
     </template>
 
     <template v-slot:tab2>
-      <!-- Содержимое для вкладки со всеми специалистами -->
-      <!-- <AllSpecialistsCalendar /> -->
+      <CalendarShow2 />
       <div>pupup</div>
     </template>
   </UTabs>
@@ -22,17 +29,22 @@
 <script setup>
 import { ref, computed } from "vue";
 import CalendarShow2 from "~/components/appointment/CalendarShow2.vue";
-// Импортируем остальной необходимый код
 import { useUserStore } from "~/stores/user";
+
+const currentTab = ref(0); // default to the first tab
 const userStore = useUserStore();
 const specialistName = userStore.selectedSpecialist.name;
 const supabase = useSupabaseClient();
-// supabase.
+const businessStore = useBusinessStore();
+
 // Данные для вкладок
-const tabsItems = [
+const tabsItems = computed(() => [
   { slot: "tab1", label: specialistName },
-  { slot: "tab2", label: "Все доступные" },
-];
+  {
+    slot: "tab2",
+    label: "Все доступные",
+  },
+]);
 let appointmentChanges;
 
 const addNewAppointments = (payload) => {
@@ -79,10 +91,10 @@ onBeforeUnmount(() => {
     supabase.removeChannel(appointmentChanges);
   }
 });
-</script>
 
-<style>
-.custom-tabs .tab {
-  color: #ff0000; /* Задайте нужный вам цвет текста */
-}
-</style>
+watch(currentTab, (newTab, oldTab) => {
+  console.log(`Switched from ${oldTab} to ${newTab}`);
+  businessStore.setSelectedTab(newTab);
+  // Perform any side effects or data fetching here
+});
+</script>

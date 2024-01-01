@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col items-center m-5 text-gray-300">
+  <div
+    class="flex flex-col items-center m-5 text-gray-300 first-line:justify-center p-3 max-w-sm mx-auto"
+  >
     <!-- <div class="flex items-center w-full"> -->
     <CalendarHeader
       :visibleMonths="visibleMonths"
@@ -76,14 +78,6 @@ function scroll(direction) {
 }
 
 const selectDate = async (date) => {
-  // console.log(selectedDate.value);
-
   selectedDate.value = date;
-  // console.log(selectedDate.value);
-  // const { data: availability } = await useFetch(
-  //   `/api/availability/${userStore.selectedSpecialist.id}`
-  // );
-  // // console.log(availability.value);
-  // Логика выбора даты...
 };
 </script>

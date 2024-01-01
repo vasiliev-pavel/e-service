@@ -6,7 +6,7 @@
       :categoryId="category"
       :title="categoriesById[category].category_name"
       :items="categoriesById[category].servicesById"
-      :serviceIds="categoriesById[category].serviceIds"
+      :serviceIds="getFilteredServiceIds(category)"
     />
 
     <div
@@ -48,15 +48,14 @@ const filteredCategories = computed(() => {
     const specialist = specialistsById[selectedSpecialistId];
 
     if (specialist && specialist.categoryIds) {
-      return specialist.categoryIds
-        .map((categoryId) => categoriesById[categoryId])
-        .filter(
-          (category) =>
-            category && category.serviceIds && category.serviceIds.length > 0
+      return specialist.categoryIds.filter((categoryId) => {
+        const category = categoriesById[categoryId];
+        return (
+          category && category.serviceIds && category.serviceIds.length > 0
         );
+      });
     }
   }
-
   return [];
 });
 
@@ -65,6 +64,15 @@ const hasSelectedServices = computed(() => {
   return Object.keys(userStore.selectedServices).length > 0;
 });
 
+// Функция для получения отфильтрованных serviceIds для каждой категории
+const getFilteredServiceIds = (categoryId) => {
+  // Возвращаем пересечение serviceIds категории и serviceIds специалиста
+  if (selectedSpecialistId)
+    return categoriesById[categoryId].serviceIds.filter((serviceId) =>
+      specialistsById[selectedSpecialistId].serviceIds.includes(serviceId)
+    );
+  else return categoriesById[categoryId].serviceIds;
+};
 // Сброс состояния в случае если пользователь вернулся на предыдущую страницу
 useRouteLeaveGuard();
 </script>

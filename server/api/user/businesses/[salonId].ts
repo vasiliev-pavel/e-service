@@ -15,7 +15,6 @@ export default defineEventHandler(async (event) => {
   // @ts-ignore
   const { data, error } = await client.rpc(
     "get_business_data_formatted_test3", // @ts-ignore
-
     {
       business_uuid: salonId,
     }

@@ -29,15 +29,17 @@ import { useBusinessStore } from "~/stores/business";
 
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
-const isLoading = computed(() => businessStore.selectedBusiness);
 
 // Создаем вычисляемое свойство
 const nameBusiness = ref(userStore.selectedSalon.title);
 
 onMounted(() => {
   if (!process.client) return;
+  // console.log(businessStore.selectedSalonId);
+  businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   userStore.resetSelectedServices();
   userStore.resetSelectedSpecialist();
 });
+
 useRouteLeaveGuard();
 </script>

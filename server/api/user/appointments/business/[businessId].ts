@@ -6,19 +6,18 @@ export default defineEventHandler(async (event) => {
 
   const now = moment().toISOString(); // Преобразование текущего времени в строку ISO 8601
   // Получение динамического параметра salonId из URL
-  const speciliastId = event.context.params?.speciliastId;
-  if (!speciliastId) {
+  const businessId = event.context.params?.businessId;
+  if (!businessId) {
     // Обработка ситуации, когда salonId не предоставлен
-    return { error: "speciliastId ID is required" };
+    return { error: "business_id ID is required" };
   }
 
   // @ts-ignore
   const { data, error } = await client
     .from("appointments")
-    .select("id,date_time,service_id,status,category_id")
-    .eq("specialist_id", speciliastId);
+    .select("id,date_time,service_id,category_id,specialist_id")
+    .eq("business_id", businessId);
   // .gte("date_time", now); // Использование текущего времени в формате ISO 8601
-
   if (error) {
     console.error(error);
     return { error };

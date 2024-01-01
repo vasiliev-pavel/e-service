@@ -12,7 +12,7 @@
           @click="selectTime(time)"
           class="py-2 px-4 border rounded text-center cursor-pointer hover:bg-gray-200 hover:text-gray-600"
         >
-          {{ time }}
+          {{ time.time }}
         </button>
       </div>
     </div>
@@ -77,56 +77,100 @@ const workingHours = computed(() => {
 });
 
 const selectTime = (time) => {
+  console.log(time);
   // Создаем объект moment с выбранной датой и временем
   const selectedDateTime = moment(props.selectedDate).set({
-    hour: moment(time, "HH:mm").get("hour"),
-    minute: moment(time, "HH:mm").get("minute"),
+    hour: moment(time.time, "HH:mm").get("hour"),
+    minute: moment(time.time, "HH:mm").get("minute"),
     second: 0,
   });
   // Сохранение выбранного времени в userStore
   userStore.setSelectedDateTime(selectedDateTime);
 
   // Программный переход на страницу appointment
-  router.push("/user/appointment");
+  // router.push("/user/appointment");
 };
 
+// const getOccupiedSlots = () => {
+//   return Object.values(userStore.specialistAppointments)
+//     .filter((appointment) => {
+//       const appointmentDate = moment(appointment.date_time);
+//       return appointmentDate.isSame(props.selectedDate, "day");
+//     })
+//     .map((appointment) => {
+//       const category = categoriesById[appointment.category_id];
+//       if (!category) {
+//         console.error("Category not found for appointment", appointment);
+//         return null;
+//       }
+//       const service = category.servicesById[appointment.service_id];
+//       if (!service) {
+//         console.error("Service not found for appointment", appointment);
+//         return null;
+//       }
+
+//       const durationStr = service.duration;
+//       const durationInMinutes = durationToMinutes(durationStr);
+//       return {
+//         start: moment(appointment.date_time),
+//         end: moment(appointment.date_time).add(durationInMinutes, "minutes"),
+//       };
+//     })
+//     .filter((slot) => slot !== null);
+// };
+
 const getOccupiedSlots = () => {
-  return Object.values(userStore.specialistAppointments)
+  let appointments = [];
+
+  if (
+    businessStore.selectedTab &&
+    userStore.availableSpecialistIds.length > 1
+  ) {
+    // console.log("слоты для вкладки все доступные");
+    userStore.availableSpecialistIds.forEach((specialistId) => {
+      const specialistAppointments =
+        businessStore.allSpecialistsAppointments[specialistId];
+      appointments.push(...Object.values(specialistAppointments || {}));
+    });
+  } else {
+    // console.log("слоты для конкретного специалиста");
+    const specialistAppointments =
+      businessStore.allSpecialistsAppointments[userStore.selectedSpecialist.id];
+    appointments = Object.values(specialistAppointments || {});
+  }
+
+  return appointments
     .filter((appointment) => {
       const appointmentDate = moment(appointment.date_time);
       return appointmentDate.isSame(props.selectedDate, "day");
     })
     .map((appointment) => {
       const category = categoriesById[appointment.category_id];
-      if (!category) {
-        console.error("Category not found for appointment", appointment);
-        return null;
-      }
-      const service = category.servicesById[appointment.service_id];
+      const service = category?.servicesById[appointment.service_id];
+
       if (!service) {
         console.error("Service not found for appointment", appointment);
-        return null;
+        return null; // or handle error as needed
       }
 
       const durationStr = service.duration;
       const durationInMinutes = durationToMinutes(durationStr);
+
       return {
+        specialistId: appointment.specialist_id,
         start: moment(appointment.date_time),
         end: moment(appointment.date_time).add(durationInMinutes, "minutes"),
       };
     })
-    .filter((slot) => slot !== null);
+    .filter((slot) => slot); // Filtering out null values
 };
 
 const filteredPeriods = computed(() => {
-  // console.log(userStore.specialistAppointments);
   const occupiedSlots = getOccupiedSlots();
   const totalDuration = getTotalDuration();
   const periods = { Morning: [], Afternoon: [], Evening: [] };
   const now = moment();
-  console.log("occupiedSlots:", occupiedSlots);
 
-  // Определяем последний слот рабочего дня
   const lastWorkingHourSlot = workingHours.value[workingHours.value.length - 1];
   const endOfWorkingDay = moment(props.selectedDate)
     .set({
@@ -140,48 +184,65 @@ const filteredPeriods = computed(() => {
       hour: moment(slot, "HH:mm").hour(),
       minute: moment(slot, "HH:mm").minute(),
     });
-
-    const isToday = moment(props.selectedDate).isSame(now, "day"); // Является ли выбранная дата сегодняшним днем
-
     const endOfServiceMoment = slotMoment.clone().add(totalDuration, "minutes");
-    let isAvailable = true;
+    const isToday = moment(props.selectedDate).isSame(now, "day");
 
     // Проверка на текущий день и время, которое уже прошло
-    if (isToday && slotMoment.isBefore(now)) {
-      continue; // Пропускаем прошедшие слоты для текущего дня
-    }
-
     // Проверка на окончание услуги до конца рабочего дня
-    if (endOfServiceMoment.isAfter(endOfWorkingDay)) {
-      continue; // Пропускаем слоты, которые завершаются после конца рабочего дня
+    if (
+      (isToday && slotMoment.isBefore(now)) ||
+      endOfServiceMoment.isAfter(endOfWorkingDay)
+    )
+      continue;
+
+    let slotData = { time: slot, specialistIds: new Set() }; // Данные текущего слота
+
+    // Разделение логики для "Все доступные" и конкретного специалиста
+    if (
+      businessStore.selectedTab &&
+      userStore.availableSpecialistIds.length > 1
+    ) {
+      // Логика для "Все доступные"
+      userStore.availableSpecialistIds.forEach((specialistId) => {
+        const isSpecialistAvailable = !occupiedSlots.some(
+          (occupied) =>
+            occupied.specialistId === specialistId &&
+            slotMoment.isBetween(occupied.start, occupied.end, null, "[)")
+        );
+        if (isSpecialistAvailable) slotData.specialistIds.add(specialistId);
+      });
+    } else {
+      // Логика для конкретного специалиста
+      const isSlotOccupied = occupiedSlots.some(
+        (occupied) =>
+          occupied.specialistId === userStore.selectedSpecialist.id &&
+          slotMoment.isBetween(occupied.start, occupied.end, null, "[)")
+      );
+      if (!isSlotOccupied)
+        slotData.specialistIds.add(userStore.selectedSpecialist.id);
     }
 
-    // Проверка на пересечение с занятыми слотами
-    for (const occupied of occupiedSlots) {
-      if (
-        slotMoment.isBefore(occupied.end) &&
-        endOfServiceMoment.isAfter(occupied.start)
-      ) {
-        console.log("tyt3");
-        isAvailable = false;
-        break;
-      }
-    }
-
-    if (isAvailable) {
+    // Добавление слота, если он доступен хотя бы для одного специалиста
+    if (slotData.specialistIds.size > 0) {
       const hour = slotMoment.hour();
       if (hour < 12) {
-        periods["Morning"].push(slot);
+        periods["Morning"].push(slotData);
       } else if (hour >= 12 && hour < 18) {
-        periods["Afternoon"].push(slot);
+        periods["Afternoon"].push(slotData);
       } else {
-        periods["Evening"].push(slot);
+        periods["Evening"].push(slotData);
       }
     }
   }
 
   return Object.keys(periods)
     .filter((period) => periods[period].length > 0)
-    .map((period) => ({ label: period, times: periods[period] }));
+    .map((period) => ({
+      label: period,
+      times: periods[period].map((slotData) => ({
+        time: slotData.time,
+        specialistIds: Array.from(slotData.specialistIds),
+      })),
+    }));
 });
 </script>

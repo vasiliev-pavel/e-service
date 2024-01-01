@@ -39,6 +39,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { useBusinessStore } from "@/stores/business";
 import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
+import { filterSpecialistsByServices } from "~/composables/filterSpecialistsByServices";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -50,11 +51,14 @@ const specialistIds = businessStore.selectedBusiness.specialistIds || [];
 const filteredSpecialists = computed(() => {
   const selectedServiceIds = Object.keys(userStore.selectedServices);
   if (selectedServiceIds.length > 0) {
-    return specialistIds.filter((id) =>
-      selectedServiceIds.every((serviceId) =>
-        specialistsById[id].serviceIds.includes(serviceId)
-      )
+    const filteredIds = filterSpecialistsByServices(
+      specialistIds,
+      specialistsById,
+      selectedServiceIds
     );
+
+    userStore.setAvailableSpecialistIds(filteredIds);
+    return filteredIds;
   } else {
     return specialistIds;
   }
