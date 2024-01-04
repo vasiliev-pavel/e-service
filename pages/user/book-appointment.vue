@@ -1,4 +1,6 @@
 <template>
+  <h2 class="text-gray-200 text-lg mb-3 text-center">Select a date and time</h2>
+
   <section
     v-if="userStore.availableSpecialistIds.length < 2"
     class="flex flex-col items-center justify-center p-3 max-w-sm mx-auto"
@@ -42,7 +44,7 @@ const tabsItems = computed(() => [
   { slot: "tab1", label: specialistName },
   {
     slot: "tab2",
-    label: "Все доступные",
+    label: "All available",
   },
 ]);
 let appointmentChanges;
@@ -69,6 +71,8 @@ const addNewAppointments = (payload) => {
 };
 
 onMounted(() => {
+  businessStore.setSelectedTab(0);
+
   // Инициализация подписки на события
   appointmentChanges = supabase
     .channel("schema-db-changes")

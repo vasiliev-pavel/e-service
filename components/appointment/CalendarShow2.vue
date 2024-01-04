@@ -15,34 +15,28 @@
         v-for="date in visibleDates"
         :key="date.toString()"
         :date="date"
+        :isSelected="date.isSame(selectedDate, 'day')"
         @click="selectDate(date)"
       />
     </div>
   </div>
 
   <TimeSlot :selectedDate="selectedDate" />
-
-  <!-- <UnavailableDateAlert
-    v-if="
-      (showUnavailableAlert && !isWeekend) ||
-      (!hasAvailableTimeSlots && !isWeekend)
-    "
-    :selectedDay="dayNumber"
-  />
-  <SpecUnavNotification v-else-if="isWeekend" :selectedDay="dayNumber" /> -->
+  <!-- <SpecUnavNotification v-else-if="isWeekend" :selectedDay="dayNumber" /> -->
 </template>
 
 <script setup>
 import DateCell from "~/components/appointment/DateCell.vue";
 import TimeSlot from "~/components/appointment/TimeSlot.vue";
 import CalendarHeader from "~/components/appointment/CalendarHeader.vue";
-
 import { ref, computed } from "vue";
 import moment from "moment";
 
 const userStore = useUserStore();
 
-const selectedDate = ref(moment());
+// const selectedDate = ref(moment());
+// Переключение на использование выбранной даты из userStore
+const selectedDate = computed(() => userStore.selectedDay);
 
 const now = moment(); // Базовая дата, которая будет использоваться для всех расчетов
 const visibleCount = 7;
@@ -78,6 +72,7 @@ function scroll(direction) {
 }
 
 const selectDate = async (date) => {
-  selectedDate.value = date;
+  // selectedDate.value = date;
+  userStore.setSelectedDay(date);
 };
 </script>

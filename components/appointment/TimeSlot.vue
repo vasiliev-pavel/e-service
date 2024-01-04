@@ -17,16 +17,21 @@
       </div>
     </div>
   </div>
+  <UnavailableDateAlert
+    v-if="!hasAvailableSlots"
+    :selectedDay="props.selectedDate"
+  />
 </template>
 
 <script setup>
 import { ref, computed, watch } from "vue";
+import UnavailableDateAlert from "~/components/appointment/UnavailableDateAlert.vue";
+
 import moment from "moment";
 import { durationToMinutes } from "~/utils/appointmentUtils";
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
 const router = useRouter();
-const isLoading = computed(() => userStore.isLoading); // начальное состояние загрузки
 
 const availability = ref(userStore.selectedSpecialist?.availability || {});
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
@@ -35,6 +40,10 @@ const props = defineProps({
   selectedDate: Object, // Добавляем prop для выбранной даты
 });
 
+// const hasSlotsAvailable = ref(false);
+const hasAvailableSlots = computed(() => {
+  return filteredPeriods.value.some((period) => period.times.length > 0);
+});
 // вычисление общей длительности выбранных услуг
 const getTotalDuration = () => {
   return Object.values(userStore.selectedServices).reduce((total, service) => {
@@ -86,9 +95,9 @@ const selectTime = (time) => {
   });
   // Сохранение выбранного времени в userStore
   userStore.setSelectedDateTime(selectedDateTime);
-
-  // Программный переход на страницу appointment
-  // router.push("/user/appointment");
+  userStore.setSelectedAvailableSpecialistsIds(time.specialistIds);
+  // Программный переход на страницу appointmentы
+  router.push("/user/appointment");
 };
 
 // const getOccupiedSlots = () => {
@@ -245,4 +254,5 @@ const filteredPeriods = computed(() => {
       })),
     }));
 });
+useRouteLeaveGuard();
 </script>

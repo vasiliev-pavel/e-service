@@ -4,6 +4,7 @@ import { ref, reactive } from "vue";
 export const useUserStore = defineStore(
   "user",
   () => {
+    const selectedDay = ref(null);
     const selectedSalon = ref({});
     const firstPageVisited = ref(null);
     const selectedServices = reactive({});
@@ -12,9 +13,18 @@ export const useUserStore = defineStore(
     const selectedDateAndTime = ref({});
     const specialistAppointments = ref({});
     const availableSpecialistIds = ref([]);
+    const selectedAvailableSpecialistsIds = ref([]);
+
+    const setSelectedDay = (day) => {
+      selectedDay.value = day;
+    };
 
     const removeSelectedServices = (id) => {
       delete selectedServices[id];
+    };
+
+    const setSelectedAvailableSpecialistsIds = (newIds) => {
+      selectedAvailableSpecialistsIds.value = newIds;
     };
 
     const setSelectedDateTime = (date) => {
@@ -83,14 +93,28 @@ export const useUserStore = defineStore(
       specialistAppointments.value = {};
     };
 
+    const resetForButton = () => {
+      Object.keys(selectedServices).forEach((key) => {
+        delete selectedServices[key];
+      });
+      totalSum.value = 0;
+      selectedSpecialist.value = null;
+      availableSpecialistIds.value = [];
+      selectedAvailableSpecialistsIds.value = [];
+      selectedDateAndTime.value = {};
+    };
+
     const resetSelected = () => {
       Object.keys(selectedServices).forEach((key) => {
         delete selectedServices[key];
       });
       totalSum.value = 0;
       selectedSpecialist.value = null;
+      availableSpecialistIds.value = [];
+      selectedAvailableSpecialistsIds.value = [];
       selectedSalon.value = null;
       selectedDateAndTime.value = {};
+      selectedDay.value = null;
     };
 
     watch(selectedSpecialist, async (newSpecialist, oldSpecialist) => {
@@ -102,6 +126,7 @@ export const useUserStore = defineStore(
     });
 
     return {
+      selectedDay,
       selectedSalon,
       firstPageVisited,
       selectedServices,
@@ -110,6 +135,8 @@ export const useUserStore = defineStore(
       selectedDateAndTime,
       specialistAppointments,
       availableSpecialistIds,
+      selectedAvailableSpecialistsIds,
+      resetForButton,
       setSelectedSalon,
       setAvailableSpecialistIds,
       setSelectedDateTime,
@@ -120,6 +147,8 @@ export const useUserStore = defineStore(
       resetSelectedSpecialist,
       removeSelectedServices,
       resetSelected,
+      setSelectedDay,
+      setSelectedAvailableSpecialistsIds,
     };
   },
   { persist: true }

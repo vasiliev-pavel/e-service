@@ -5,9 +5,15 @@
     <div>
       <div class="flex items-center justify-between mb-4">
         <div class="flex items-center">
-          <img class="h-12 w-12 rounded-full mr-2" alt="Avatar" />
+          <img
+            v-if="displaySpecialistName !== 'Any specialist'"
+            class="h-12 w-12 rounded-full mr-2"
+            alt="Avatar"
+          />
           <div>
-            <div class="font-bold text-lg">{{ specialistName }}</div>
+            <div class="font-bold text-lg">
+              {{ displaySpecialistName }}
+            </div>
             <div class="text-sm text-gray-600">{{ specialistType }}</div>
           </div>
         </div>
@@ -16,7 +22,7 @@
 
       <div class="mb-4">
         <div class="text-gray-700 font-semibold">{{ selectedDate }}</div>
-        <div class="text-gray-500 text-sm">{{ selectedTime }}</div>
+        <div class="text-gray-500 text-sm">{{ timeRangeAndDuration }}</div>
       </div>
 
       <SelectedServices :selectedServices="selectedServices" />
@@ -84,6 +90,7 @@ import moment from "moment";
 definePageMeta({
   middleware: ["no-back-navigation"],
 });
+
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const router = useRouter();
@@ -101,8 +108,52 @@ const user = useSupabaseUser();
 
 // Извлечение даты и времени
 const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
-const selectedTime = selectedDateTime.value.format("HH:mm"); //
+// const selectedTime = selectedDateTime.value.format("HH:mm"); //
 const appointmentObject = ref([]);
+
+const displaySpecialistName = computed(() => {
+  if (
+    userStore.availableSpecialistIds.length > 1 &&
+    businessStore.selectedTab === 1
+  ) {
+    return "Any specialist";
+  } else {
+    return specialistName.value;
+  }
+});
+
+const timeRangeAndDuration = computed(() => {
+  const startTime = selectedDateTime.value;
+
+  // Calculate the total duration of all services in minutes
+  const totalDurationMinutes = Object.values(selectedServices.value).reduce(
+    (sum, service) => {
+      return sum + durationToMinutes(service.duration);
+    },
+    0
+  );
+  // Calculate end time by adding total duration to start time
+  const endTime = startTime.clone().add(totalDurationMinutes, "minutes");
+
+  // Formatting start and end time
+  const formattedStartTime = startTime.format("HH:mm");
+  const formattedEndTime = endTime.format("HH:mm");
+
+  // Calculate hours and minutes for duration
+  const durationHours = Math.floor(totalDurationMinutes / 60);
+  const durationMinutes = totalDurationMinutes % 60;
+
+  // Constructing the formatted duration string
+  const formattedDurationParts = [];
+  if (durationHours > 0) formattedDurationParts.push(`${durationHours} h`);
+  if (durationMinutes > 0)
+    formattedDurationParts.push(`${durationMinutes} min`);
+
+  // Join the parts with space (if both hours and minutes are present)
+  const formattedDuration = formattedDurationParts.join(" ");
+
+  return `${formattedStartTime}–${formattedEndTime}, ${formattedDuration}`;
+});
 
 const calculateStartTimes = () => {
   let currentTime = selectedDateTime.value.clone();
@@ -119,8 +170,6 @@ const calculateStartTimes = () => {
   return serviceStartTimes;
 };
 
-const serviceStartTimes = calculateStartTimes();
-
 const totalSum = computed(() => {
   return Object.values(selectedServices.value).reduce((sum, service) => {
     return sum + service.price;
@@ -129,6 +178,19 @@ const totalSum = computed(() => {
 
 watchEffect(() => {
   const serviceStartTimes = calculateStartTimes();
+
+  // Выбираем случайного специалиста из списка доступных, если это необходимо
+  let chosenSpecialistId = specialistId.value;
+  if (
+    userStore.availableSpecialistIds.length > 1 &&
+    businessStore.selectedTab === 1
+  ) {
+    const randomIndex = Math.floor(
+      Math.random() * userStore.selectedAvailableSpecialistsIds.length
+    );
+    chosenSpecialistId = userStore.selectedAvailableSpecialistsIds[randomIndex];
+  }
+
   appointmentObject.value = Object.keys(selectedServices.value).map(
     (serviceId) => {
       const service = selectedServices.value[serviceId];
@@ -136,7 +198,7 @@ watchEffect(() => {
 
       return {
         client_id: user.value.id,
-        specialist_id: specialistId.value,
+        specialist_id: chosenSpecialistId,
         service_id: serviceId,
         date_time: moment(startTime).utc().toISOString(),
         category_id: service.category_id,

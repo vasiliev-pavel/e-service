@@ -39,10 +39,21 @@ export const useBusinessStore = defineStore(
 
     //Получаем данные записей всех специалистов
     const getSpecialistAppointments = async (businessId) => {
-      const { data: appointments } = await useFetch(
-        `/api/user/appointments/business/${businessId}`
-      );
-      // console.log(appointments.value);
+      const loading = useLoadingStore();
+      let appointments = null; // Объявляем переменную вне блока try-catch
+
+      loading.showLoading(); // Активация индикатора загрузки
+      try {
+        const response = await useFetch(
+          `/api/user/appointments/business/${businessId}`
+        );
+        appointments = response.data; // Присваиваем значение переменной внутри try
+      } catch (error) {
+        console.error(error);
+      } finally {
+        loading.hideLoading(); // Деактивация индикатора загрузки
+      }
+      // console.log(appointments.value.data);
       const appointmentsObject = appointments.value.data.reduce(
         (acc, appointment) => {
           // Check if the accumulator already has the specialist_id key

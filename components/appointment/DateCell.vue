@@ -1,7 +1,12 @@
 <template>
   <div
     @click="$emit('click', date)"
-    class="flex flex-col items-center mx-1 bg-gray-700 rounded-lg w-full px-1 py-1 cursor-pointer hover:bg-gray-600 hover:shadow-lg transition duration-300 ease-in-out flex-grow"
+    :class="[
+      'flex flex-col items-center mx-1 rounded-lg w-full px-1 py-1 cursor-pointer transition duration-300 ease-in-out flex-grow',
+      isSelected
+        ? 'bg-blue-500 hover:bg-blue-400'
+        : 'bg-gray-700 hover:bg-gray-600 hover:shadow-lg',
+    ]"
   >
     <div class="text-white text-xs">
       {{ date.format("ddd") }}
@@ -13,5 +18,8 @@
 </template>
 
 <script setup>
-defineProps(["date"]);
+defineProps({
+  date: Object,
+  isSelected: Boolean,
+});
 </script>

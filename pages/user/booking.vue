@@ -3,6 +3,15 @@
     v-show="nameBusiness"
     class="flex flex-col h-screen bg-gradient-to-tr from-start to-end text-white"
   >
+    <!-- Индикатор загрузки -->
+    <div
+      v-if="loading.isLoading"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+    >
+      <!-- Можете заменить на любой индикатор загрузки -->
+      <div class="spinner"></div>
+    </div>
+
     <div class="p-4">
       <h1 class="font-bold text-xl mt-2">{{ nameBusiness }}</h1>
       <h3 class="text-2xl font-semibold mt-4 mb-4">Where do I begin?</h3>
@@ -25,7 +34,10 @@
 
 <script setup>
 import { computed } from "vue";
-import { useBusinessStore } from "~/stores/business";
+// import { useBusinessStore } from "~/stores/business";
+import moment from "moment";
+
+const loading = useLoadingStore();
 
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
@@ -36,10 +48,49 @@ const nameBusiness = ref(userStore.selectedSalon.title);
 onMounted(() => {
   if (!process.client) return;
   // console.log(businessStore.selectedSalonId);
+  userStore.setSelectedDay(moment());
   businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   userStore.resetSelectedServices();
   userStore.resetSelectedSpecialist();
 });
 
+const nuxtApp = useNuxtApp();
+nuxtApp.hook("page:start", () => {
+  loading.value = true; // Включить индикатор при начале загрузки страницы
+});
+nuxtApp.hook("page:finish", () => {
+  loading.value = false; // Выключить индикатор по окончании загрузки страницы
+});
+
 useRouteLeaveGuard();
 </script>
+<style>
+/* Простой спиннер в качестве индикатора загрузки */
+.spinner {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 4px solid #fff;
+  width: 50px;
+  height: 50px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Анимация спиннера */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  } /* Safari */
+  100% {
+    -webkit-transform: rotate(360deg);
+  } /* Safari */
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+</style>
