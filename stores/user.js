@@ -66,14 +66,22 @@ export const useUserStore = defineStore(
       price,
       duration,
       category,
-      category_id
+      category_id,
+      price_id
     ) => {
       if (selectedServices[id]) {
         totalSum.value -= price;
         delete selectedServices[id];
       } else {
         totalSum.value += price;
-        selectedServices[id] = { name, category, price, duration, category_id };
+        selectedServices[id] = {
+          name,
+          category,
+          price,
+          duration,
+          category_id,
+          price_id,
+        };
       }
     };
 
@@ -151,5 +159,9 @@ export const useUserStore = defineStore(
       setSelectedAvailableSpecialistsIds,
     };
   },
-  { persist: true }
+  {
+    persist: {
+      storage: persistedState.localStorage,
+    },
+  }
 );

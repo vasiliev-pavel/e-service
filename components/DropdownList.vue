@@ -33,7 +33,8 @@
                   props.items[item].price,
                   props.items[item].duration,
                   title,
-                  categoryId
+                  categoryId,
+                  props.items[item].price_id
                 )
             "
           />

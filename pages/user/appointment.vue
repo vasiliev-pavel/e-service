@@ -94,13 +94,20 @@ definePageMeta({
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const router = useRouter();
+const route = useRoute();
 
 const specialistName = ref(userStore.selectedSpecialist.name);
 const specialistType = ref(userStore.selectedSpecialist.type);
 const specialistId = ref(userStore.selectedSpecialist.id);
-const sum = ref();
 
 const selectedDateTime = ref(userStore.selectedDateAndTime);
+
+//временное решение
+if (typeof selectedDateTime.value === "string") {
+  // console.log(moment(selectedDateTime.value));
+  selectedDateTime.value = moment(selectedDateTime.value);
+}
+
 const selectedServices = ref(userStore.selectedServices);
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
 
@@ -210,14 +217,62 @@ watchEffect(() => {
 
 const confirmAppointment = async () => {
   try {
-    await $fetch(`/api/user/appointments/post`, {
+    // Запрашиваем сессию Stripe для оплаты
+    const { data: session } = await useFetch(`/api/user/payment`, {
       method: "post",
-      body: appointmentObject.value,
+      body: {
+        line_items: createLineItems(selectedServices.value),
+      },
     });
-    // Обработка ответа от сервера
+
+    // Перенаправляем пользователя на Stripe
+    if (session && session.value.url) {
+      navigateTo(`${session.value.url}`, { external: true });
+    } else {
+      console.error("Ошибка: URL сессии Stripe не получен");
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Ошибка при инициации сессии оплаты:", error);
   }
-  router.push("/");
+};
+
+onMounted(async () => {
+  const sessionId = route.query.session_id;
+  console.log(sessionId);
+
+  if (sessionId) {
+    try {
+      // Запрос к серверу для проверки статуса оплаты
+      const { data: paymentStatus } = await useFetch(
+        `/api/user/payment/${sessionId}`
+      );
+
+      console.log(paymentStatus);
+      if (paymentStatus && paymentStatus.value.status === "paid") {
+        // Отправка данных о назначении в базу данных
+        try {
+          await $fetch(`/api/user/appointments/post`, {
+            method: "post",
+            body: appointmentObject.value,
+          });
+          router.push("/"); // Перенаправление пользователя на главную страницу
+        } catch (error) {
+          console.error("Ошибка при отправке данных о назначении:", error);
+        }
+      } else {
+        // Обработка неудачной оплаты
+        console.error("Оплата не удалась или статус оплаты неизвестен");
+      }
+    } catch (error) {
+      console.error("Ошибка при проверке статуса оплаты:", error);
+    }
+  }
+});
+
+const createLineItems = (selectedServices) => {
+  return Object.values(selectedServices).map((service) => ({
+    price: service.price_id,
+    quantity: 1,
+  }));
 };
 </script>
