@@ -28,11 +28,11 @@ const validate = (state) => {
 };
 
 async function onSubmit(event) {
-  const { data, error } = await useFetch("/api/businesses/create", {
+  const { data, error } = await useFetch("/api/businesses", {
     method: "POST",
     body: state,
   });
-  profileStore.addBusiness(data);
+  profileStore.addBusiness(state);
   closeModal();
   toast.add({ title: "Business Created Successfully" });
 }

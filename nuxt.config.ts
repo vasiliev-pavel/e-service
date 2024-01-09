@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     "~/assets/css/icons.css",
     "~/assets/css/fonts.css",
   ],
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   devServer: {
     host: "0.0.0.0",
   },

@@ -16,16 +16,16 @@ const toggleModal = () => {
 const user = useSupabaseUser();
 const userID = user.value.id;
 
-const state = reactive({
+const state = computed(() => ({
     id: profileStore.currentBusiness.id,
     owner_id: userID,
-});
+}));
 
 // при удалении могут быть связи, нужно спрашивать пользователя об удалениии всех сервисов, сотрудников и других связанных полей
 
 async function onSubmit() {
-    const { data, error } = await useFetch("/api/businesses/remove", {
-        method: "POST",
+    const { data, error } = await useFetch("/api/businesses", {
+        method: "DELETE",
         body: state,
     });
     profileStore.deleteBusiness(state.id);

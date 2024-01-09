@@ -25,7 +25,7 @@ const closeModal = () => {
 const goTo = (business) => {
     selectBusiness(business)
     closeModal();
-    router.push({ path: "/panel/companies" })
+    router.push({ path: "/panel/business" })
 }
 
 const toggleModalCreate = () => {
@@ -36,7 +36,7 @@ const toggleModalCreate = () => {
 </script>
 
 <template>
-    <UModal v-model="props.isOpenSelect" prevent-close>
+    <UModal v-model="props.isOpenSelect">
         <UCard :ui="{
             ring: '',
             divide: 'divide-y divide-gray-100 dark:divide-gray-800',
