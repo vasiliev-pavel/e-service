@@ -14,7 +14,9 @@
             <div class="font-bold text-lg">
               {{ displaySpecialistName }}
             </div>
-            <div class="text-sm text-gray-600">{{ specialistType }}</div>
+            <div class="text-sm text-gray-600">
+              {{ userStore.selectedSpecialist.type }}
+            </div>
           </div>
         </div>
         <!-- The 'Edit' button seems not to be in the provided design -->
@@ -96,17 +98,11 @@ const businessStore = useBusinessStore();
 const router = useRouter();
 const route = useRoute();
 
-const specialistName = ref(userStore.selectedSpecialist.name);
-const specialistType = ref(userStore.selectedSpecialist.type);
-const specialistId = ref(userStore.selectedSpecialist.id);
+// const specialistName = ref(userStore.selectedSpecialist.name);
+// const specialistType = ref(userStore.selectedSpecialist.type);
+// const specialistId = ref(userStore.selectedSpecialist.id);
 
 const selectedDateTime = ref(userStore.selectedDateAndTime);
-
-//временное решение
-if (typeof selectedDateTime.value === "string") {
-  // console.log(moment(selectedDateTime.value));
-  selectedDateTime.value = moment(selectedDateTime.value);
-}
 
 const selectedServices = ref(userStore.selectedServices);
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
@@ -125,7 +121,7 @@ const displaySpecialistName = computed(() => {
   ) {
     return "Any specialist";
   } else {
-    return specialistName.value;
+    return userStore.selectedSpecialist.name;
   }
 });
 
@@ -187,7 +183,7 @@ watchEffect(() => {
   const serviceStartTimes = calculateStartTimes();
 
   // Выбираем случайного специалиста из списка доступных, если это необходимо
-  let chosenSpecialistId = specialistId.value;
+  let chosenSpecialistId = userStore.selectedSpecialist.id;
   if (
     userStore.availableSpecialistIds.length > 1 &&
     businessStore.selectedTab === 1

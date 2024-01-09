@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, watch } from "vue";
+import moment from "moment";
 
 export const useBusinessStore = defineStore(
   "business",
@@ -93,5 +94,9 @@ export const useBusinessStore = defineStore(
       setSelectedTab,
     };
   },
-  { persist: true }
+  {
+    persist: {
+      storage: persistedState.localStorage,
+    },
+  }
 );

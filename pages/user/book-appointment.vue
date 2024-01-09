@@ -35,13 +35,13 @@ import { useUserStore } from "~/stores/user";
 
 const currentTab = ref(0); // default to the first tab
 const userStore = useUserStore();
-const specialistName = userStore.selectedSpecialist.name;
+// const specialistName = userStore.selectedSpecialist.name;
 const supabase = useSupabaseClient();
 const businessStore = useBusinessStore();
 
 // Данные для вкладок
 const tabsItems = computed(() => [
-  { slot: "tab1", label: specialistName },
+  { slot: "tab1", label: userStore.selectedSpecialist.name },
   {
     slot: "tab2",
     label: "All available",
