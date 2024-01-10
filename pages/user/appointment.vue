@@ -73,10 +73,17 @@
 
       <div class="mt-4">
         <button
+          v-if="isUserLoggedIn"
           class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           @click="confirmAppointment"
         >
           Confirm appointment
+        </button>
+        <button
+          v-else
+          class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+        >
+          Login to Confirm
         </button>
       </div>
     </div>
@@ -97,7 +104,10 @@ const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const router = useRouter();
 const route = useRoute();
-
+const user = useSupabaseUser();
+const isUserLoggedIn = computed(() => {
+  return user.value !== null; // Проверяем, авторизован ли пользователь
+});
 // const specialistName = ref(userStore.selectedSpecialist.name);
 // const specialistType = ref(userStore.selectedSpecialist.type);
 // const specialistId = ref(userStore.selectedSpecialist.id);
@@ -106,8 +116,6 @@ const selectedDateTime = computed(() => moment(userStore.selectedDateAndTime));
 
 const selectedServices = ref(userStore.selectedServices);
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
-
-const user = useSupabaseUser();
 
 // Извлечение даты и времени
 const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
@@ -180,35 +188,41 @@ const totalSum = computed(() => {
 });
 
 watchEffect(() => {
-  const serviceStartTimes = calculateStartTimes();
+  // Проверяем, авторизован ли пользователь
+  if (user.value) {
+    const serviceStartTimes = calculateStartTimes();
 
-  // Выбираем случайного специалиста из списка доступных, если это необходимо
-  let chosenSpecialistId = userStore.selectedSpecialist.id;
-  if (
-    userStore.availableSpecialistIds.length > 1 &&
-    businessStore.selectedTab === 1
-  ) {
-    const randomIndex = Math.floor(
-      Math.random() * userStore.selectedAvailableSpecialistsIds.length
-    );
-    chosenSpecialistId = userStore.selectedAvailableSpecialistsIds[randomIndex];
-  }
-
-  appointmentObject.value = Object.keys(selectedServices.value).map(
-    (serviceId) => {
-      const service = selectedServices.value[serviceId];
-      const startTime = serviceStartTimes[serviceId];
-
-      return {
-        client_id: user.value.id,
-        specialist_id: chosenSpecialistId,
-        service_id: serviceId,
-        date_time: moment(startTime).utc().toISOString(),
-        category_id: service.category_id,
-        business_id: userStore.selectedSalon.id,
-      };
+    let chosenSpecialistId = userStore.selectedSpecialist.id;
+    if (
+      userStore.availableSpecialistIds.length > 1 &&
+      businessStore.selectedTab === 1
+    ) {
+      const randomIndex = Math.floor(
+        Math.random() * userStore.selectedAvailableSpecialistsIds.length
+      );
+      chosenSpecialistId =
+        userStore.selectedAvailableSpecialistsIds[randomIndex];
     }
-  );
+
+    appointmentObject.value = Object.keys(selectedServices.value).map(
+      (serviceId) => {
+        const service = selectedServices.value[serviceId];
+        const startTime = serviceStartTimes[serviceId];
+
+        return {
+          client_id: user.value.id,
+          specialist_id: chosenSpecialistId,
+          service_id: serviceId,
+          date_time: moment(startTime).utc().toISOString(),
+          category_id: service.category_id,
+          business_id: userStore.selectedSalon.id,
+        };
+      }
+    );
+  } else {
+    // Очищаем appointmentObject, если пользователь не авторизован
+    appointmentObject.value = [];
+  }
 });
 
 const confirmAppointment = async () => {
