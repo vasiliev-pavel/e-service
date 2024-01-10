@@ -15,13 +15,13 @@
         v-for="date in visibleDates"
         :key="date.toString()"
         :date="date"
-        :isSelected="date.isSame(selectedDate, 'day')"
+        :isSelected="date.isSame(userStore.selectedDay, 'day')"
         @click="selectDate(date)"
       />
     </div>
   </div>
 
-  <TimeSlot :selectedDate="selectedDate" />
+  <TimeSlot :selectedDate="userStore.selectedDay" />
   <!-- <SpecUnavNotification v-else-if="isWeekend" :selectedDay="dayNumber" /> -->
 </template>
 
@@ -36,7 +36,7 @@ const userStore = useUserStore();
 
 // const selectedDate = ref(moment());
 // Переключение на использование выбранной даты из userStore
-const selectedDate = computed(() => userStore.selectedDay);
+// const selectedDate = computed(() => userStore.selectedDay);
 
 const now = moment(); // Базовая дата, которая будет использоваться для всех расчетов
 const visibleCount = 7;

@@ -144,7 +144,9 @@ const getOccupiedSlots = () => {
   } else {
     // console.log("слоты для конкретного специалиста");
     const specialistAppointments =
-      businessStore.allSpecialistsAppointments[userStore.selectedSpecialist.id];
+      businessStore.allSpecialistsAppointments[
+        userStore.selectedSpecialist?.id
+      ];
     appointments = Object.values(specialistAppointments || {});
   }
 

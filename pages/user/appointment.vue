@@ -102,7 +102,7 @@ const route = useRoute();
 // const specialistType = ref(userStore.selectedSpecialist.type);
 // const specialistId = ref(userStore.selectedSpecialist.id);
 
-const selectedDateTime = ref(userStore.selectedDateAndTime);
+// const selectedDateTime = ref(userStore.selectedDateAndTime);
 
 const selectedServices = ref(userStore.selectedServices);
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
@@ -110,7 +110,7 @@ const categoriesById = businessStore.selectedBusiness.categoriesById || {};
 const user = useSupabaseUser();
 
 // Извлечение даты и времени
-const selectedDate = selectedDateTime.value.format("D MMMM, dddd"); // Форматирование даты
+const selectedDate = userStore.selectedDateAndTime.format("D MMMM, dddd"); // Форматирование даты
 // const selectedTime = selectedDateTime.value.format("HH:mm"); //
 const appointmentObject = ref([]);
 
@@ -126,7 +126,7 @@ const displaySpecialistName = computed(() => {
 });
 
 const timeRangeAndDuration = computed(() => {
-  const startTime = selectedDateTime.value;
+  const startTime = userStore.selectedDateAndTime;
 
   // Calculate the total duration of all services in minutes
   const totalDurationMinutes = Object.values(selectedServices.value).reduce(
@@ -159,7 +159,7 @@ const timeRangeAndDuration = computed(() => {
 });
 
 const calculateStartTimes = () => {
-  let currentTime = selectedDateTime.value.clone();
+  let currentTime = userStore.selectedDateAndTime.clone();
   const serviceStartTimes = {};
 
   Object.keys(selectedServices.value).forEach((serviceId) => {
