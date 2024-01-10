@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
 import moment from "moment";
+import { parse, stringify } from "zipson";
 
 export const useUserStore = defineStore(
   "user",
@@ -162,7 +163,11 @@ export const useUserStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({}),
+      storage: persistedState.cookies,
+      serializer: {
+        deserialize: parse,
+        serialize: stringify,
+      },
     },
   }
 );

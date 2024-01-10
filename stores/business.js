@@ -96,10 +96,11 @@ export const useBusinessStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({
-        sameSite: "strict",
-        secure: true,
-      }),
+      storage: persistedState.cookies,
+      serializer: {
+        deserialize: parse,
+        serialize: stringify,
+      },
     },
   }
 );
