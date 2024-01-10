@@ -48,7 +48,7 @@ const nameBusiness = ref(userStore.selectedSalon.title);
 onMounted(() => {
   if (!process.client) return;
   // console.log(businessStore.selectedSalonId);
-  userStore.setSelectedDay(moment());
+  userStore.setSelectedDay(moment().toISOString());
   businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   userStore.resetSelectedServices();
   userStore.resetSelectedSpecialist();

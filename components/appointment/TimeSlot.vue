@@ -37,7 +37,7 @@ const availability = ref(userStore.selectedSpecialist?.availability || {});
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
 
 const props = defineProps({
-  selectedDate: Object, // Добавляем prop для выбранной даты
+  selectedDate: String, // Добавляем prop для выбранной даты
 });
 
 // const hasSlotsAvailable = ref(false);
@@ -94,7 +94,7 @@ const selectTime = (time) => {
     second: 0,
   });
   // Сохранение выбранного времени в userStore
-  userStore.setSelectedDateTime(selectedDateTime);
+  userStore.setSelectedDateTime(selectedDateTime.toISOString());
   userStore.setSelectedAvailableSpecialistsIds(time.specialistIds);
   // Программный переход на страницу appointmentы
   router.push("/user/appointment");

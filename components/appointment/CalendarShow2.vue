@@ -73,6 +73,6 @@ function scroll(direction) {
 
 const selectDate = async (date) => {
   // selectedDate.value = date;
-  userStore.setSelectedDay(date);
+  userStore.setSelectedDay(date.toISOString());
 };
 </script>

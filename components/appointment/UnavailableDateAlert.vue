@@ -16,8 +16,9 @@
 </template>
 
 <script setup>
+import moment from "moment";
 const props = defineProps({
-  selectedDay: Object,
+  selectedDay: String,
 });
 const businessStore = useBusinessStore();
 const router = useRouter();
@@ -26,7 +27,7 @@ const userStore = useUserStore();
 const formattedSelectedDay = computed(() => {
   // Убедитесь, что selectedDay действительно передан и является объектом moment
   if (props.selectedDay) {
-    return `Unable to book for ${props.selectedDay.format("MMMM Do")}`;
+    return `Unable to book for ${moment(props.selectedDay).format("MMMM Do")}`;
   }
   return "undefined error"; // Запасное сообщение или обработка ошибок
 });

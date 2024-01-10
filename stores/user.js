@@ -11,7 +11,7 @@ export const useUserStore = defineStore(
     const selectedServices = reactive({});
     const totalSum = ref(0);
     const selectedSpecialist = ref(null);
-    const selectedDateAndTime = ref({});
+    const selectedDateAndTime = ref(null);
     const specialistAppointments = ref({});
     const availableSpecialistIds = ref([]);
     const selectedAvailableSpecialistsIds = ref([]);
@@ -110,7 +110,7 @@ export const useUserStore = defineStore(
       selectedSpecialist.value = null;
       availableSpecialistIds.value = [];
       selectedAvailableSpecialistsIds.value = [];
-      selectedDateAndTime.value = {};
+      selectedDateAndTime.value = null;
     };
 
     const resetSelected = () => {
@@ -122,7 +122,7 @@ export const useUserStore = defineStore(
       availableSpecialistIds.value = [];
       selectedAvailableSpecialistsIds.value = [];
       selectedSalon.value = null;
-      selectedDateAndTime.value = {};
+      selectedDateAndTime.value = null;
       selectedDay.value = null;
     };
 
@@ -162,41 +162,44 @@ export const useUserStore = defineStore(
   },
   {
     persist: {
-      storage: persistedState.localStorage,
-      serializer: {
-        serialize: (state) => {
-          const stateCopy = JSON.parse(JSON.stringify(state));
-          // // Преобразование объектов moment в строки
-          // if (
-          //   stateCopy.selectedDateAndTime &&
-          //   moment.isMoment(stateCopy.selectedDateAndTime)
-          // ) {
-          //   stateCopy.selectedDateAndTime =
-          //     stateCopy.selectedDateAndTime.toISOString();
-          // }
-          // console.log("JSON.stringify(state)", JSON.stringify(stateCopy));
+      storage: persistedState.cookiesWithOptions({
+        // sameSite: "strict",
+        // secure: true,
+      }),
+      // serializer: {
+      //   serialize: (state) => {
+      //     const stateCopy = JSON.parse(JSON.stringify(state));
+      //     // // Преобразование объектов moment в строки
+      //     // if (
+      //     //   stateCopy.selectedDateAndTime &&
+      //     //   moment.isMoment(stateCopy.selectedDateAndTime)
+      //     // ) {
+      //     //   stateCopy.selectedDateAndTime =
+      //     //     stateCopy.selectedDateAndTime.toISOString();
+      //     // }
+      //     // console.log("JSON.stringify(state)", JSON.stringify(stateCopy));
 
-          return JSON.stringify(stateCopy);
-        },
-        deserialize: (value) => {
-          const state = JSON.parse(value);
-          // Преобразование строк обратно в объекты moment
-          // console.log(value);
+      //     return JSON.stringify(stateCopy);
+      //   },
+      //   deserialize: (value) => {
+      //     const state = JSON.parse(value);
+      //     // Преобразование строк обратно в объекты moment
+      //     // console.log(value);
 
-          if (state.selectedDay && typeof state.selectedDay === "string") {
-            // console.log(state);
-            state.selectedDay = moment(state.selectedDay);
-          }
-          if (
-            state.selectedDateAndTime &&
-            typeof state.selectedDateAndTime === "string"
-          ) {
-            state.selectedDateAndTime = moment(state.selectedDateAndTime);
-          }
-          // console.log(JSON.parse(state));
-          return state;
-        },
-      },
+      //     if (state.selectedDay && typeof state.selectedDay === "string") {
+      //       // console.log(state);
+      //       state.selectedDay = moment(state.selectedDay);
+      //     }
+      //     if (
+      //       state.selectedDateAndTime &&
+      //       typeof state.selectedDateAndTime === "string"
+      //     ) {
+      //       state.selectedDateAndTime = moment(state.selectedDateAndTime);
+      //     }
+      //     // console.log(JSON.parse(state));
+      //     return state;
+      //   },
+      // },
     },
   }
 );
