@@ -102,9 +102,7 @@ const route = useRoute();
 // const specialistType = ref(userStore.selectedSpecialist.type);
 // const specialistId = ref(userStore.selectedSpecialist.id);
 
-const selectedDateTime = computed(() =>
-  moment(userStore.selectedDateAndTime, moment.ISO_8601)
-);
+const selectedDateTime = computed(() => moment(userStore.selectedDateAndTime));
 
 const selectedServices = ref(userStore.selectedServices);
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};

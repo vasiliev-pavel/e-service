@@ -34,7 +34,7 @@ import { useRouteLeaveGuard } from "~/composables/useRouteLeaveGuard.js";
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 
-const selectedSpecialistId = userStore.selectedSpecialist.id || "";
+const selectedSpecialistId = userStore.selectedSpecialist?.id;
 const categoriesById = businessStore.selectedBusiness.categoriesById || {};
 const specialistsById = businessStore.selectedBusiness.specialistsById || {};
 const categoryIds = businessStore.selectedBusiness.categoryIds || [];
