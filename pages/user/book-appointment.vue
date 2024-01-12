@@ -60,14 +60,14 @@ const addNewAppointments = (payload) => {
 
   console.log("Появилась новая запись");
 
-  userStore.specialistAppointments[id] = {
-    id: id,
-    date_time: date_time,
-    service_id: service_id,
-    specialist_id: specialist_id,
-    status: status,
-    category_id: category_id,
-  };
+  // userStore.specialistAppointments[id] = {
+  //   id: id,
+  //   date_time: date_time,
+  //   service_id: service_id,
+  //   specialist_id: specialist_id,
+  //   status: status,
+  //   category_id: category_id,
+  // };
 };
 
 onMounted(() => {

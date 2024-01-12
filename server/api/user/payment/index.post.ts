@@ -1,18 +1,17 @@
 import stripe from "./stripe";
-import { defineEventHandler, sendError } from "h3";
+import { sendError } from "h3";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   if (!body) {
     return { error: "body are required" };
   }
-
   try {
-    const YOUR_DOMAIN = "http://localhost:3000";
+    const YOUR_DOMAIN = getRequestURL(event).origin;
     const session = await stripe.checkout.sessions.create({
       line_items: body.line_items,
       mode: "payment",
-      success_url: `${YOUR_DOMAIN}/user/appointment?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${YOUR_DOMAIN}/user/appointment-confirmation?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${YOUR_DOMAIN}/user/appointment?canceled=true`,
     });
 

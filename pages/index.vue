@@ -7,6 +7,11 @@ definePageMeta({
   middleware: ["no-back-navigation"],
 });
 
+useHead({
+  title: "Home Page",
+  meta: [{ name: "description", content: "My amazing site." }],
+});
+
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
@@ -19,5 +24,6 @@ watchEffect(async () => {
   }
   if (data.value) businessStore.setBusiness(data.value);
 });
+
 useRouteLeaveGuard();
 </script>

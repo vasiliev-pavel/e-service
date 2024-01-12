@@ -1,21 +1,25 @@
 import { defineStore } from "pinia";
 import { ref, reactive } from "vue";
-import moment from "moment";
 import { parse, stringify } from "zipson";
 
 export const useUserStore = defineStore(
   "user",
   () => {
+    const isAppointmentSubmitted = ref(false);
     const selectedDay = ref(null);
     const selectedSalon = ref({});
-    const firstPageVisited = ref(null);
     const selectedServices = reactive({});
     const totalSum = ref(0);
     const selectedSpecialist = ref(null);
     const selectedDateAndTime = ref(null);
-    const specialistAppointments = ref({});
+    // const specialistAppointments = ref({});
     const availableSpecialistIds = ref([]);
     const selectedAvailableSpecialistsIds = ref([]);
+    const appointObject = ref({});
+
+    const setAppointObject = (data) => {
+      appointObject.value = data;
+    };
 
     const setSelectedDay = (day) => {
       selectedDay.value = day;
@@ -41,26 +45,20 @@ export const useUserStore = defineStore(
       selectedSalon.value = salon;
     };
 
-    const getSpecialistAppointments = async (speciliastId) => {
-      const { data: appointments } = await useFetch(
-        `/api/user/appointments/${speciliastId}`
-      );
-      const appointmentsObject = appointments.value.data.reduce(
-        (acc, appointment) => {
-          acc[appointment.id] = appointment;
-          return acc;
-        },
-        {}
-      );
+    // const getSpecialistAppointments = async (speciliastId) => {
+    //   const { data: appointments } = await useFetch(
+    //     `/api/user/appointments/${speciliastId}`
+    //   );
+    //   const appointmentsObject = appointments.value.data.reduce(
+    //     (acc, appointment) => {
+    //       acc[appointment.id] = appointment;
+    //       return acc;
+    //     },
+    //     {}
+    //   );
 
-      specialistAppointments.value = appointmentsObject ?? null;
-    };
-
-    const setFirstPageVisited = (page) => {
-      if (!firstPageVisited.value) {
-        firstPageVisited.value = page;
-      }
-    };
+    //   specialistAppointments.value = appointmentsObject ?? null;
+    // };
 
     const toggleCheckbox = (
       id,
@@ -100,7 +98,7 @@ export const useUserStore = defineStore(
 
     const resetSelectedSpecialist = () => {
       selectedSpecialist.value = null;
-      specialistAppointments.value = {};
+      // specialistAppointments.value = {};
     };
 
     const resetForButton = () => {
@@ -125,32 +123,34 @@ export const useUserStore = defineStore(
       selectedSalon.value = null;
       selectedDateAndTime.value = null;
       selectedDay.value = null;
+      isAppointmentSubmitted.value = false;
     };
 
-    watch(selectedSpecialist, async (newSpecialist, oldSpecialist) => {
-      if (selectedSpecialist)
-        if (newSpecialist && newSpecialist !== oldSpecialist) {
-          // console.log(newSpecialist.id);
-          await getSpecialistAppointments(newSpecialist.id);
-        }
-    });
+    // watch(selectedSpecialist, async (newSpecialist, oldSpecialist) => {
+    //   if (selectedSpecialist)
+    //     if (newSpecialist && newSpecialist !== oldSpecialist) {
+    //       // console.log(newSpecialist.id);
+    //       // await getSpecialistAppointments(newSpecialist.id);
+    //     }
+    // });
 
     return {
+      appointObject,
       selectedDay,
       selectedSalon,
-      firstPageVisited,
       selectedServices,
       totalSum,
       selectedSpecialist,
       selectedDateAndTime,
-      specialistAppointments,
+      // specialistAppointments,
       availableSpecialistIds,
       selectedAvailableSpecialistsIds,
+      isAppointmentSubmitted,
       resetForButton,
+      setAppointObject,
       setSelectedSalon,
       setAvailableSpecialistIds,
       setSelectedDateTime,
-      setFirstPageVisited,
       toggleCheckbox,
       resetSelectedServices,
       setSelectedSpecialist,

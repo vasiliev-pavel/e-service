@@ -61,7 +61,6 @@
           id="comment"
           placeholder="Optional"
         ></textarea>
-        <!-- Changed placeholder to content inside textarea -->
       </div>
 
       <div class="flex items-center justify-between">
@@ -219,6 +218,7 @@ watchEffect(() => {
         };
       }
     );
+    userStore.setAppointObject(appointmentObject.value);
   } else {
     // Очищаем appointmentObject, если пользователь не авторизован
     appointmentObject.value = [];
@@ -257,18 +257,18 @@ onMounted(async () => {
         `/api/user/payment/${sessionId}`
       );
 
-      console.log(paymentStatus);
+      // console.log("paymentStatus", paymentStatus);
       if (paymentStatus && paymentStatus.value.status === "paid") {
         // Отправка данных о назначении в базу данных
-        try {
-          await $fetch(`/api/user/appointments/post`, {
-            method: "post",
-            body: appointmentObject.value,
-          });
-          router.push("/"); // Перенаправление пользователя на главную страницу
-        } catch (error) {
-          console.error("Ошибка при отправке данных о назначении:", error);
-        }
+        // try {
+        //   await $fetch(`/api/user/appointments/post`, {
+        //     method: "post",
+        //     body: appointmentObject.value,
+        //   });
+        //   router.push("/"); // Перенаправление пользователя на главную страницу
+        // } catch (error) {
+        //   console.error("Ошибка при отправке данных o назначении:", error);
+        // }
       } else {
         // Обработка неудачной оплаты
         console.error("Оплата не удалась или статус оплаты неизвестен");
