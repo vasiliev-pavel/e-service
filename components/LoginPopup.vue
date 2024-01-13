@@ -5,7 +5,7 @@
     @click="$emit('update:isOpen', false)"
   >
     <div
-      class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      class="fixed inset-x-0 bottom-0 p-5 border shadow-lg bg-white rounded-t-md md:relative md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-auto md:max-w-md md:rounded-md"
       @click.stop
     >
       <!-- Контент всплывающего окна -->
@@ -23,9 +23,10 @@
           class="border rounded p-2 w-full"
         />
         <button
+          @click="signOut"
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded block w-full my-3"
         >
-          Log in
+          Log out
         </button>
       </div>
     </div>
@@ -42,7 +43,7 @@ const signInWithGoogle = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/confirm`,
+      redirectTo: `${window.location.origin}/`,
       queryParams: {
         access_type: "offline",
         prompt: "consent",
@@ -52,6 +53,10 @@ const signInWithGoogle = async () => {
   if (error) console.log(error);
 };
 
+const signOut = async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) console.log(error);
+};
 const props = defineProps({
   isOpen: Boolean,
 });

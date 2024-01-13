@@ -1,5 +1,6 @@
 <template>
   <SearchBody />
+  <div>{{ user }}></div>
 </template>
 
 <script setup lang="ts">
@@ -18,7 +19,6 @@ useHead({
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
-
 const { data } = await useFetch("/api/user/businesses");
 
 watchEffect(async () => {
