@@ -23,8 +23,8 @@
 </template>
 
 <script setup>
-import DropdownList from "~/components/DropdownList.vue";
-import NavigationButton from "~/components/NavigationButton.vue";
+import DropdownList from "~/components/user/DropdownList.vue";
+import NavigationButton from "~/components/user/NavigationButton.vue";
 
 import { useUserStore } from "~/stores/user";
 import { ref } from "vue";

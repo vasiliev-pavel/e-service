@@ -3,8 +3,11 @@
 </template>
 
 <script setup lang="ts">
+import SearchBody from "~/components/user/SearchBody.vue";
+
 definePageMeta({
   middleware: ["no-back-navigation"],
+  layout: "user",
 });
 
 useHead({

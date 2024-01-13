@@ -9,20 +9,22 @@ watch(
   () => user.value,
   async (newUser, oldUser) => {
     if (newUser) {
-      loaderStore.show();
+      navigateTo("/");
 
-      // Fetch Profile Data
-      const profile = await profileStore.fetchMyProfile(newUser.id);
+      // loaderStore.show();
 
-      if (profile.role !== "owner" || profile.role !== "specialist") {
-        navigateTo("/");
-      } else {
-        await profileStore.fetchMyBusinesses(newUser.id);
-        navigateTo("/panel");
-      }
+      // // Fetch Profile Data
+      // const profile = await profileStore.fetchMyProfile(newUser.id);
 
-      // Скрыть загрузчик в любом случае
-      loaderStore.hide();
+      // if (profile.role !== "owner" || profile.role !== "specialist") {
+      //   navigateTo("/");
+      // } else {
+      //   await profileStore.fetchMyBusinesses(newUser.id);
+      //   navigateTo("/panel");
+      // }
+
+      // // Скрыть загрузчик в любом случае
+      // loaderStore.hide();
     }
   },
   { immediate: true }

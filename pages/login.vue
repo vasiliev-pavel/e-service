@@ -10,6 +10,10 @@ const signInWithGoogle = async () => {
     provider: "google",
     options: {
       redirectTo: `${window.location.origin}/confirm`,
+      queryParams: {
+        access_type: "offline",
+        prompt: "consent",
+      },
     },
   });
   if (error) console.log(error);

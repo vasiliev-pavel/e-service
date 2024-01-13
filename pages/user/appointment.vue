@@ -92,7 +92,7 @@
 <script setup>
 import { ref } from "vue";
 import { durationToMinutes } from "~/utils/appointmentUtils";
-import SelectedServices from "~/components/appointment/SelectedServices.vue";
+import SelectedServices from "~/components/user/appointment/SelectedServices.vue";
 import moment from "moment";
 
 definePageMeta({

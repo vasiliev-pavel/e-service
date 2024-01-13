@@ -30,7 +30,7 @@
 
 <script setup>
 import { ref, computed } from "vue";
-import CalendarShow2 from "~/components/appointment/CalendarShow2.vue";
+import CalendarShow2 from "~/components/user/appointment/CalendarShow2.vue";
 import { useUserStore } from "~/stores/user";
 
 const currentTab = ref(0); // default to the first tab

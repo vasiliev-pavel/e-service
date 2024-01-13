@@ -26,9 +26,9 @@
 </template>
 
 <script setup>
-import DateCell from "~/components/appointment/DateCell.vue";
-import TimeSlot from "~/components/appointment/TimeSlot.vue";
-import CalendarHeader from "~/components/appointment/CalendarHeader.vue";
+import DateCell from "~/components/user/appointment/DateCell.vue";
+import TimeSlot from "~/components/user/appointment/TimeSlot.vue";
+import CalendarHeader from "~/components/user/appointment/CalendarHeader.vue";
 import { ref, computed } from "vue";
 import moment from "moment";
 

@@ -25,7 +25,7 @@
 
 <script setup>
 import { ref, computed, watch } from "vue";
-import UnavailableDateAlert from "~/components/appointment/UnavailableDateAlert.vue";
+import UnavailableDateAlert from "~/components/user/appointment/UnavailableDateAlert.vue";
 
 import moment from "moment";
 import { durationToMinutes } from "~/utils/appointmentUtils";
@@ -99,34 +99,6 @@ const selectTime = (time) => {
   // Программный переход на страницу appointmentы
   router.push("/user/appointment");
 };
-
-// const getOccupiedSlots = () => {
-//   return Object.values(userStore.specialistAppointments)
-//     .filter((appointment) => {
-//       const appointmentDate = moment(appointment.date_time);
-//       return appointmentDate.isSame(props.selectedDate, "day");
-//     })
-//     .map((appointment) => {
-//       const category = categoriesById[appointment.category_id];
-//       if (!category) {
-//         console.error("Category not found for appointment", appointment);
-//         return null;
-//       }
-//       const service = category.servicesById[appointment.service_id];
-//       if (!service) {
-//         console.error("Service not found for appointment", appointment);
-//         return null;
-//       }
-
-//       const durationStr = service.duration;
-//       const durationInMinutes = durationToMinutes(durationStr);
-//       return {
-//         start: moment(appointment.date_time),
-//         end: moment(appointment.date_time).add(durationInMinutes, "minutes"),
-//       };
-//     })
-//     .filter((slot) => slot !== null);
-// };
 
 const getOccupiedSlots = () => {
   let appointments = [];
