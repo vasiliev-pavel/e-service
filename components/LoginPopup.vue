@@ -5,7 +5,7 @@
     @click="$emit('update:isOpen', false)"
   >
     <div
-      class="fixed inset-x-0 bottom-0 p-5 border shadow-lg bg-white rounded-t-md md:relative md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-auto md:max-w-md md:rounded-md"
+      class="fixed bottom-0 inset-x-0 p-5 border shadow-lg bg-white rounded-t-md animate-slideUp md:animate-none md:relative md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-auto md:max-w-md md:rounded-md"
       @click.stop
     >
       <!-- Контент всплывающего окна -->

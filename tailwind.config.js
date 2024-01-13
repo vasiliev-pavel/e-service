@@ -10,6 +10,15 @@ export default {
   ],
   theme: {
     extend: {
+      keyframes: {
+        slideUp: {
+          "0%": { transform: "translateY(100%)" },
+          "100%": { transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        slideUp: "slideUp 0.5s ease-out",
+      },
       fontFamily: {
         sora: ["Sora", "ui-sans-serif", "system-ui"],
         // roboto: ["ui-sans-serif", "system-ui", "Roboto"], // other font families...
