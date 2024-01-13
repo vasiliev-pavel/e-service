@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import GoogleIcon from "@/components/icons/GoogleIcon.vue";
-import FacebookIcon from "@/components/icons/FacebookIcon.vue";
-import AppleIcon from "@/components/icons/AppleIcon.vue";
 
 const supabase = useSupabaseClient();
 
