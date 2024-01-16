@@ -15,6 +15,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "user",
+});
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useUserStore } from "~/stores/user";

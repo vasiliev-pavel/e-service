@@ -23,6 +23,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "user",
+});
 import DropdownList from "~/components/user/DropdownList.vue";
 import NavigationButton from "~/components/user/NavigationButton.vue";
 

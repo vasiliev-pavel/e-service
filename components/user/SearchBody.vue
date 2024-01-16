@@ -16,6 +16,10 @@
       </li>
     </ul>
   </div>
+  <div>
+    <p>latitude{{ userLocation }}</p>
+    <!-- <p>longitude{{ userLocation.longitude }}</p> -->
+  </div>
 </template>
 
 <script setup>
@@ -24,6 +28,7 @@ import { useRouter } from "vue-router";
 const businessStore = useBusinessStore();
 const router = useRouter();
 const user = useUserStore();
+const userLocation = ref(null);
 
 const selectSalon = (salon) => {
   businessStore.selectedSalonId = salon.id;
@@ -37,10 +42,32 @@ const selectSalon = (salon) => {
 onMounted(async () => {
   if (!process.client) return;
   businessStore.resetSelected();
+  getUserLocation();
 });
 
-const button = () => {
-  const { data: data } = useFetch("/api/user/appointments");
-  console.log(data.value);
+// const button = () => {
+//   const { data: data } = useFetch("/api/user/appointments");
+//   console.log(data.value);
+// };
+
+const getUserLocation = () => {
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // Получите координаты пользователя и сохраните их в userLocation
+        userLocation.value = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        };
+        // Здесь вы можете выполнить дополнительную логику, связанную с полученными координатами
+      },
+      (error) => {
+        // Обработка ошибок при получении местоположения пользователя
+        console.error("Ошибка получения местоположения:", error);
+      }
+    );
+  } else {
+    console.error("Браузер не поддерживает геолокацию.");
+  }
 };
 </script>

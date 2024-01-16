@@ -33,6 +33,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "user",
+});
 import { computed } from "vue";
 // import { useBusinessStore } from "~/stores/business";
 import moment from "moment";

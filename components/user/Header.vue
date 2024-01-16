@@ -16,6 +16,12 @@
       >
         Log in
       </button>
+      <button
+        @click="logOut"
+        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+      >
+        Log out
+      </button>
     </div>
     <LoginPopup
       :isOpen="isLoginPopupOpen"
@@ -27,10 +33,15 @@
 <script setup>
 import { ref } from "vue";
 import LoginPopup from "~/components/LoginPopup.vue";
+const supabase = useSupabaseClient();
 
 const isLoginPopupOpen = ref(false);
 
 const toggleLoginPopup = () => {
   isLoginPopupOpen.value = !isLoginPopupOpen.value;
+};
+
+const logOut = async () => {
+  const { error } = await supabase.auth.signOut();
 };
 </script>

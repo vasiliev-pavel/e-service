@@ -34,6 +34,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "user",
+});
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/user";

@@ -23,6 +23,7 @@ const { data } = await useFetch("/api/user/businesses");
 
 watchEffect(async () => {
   if (user.value) {
+    console.log(user.value);
     userStore.resetSelected();
   }
   if (data.value) businessStore.setBusiness(data.value);

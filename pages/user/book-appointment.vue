@@ -29,6 +29,9 @@
 </template>
 
 <script setup>
+definePageMeta({
+  layout: "user",
+});
 import { ref, computed } from "vue";
 import CalendarShow2 from "~/components/user/appointment/CalendarShow2.vue";
 import { useUserStore } from "~/stores/user";

@@ -80,6 +80,7 @@
         </button>
         <button
           v-else
+          @click="toggleLoginPopup"
           class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
         >
           Login to Confirm
@@ -87,18 +88,28 @@
       </div>
     </div>
   </div>
+  <LoginPopup
+    :isOpen="isLoginPopupOpen"
+    @update:isOpen="isLoginPopupOpen = $event"
+  />
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { durationToMinutes } from "~/utils/appointmentUtils";
 import SelectedServices from "~/components/user/appointment/SelectedServices.vue";
+import LoginPopup from "~/components/LoginPopup.vue";
 import moment from "moment";
 
 definePageMeta({
   middleware: ["no-back-navigation"],
+  layout: "user",
 });
+const isLoginPopupOpen = ref(false);
 
+const toggleLoginPopup = () => {
+  isLoginPopupOpen.value = !isLoginPopupOpen.value;
+};
 const userStore = useUserStore();
 const businessStore = useBusinessStore();
 const router = useRouter();
