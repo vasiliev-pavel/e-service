@@ -115,9 +115,11 @@ const businessStore = useBusinessStore();
 const router = useRouter();
 const route = useRoute();
 const user = useSupabaseUser();
+
 const isUserLoggedIn = computed(() => {
   return user.value !== null; // Проверяем, авторизован ли пользователь
 });
+
 // const specialistName = ref(userStore.selectedSpecialist.name);
 // const specialistType = ref(userStore.selectedSpecialist.type);
 // const specialistId = ref(userStore.selectedSpecialist.id);

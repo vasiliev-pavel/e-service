@@ -16,6 +16,11 @@ export const useUserStore = defineStore(
     const availableSpecialistIds = ref([]);
     const selectedAvailableSpecialistsIds = ref([]);
     const appointObject = ref({});
+    const location = ref({});
+
+    const setLocation = (data) => {
+      location.value = data;
+    };
 
     const setAppointObject = (data) => {
       appointObject.value = data;
@@ -136,6 +141,7 @@ export const useUserStore = defineStore(
 
     return {
       appointObject,
+      location,
       selectedDay,
       selectedSalon,
       selectedServices,
@@ -146,6 +152,7 @@ export const useUserStore = defineStore(
       availableSpecialistIds,
       selectedAvailableSpecialistsIds,
       isAppointmentSubmitted,
+      setLocation,
       resetForButton,
       setAppointObject,
       setSelectedSalon,

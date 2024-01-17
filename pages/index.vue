@@ -1,10 +1,12 @@
 <template>
+  <SearchFilter />
   <SearchBody />
   <div>{{ user }}></div>
 </template>
 
 <script setup lang="ts">
 import SearchBody from "~/components/user/SearchBody.vue";
+import SearchFilter from "~/components/user/SearchFilter.vue";
 
 definePageMeta({
   middleware: ["no-back-navigation"],
