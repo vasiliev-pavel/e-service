@@ -15,7 +15,7 @@
       Фильтр по расстоянию
     </button>
   </div>
-  <div>{{ salonsData }}</div>
+  <div>{{ userLocation }}</div>
 </template>
 
 <script setup>

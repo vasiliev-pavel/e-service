@@ -1,7 +1,13 @@
 <template>
   <SearchFilter />
   <SearchBody />
-  <div>{{ user }}></div>
+  <div>{{ userLocation }}></div>
+  <button
+    @click="test"
+    class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+  >
+    Log out
+  </button>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +23,7 @@ useHead({
   title: "Home Page",
   meta: [{ name: "description", content: "My amazing site." }],
 });
+const userLocation = ref(null);
 
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
@@ -28,8 +35,11 @@ watchEffect(async () => {
     console.log(user.value);
     userStore.resetSelected();
   }
+
   if (data.value) businessStore.setBusiness(data.value);
 });
-
+const test = async () => {
+  userLocation.value = await getUserLocation();
+};
 useRouteLeaveGuard();
 </script>
