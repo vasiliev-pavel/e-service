@@ -10,7 +10,7 @@
   </button>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import SearchBody from "~/components/user/SearchBody.vue";
 import SearchFilter from "~/components/user/SearchFilter.vue";
 
@@ -23,7 +23,7 @@ useHead({
   title: "Home Page",
   meta: [{ name: "description", content: "My amazing site." }],
 });
-const userLocation = ref(null);
+const userLocation = ref({});
 
 const user = useSupabaseUser();
 const businessStore = useBusinessStore();
@@ -38,8 +38,30 @@ watchEffect(async () => {
 
   if (data.value) businessStore.setBusiness(data.value);
 });
+
+const getUserLocation = () => {
+  return new Promise((resolve, reject) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          userLocation.value = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          };
+          resolve();
+        },
+        (error) => {
+          reject(error);
+        }
+      );
+    } else {
+      reject(new Error("Браузер не поддерживает геолокацию."));
+    }
+  });
+};
+
 const test = async () => {
-  userLocation.value = await getUserLocation();
+  await getUserLocation();
 };
 useRouteLeaveGuard();
 </script>
