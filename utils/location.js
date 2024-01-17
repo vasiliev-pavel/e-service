@@ -17,6 +17,12 @@ export function calculateDistance(lat1, lon1, lat2, lon2) {
 export function getUserLocation() {
   return new Promise((resolve, reject) => {
     if ("geolocation" in navigator) {
+      // Опции для увеличения точности
+      const options = {
+        enableHighAccuracy: true, // Запрашивает наивысшую доступную точность
+        maximumAge: 0, // Определяет максимальный возраст принимаемых кэшированных позиций (0 = только свежие данные)
+      };
+
       navigator.geolocation.getCurrentPosition(
         (position) => {
           console.log("Геолокация получена:", position);
@@ -28,7 +34,8 @@ export function getUserLocation() {
         (error) => {
           console.error("Ошибка геолокации:", error);
           reject(error);
-        }
+        },
+        options
       );
     } else {
       console.error("Браузер не поддерживает геолокацию.");
