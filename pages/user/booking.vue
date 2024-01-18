@@ -36,24 +36,44 @@
 definePageMeta({
   layout: "user",
 });
+
+useHead({
+  title: "Booking",
+  meta: [{ name: "description", content: "My amazing site." }],
+});
+
 import { computed } from "vue";
 // import { useBusinessStore } from "~/stores/business";
 import moment from "moment";
 import SelectService from "~/components/user/SelectService.vue";
 
+const route = useRoute();
+const businessId = computed(() => route.query.id || null);
 const loading = useLoadingStore();
-
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
+const nameBusiness = ref("");
 
-// Создаем вычисляемое свойство
-const nameBusiness = ref(userStore.selectedSalon.title);
+let businessData, pending, error;
+if (!businessStore.selectedSalonId.value) {
+  ({
+    data: businessData,
+    pending,
+    error,
+  } = await useAsyncData(`businessInfo-${businessId.value}`, () =>
+    $fetch(`/api/user/businesses/get/${businessId.value}`)
+  ));
+}
 
-onMounted(() => {
-  if (!process.client) return;
-  // console.log(businessStore.selectedSalonId);
+onMounted(async () => {
+  if (businessId.value) {
+    nameBusiness.value = businessData.value.data[0].name;
+    businessStore.selectedSalonId = businessId.value;
+    businessStore.getSpecialistAppointments(businessId.value);
+  } else {
+    businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
+  }
   userStore.setSelectedDay(moment().toISOString());
-  businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   userStore.resetSelectedServices();
   userStore.resetSelectedSpecialist();
 });

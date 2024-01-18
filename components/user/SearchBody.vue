@@ -24,4 +24,13 @@ import { useRouter } from "vue-router";
 const businessStore = useBusinessStore();
 const router = useRouter();
 const user = useUserStore();
+
+const selectSalon = (salon) => {
+  businessStore.selectedSalonId = salon.id;
+  // Save the selected salon to local storage
+  user.setSelectedSalon({ id: salon.id, title: salon.name });
+  // localStorage.setItem("selectedSalon", JSON.stringify(salon));
+  // Navigate to a new page, for example, '/salon-details'
+  router.push("/user/booking");
+};
 </script>

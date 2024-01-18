@@ -26,12 +26,21 @@ export const useBusinessStore = defineStore(
     const setCategories = (newData) => {
       // categories.value = newData;
     };
+
     // Получение cпециалистов и услуги которые они выполняют
     const fetchAllData = async (salonId) => {
-      const { data: businessData } = await useFetch(
-        `/api/user/businesses/${salonId}`
-      );
-      selectedBusiness.value = businessData.value.data;
+      try {
+        const { data } = await useFetch(`/api/user/businesses/${salonId}`);
+        if (data && data.value && data.value.data) {
+          selectedBusiness.value = data.value.data;
+        } else {
+          console.error("Invalid response structure");
+          selectedBusiness.value = null;
+        }
+      } catch (error) {
+        console.error("Failed to fetch business data:", error);
+        selectedBusiness.value = null;
+      }
     };
 
     const resetSelected = () => {
@@ -42,38 +51,36 @@ export const useBusinessStore = defineStore(
     //Получаем данные записей всех специалистов
     const getSpecialistAppointments = async (businessId) => {
       const loading = useLoadingStore();
-      let appointments = null; // Объявляем переменную вне блока try-catch
+      const allSpecialistsAppointments = ref(null); // Предполагая, что это ref из Vue Composition API
 
-      loading.showLoading(); // Активация индикатора загрузки
+      // loading.showLoading();
       try {
-        const response = await useFetch(
+        const { data } = await useFetch(
           `/api/user/appointments/business/${businessId}`
         );
-        appointments = response.data; // Присваиваем значение переменной внутри try
+
+        if (data && data.data) {
+          allSpecialistsAppointments.value = data.data.reduce(
+            (acc, { specialist_id, id, ...rest }) => {
+              if (!acc[specialist_id]) {
+                acc[specialist_id] = {};
+              }
+              acc[specialist_id][id] = { id, ...rest };
+              return acc;
+            },
+            {}
+          );
+        } else {
+          console.error("Response or response.data is null");
+          allSpecialistsAppointments.value = null;
+        }
       } catch (error) {
         console.error(error);
+        allSpecialistsAppointments.value = null;
       } finally {
-        loading.hideLoading(); // Деактивация индикатора загрузки
+        // loading.hideLoading();
       }
-      // console.log(appointments.value.data);
-      const appointmentsObject = appointments.value.data.reduce(
-        (acc, appointment) => {
-          // Check if the accumulator already has the specialist_id key
-          if (!acc[appointment.specialist_id]) {
-            acc[appointment.specialist_id] = {}; // Initialize an empty object for the specialist
-          }
-
-          // Add the appointment to the respective specialist's object using the appointment id as the key
-          acc[appointment.specialist_id][appointment.id] = appointment;
-
-          return acc;
-        },
-        {}
-      );
-
-      allSpecialistsAppointments.value = appointmentsObject ?? null;
     };
-
     //следим за выбранным пользователем салоном
     //и если он выбрал новый, то обновляем данные
     watch(selectedSalonId, async (newId, oldId) => {
