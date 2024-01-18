@@ -53,14 +53,22 @@ const loading = useLoadingStore();
 const businessStore = useBusinessStore();
 const userStore = useUserStore();
 const nameBusiness = ref("");
-
 let businessData, pending, error;
-if (!businessStore.selectedSalonId.value) {
+
+// const {
+//   data: businessData,
+//   pending,
+//   error,
+// } = await useAsyncData("businessInfo", () =>
+//   $fetch(`/api/user/businesses/get/${businessId.value}`)
+// );
+
+if (!businessStore.selectedSalonId) {
   ({
     data: businessData,
     pending,
     error,
-  } = await useAsyncData(`businessInfo-${businessId.value}`, () =>
+  } = await useAsyncData("businessInfo", () =>
     $fetch(`/api/user/businesses/get/${businessId.value}`)
   ));
 }
@@ -71,6 +79,7 @@ onMounted(async () => {
     businessStore.selectedSalonId = businessId.value;
     businessStore.getSpecialistAppointments(businessId.value);
   } else {
+    nameBusiness.value = userStore.selectedSalon.title;
     businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   }
   userStore.setSelectedDay(moment().toISOString());
