@@ -75,8 +75,17 @@ const generateTimeSlots = (startTime, endTime) => {
 const workingHours = computed(() => {
   const dayOfWeek = moment(props.selectedDate).format("dddd").toLowerCase();
   // Используйте опциональную цепочку для безопасного доступа к свойствам
+  let hours;
+  if (
+    businessStore.selectedTab &&
+    userStore.availableSpecialistIds.length > 1
+  ) {
+    hours = getMaxWorkingHours();
+    console.log(hours);
+  } else {
+    hours = availability.value?.[dayOfWeek];
+  }
 
-  const hours = availability.value?.[dayOfWeek];
   if (hours && hours !== "Closed") {
     const [start, end] = hours.split("-");
     console.log(hours);
@@ -96,8 +105,10 @@ const selectTime = (time) => {
   // Сохранение выбранного времени в userStore
   userStore.setSelectedDateTime(selectedDateTime.toISOString());
   userStore.setSelectedAvailableSpecialistsIds(time.specialistIds);
+
+  // console.log(getMaxWorkingHours());
   // Программный переход на страницу appointmentы
-  router.push("/user/appointment");
+  // router.push("/user/appointment");
 };
 
 const getOccupiedSlots = () => {
@@ -185,14 +196,46 @@ const filteredPeriods = computed(() => {
       businessStore.selectedTab &&
       userStore.availableSpecialistIds.length > 1
     ) {
-      // Логика для "Все доступные"
       userStore.availableSpecialistIds.forEach((specialistId) => {
-        const isSpecialistAvailable = !occupiedSlots.some(
-          (occupied) =>
-            occupied.specialistId === specialistId &&
-            slotMoment.isBetween(occupied.start, occupied.end, null, "[)")
-        );
-        if (isSpecialistAvailable) slotData.specialistIds.add(specialistId);
+        const dayOfWeek = moment(props.selectedDate)
+          .format("dddd")
+          .toLowerCase();
+        const specialistAvailability =
+          businessStore.selectedBusiness.specialistsById[specialistId]
+            .availability[dayOfWeek];
+
+        if (specialistAvailability && specialistAvailability !== "Closed") {
+          const [start, end] = specialistAvailability.split("-");
+          const startMoment = moment(start.trim(), "HH:mm");
+          const endMoment = moment(end.trim(), "HH:mm"); // Рабочее время до
+
+          const slotStartMoment = moment(slot, "HH:mm");
+          const slotEndMoment = slotStartMoment
+            .clone()
+            .add(totalDuration, "minutes"); // Время окончания слота
+
+          // Проверяем, попадает ли слот в рабочее время специалиста
+          if (
+            slotStartMoment.isSameOrAfter(startMoment) &&
+            slotEndMoment.isSameOrBefore(endMoment) // Обновленное условие
+          ) {
+            // Проверяем, не занят ли специалист в данный момент времени
+            const isSpecialistAvailable = !occupiedSlots.some(
+              (occupied) =>
+                occupied.specialistId === specialistId &&
+                slotStartMoment.isBetween(
+                  occupied.start,
+                  occupied.end,
+                  null,
+                  "[)"
+                )
+            );
+
+            if (isSpecialistAvailable) {
+              slotData.specialistIds.add(specialistId);
+            }
+          }
+        }
       });
     } else {
       // Логика для конкретного специалиста
@@ -228,5 +271,41 @@ const filteredPeriods = computed(() => {
       })),
     }));
 });
+
+const getMaxWorkingHours = () => {
+  let earliestStart = moment("23:59", "HH:mm");
+  let latestEnd = moment("00:00", "HH:mm");
+  const dayOfWeek = moment(props.selectedDate).format("dddd").toLowerCase();
+
+  userStore.availableSpecialistIds.forEach((specialistId) => {
+    const specialistAvailability =
+      businessStore.selectedBusiness.specialistsById[specialistId].availability[
+        dayOfWeek
+      ];
+    if (specialistAvailability && specialistAvailability !== "Closed") {
+      const [start, end] = specialistAvailability.split("-");
+      console.log(start, end);
+
+      const startMoment = moment(start.trim(), "HH:mm");
+      const endMoment = moment(end.trim(), "HH:mm");
+
+      if (startMoment.isBefore(earliestStart)) {
+        earliestStart = startMoment;
+      }
+
+      if (endMoment.isAfter(latestEnd)) {
+        latestEnd = endMoment;
+      }
+    }
+  });
+
+  return `${earliestStart.format("HH:mm")}-${latestEnd.format("HH:mm")}`;
+  // Возвращаем время начала и окончания работы в формате HH:mm
+  // return {
+  //   start: earliestStart.format("HH:mm"),
+  //   end: latestEnd.format("HH:mm"),
+  // };
+};
+
 useRouteLeaveGuard();
 </script>

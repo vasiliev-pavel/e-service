@@ -101,14 +101,14 @@ export const useBusinessStore = defineStore(
       getSpecialistAppointments,
       setSelectedTab,
     };
-  },
-  {
-    persist: {
-      storage: persistedState.cookies,
-      serializer: {
-        deserialize: parse,
-        serialize: stringify,
-      },
-    },
   }
+  // {
+  //   persist: {
+  //     storage: persistedState.cookies,
+  //     serializer: {
+  //       deserialize: parse,
+  //       serialize: stringify,
+  //     },
+  //   },
+  // }
 );
