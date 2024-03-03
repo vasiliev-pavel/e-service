@@ -11,7 +11,7 @@ export const useBusinessStore = defineStore(
 
     //обновлённая структура
     const selectedBusiness = ref({});
-    const allSpecialistsAppointments = ref({});
+    const allSpecialistsAppointments = ref();
     const selectedTab = ref(0);
 
     const setSelectedTab = (newData) => {
@@ -49,38 +49,50 @@ export const useBusinessStore = defineStore(
     };
 
     //Получаем данные записей всех специалистов
-    const getSpecialistAppointments = async (businessId) => {
+    const getSpecialistAppointments = async (
+      businessId,
+      speciliastIds,
+      date
+    ) => {
       const loading = useLoadingStore();
-      const allSpecialistsAppointments = ref(null); // Предполагая, что это ref из Vue Composition API
+      loading.showLoading();
 
-      // loading.showLoading();
+      const startDay = date.clone().startOf("day");
+      const endDay = date.clone().endOf("day");
+
       try {
-        const { data } = await useFetch(
-          `/api/user/appointments/business/${businessId}`
-        );
+        const { data } = await useFetch(`/api/user/appointments/business/`, {
+          method: "POST",
+          body: {
+            id: businessId,
+            speciliastIds: speciliastIds,
+            startDay: startDay,
+            endDay: endDay,
+          },
+        });
 
-        if (data && data.data) {
-          allSpecialistsAppointments.value = data.data.reduce(
-            (acc, { specialist_id, id, ...rest }) => {
-              if (!acc[specialist_id]) {
-                acc[specialist_id] = {};
-              }
-              acc[specialist_id][id] = { id, ...rest };
-              return acc;
-            },
-            {}
-          );
+        if (data.value && data.value.data) {
+          data.value.data.forEach((appointment) => {
+            const { specialist_id, id, ...rest } = appointment;
+            if (!allSpecialistsAppointments.value[specialist_id]) {
+              allSpecialistsAppointments.value[specialist_id] = {};
+            }
+            allSpecialistsAppointments.value[specialist_id][id] = {
+              specialist_id,
+              id,
+              ...rest,
+            };
+          });
         } else {
           console.error("Response or response.data is null");
-          allSpecialistsAppointments.value = null;
         }
       } catch (error) {
         console.error(error);
-        allSpecialistsAppointments.value = null;
       } finally {
-        // loading.hideLoading();
+        loading.hideLoading();
       }
     };
+
     //следим за выбранным пользователем салоном
     //и если он выбрал новый, то обновляем данные
     watch(selectedSalonId, async (newId, oldId) => {
@@ -101,14 +113,14 @@ export const useBusinessStore = defineStore(
       getSpecialistAppointments,
       setSelectedTab,
     };
+  },
+  {
+    persist: {
+      storage: persistedState.cookies,
+      serializer: {
+        deserialize: parse,
+        serialize: stringify,
+      },
+    },
   }
-  // {
-  //   persist: {
-  //     storage: persistedState.cookies,
-  //     serializer: {
-  //       deserialize: parse,
-  //       serialize: stringify,
-  //     },
-  //   },
-  // }
 );

@@ -77,10 +77,10 @@ onMounted(async () => {
   if (businessId.value) {
     nameBusiness.value = businessData.value.data[0].name;
     businessStore.selectedSalonId = businessId.value;
-    businessStore.getSpecialistAppointments(businessId.value);
+    // businessStore.getSpecialistAppointments(businessId.value);
   } else {
     nameBusiness.value = userStore.selectedSalon.title;
-    businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
+    // businessStore.getSpecialistAppointments(businessStore.selectedSalonId);
   }
   userStore.setSelectedDay(moment().toISOString());
   userStore.resetSelectedServices();

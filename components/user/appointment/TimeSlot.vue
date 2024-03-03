@@ -223,16 +223,23 @@ const filteredPeriods = computed(() => {
             const isSpecialistAvailable = !occupiedSlots.some(
               (occupied) =>
                 occupied.specialistId === specialistId &&
-                slotStartMoment.isBetween(
+                (slotStartMoment.isBetween(
                   occupied.start,
                   occupied.end,
                   null,
-                  "[)"
-                )
+                  "[]"
+                ) || // Проверяем пересечение с началом занятого слота
+                  slotEndMoment.isBetween(
+                    occupied.start,
+                    occupied.end,
+                    null,
+                    "[]"
+                  )) // Проверяем пересечение с концом занятого слота
             );
 
             if (isSpecialistAvailable) {
               slotData.specialistIds.add(specialistId);
+              console.log("Добавленный специалист в слот", slotData);
             }
           }
         }
@@ -300,11 +307,6 @@ const getMaxWorkingHours = () => {
   });
 
   return `${earliestStart.format("HH:mm")}-${latestEnd.format("HH:mm")}`;
-  // Возвращаем время начала и окончания работы в формате HH:mm
-  // return {
-  //   start: earliestStart.format("HH:mm"),
-  //   end: latestEnd.format("HH:mm"),
-  // };
 };
 
 useRouteLeaveGuard();

@@ -167,14 +167,14 @@ export const useUserStore = defineStore(
       setSelectedDay,
       setSelectedAvailableSpecialistsIds,
     };
+  },
+  {
+    persist: {
+      storage: persistedState.cookies,
+      serializer: {
+        deserialize: parse,
+        serialize: stringify,
+      },
+    },
   }
-  // {
-  //   persist: {
-  //     storage: persistedState.cookies,
-  //     serializer: {
-  //       deserialize: parse,
-  //       serialize: stringify,
-  //     },
-  //   },
-  // }
 );

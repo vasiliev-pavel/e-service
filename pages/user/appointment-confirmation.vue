@@ -39,7 +39,7 @@ const toHome = () => {
 watch(
   () => route.query.session_id,
   async (sessionId) => {
-    console.log(userStore.isAppointmentSubmitted);
+    // console.log(userStore.isAppointmentSubmitted);
     if (sessionId && !userStore.isAppointmentSubmitted) {
       try {
         // Запрос к серверу для проверки статуса оплаты

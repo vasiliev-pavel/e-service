@@ -1,13 +1,22 @@
 <template>
-  <SearchFilter />
-  <SearchBody />
-  <div>{{ user }}></div>
+  <div style="height: 1500px">
+    <SearchFilter />
+    <SearchBody />
+    <div>{{ user }}></div>
+  </div>
 </template>
 
 <script setup>
 import SearchBody from "~/components/user/SearchBody.vue";
 import SearchFilter from "~/components/user/SearchFilter.vue";
-
+onMounted(() => {
+  if (process.client) {
+    window.addEventListener("scroll", handleScroll);
+  }
+});
+function handleScroll() {
+  console.log(window.scrollY);
+}
 definePageMeta({
   middleware: ["no-back-navigation"],
   layout: "user",
@@ -25,7 +34,7 @@ const { data } = await useFetch("/api/user/businesses");
 
 watchEffect(async () => {
   if (user.value) {
-    console.log(user.value);
+    // console.log(user.value);
     userStore.resetSelected();
   }
 

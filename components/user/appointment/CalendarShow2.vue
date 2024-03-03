@@ -33,6 +33,7 @@ import { ref, computed } from "vue";
 import moment from "moment";
 
 const userStore = useUserStore();
+const businessStore = useBusinessStore();
 
 // const selectedDate = ref(moment());
 // Переключение на использование выбранной даты из userStore
@@ -72,7 +73,12 @@ function scroll(direction) {
 }
 
 const selectDate = async (date) => {
-  // selectedDate.value = date;
+  businessStore.getSpecialistAppointments(
+    userStore.selectedSalon.id,
+    userStore.availableSpecialistIds,
+    date
+  );
+
   userStore.setSelectedDay(date.toISOString());
 };
 </script>
